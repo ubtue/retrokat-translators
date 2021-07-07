@@ -2,14 +2,14 @@
 	"translatorID": "fe728bc9-595a-4f03-98fc-766f1d8d0936",
 	"label": "Wiley Online Library",
 	"creator": "Sean Takats, Michael Berkowitz, Avram Lyon and Aurimas Vinckevicius",
-	"target": "^https?://(\\w+\\.)?onlinelibrary\\.wiley\\.com[^/]*/(book|doi|toc|advanced/search|search-web/cochrane|cochranelibrary/search|o/cochrane/(clcentral|cldare|clcmr|clhta|cleed|clabout)/articles/.+/sect0\\.html)",
+	"target": "^https?://([\\w-]+\\.)?onlinelibrary\\.wiley\\.com[^/]*/(book|doi|toc|advanced/search|search-web/cochrane|cochranelibrary/search|o/cochrane/(clcentral|cldare|clcmr|clhta|cleed|clabout)/articles/.+/sect0\\.html)",
 	"minVersion": "3.1",
 	"maxVersion": "",
 	"priority": 100,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-03-08 16:42:51"
+	"lastUpdated": "2021-07-02 13:32:15"
 }
 
 /*
@@ -65,36 +65,11 @@ function getAuthorName(text) {
 	return fixCase(text.trim());
 }
 
-function processSubtitles(doc, item) {
-	// add subtitle to the main title if not already present
-	var subtitle = ZU.xpathText(doc, '//h3[@class="citation__subtitle"]');
-	if (subtitle) {
-		var title = item.title;
-		if (!title)
-			title = ZU.xpathText(doc, '//h3[@class="citation__title"]');
-
-		if (!title.toLowerCase().includes(subtitle.toLowerCase())) {
-			item.shortTitle = title;
-			title = title + ": " + subtitle;
-		}
-
-		item.title = title;
-	}
-}
-
 function addBookReviewTag(doc, item) {
 	var primaryHeading = ZU.xpathText(doc, '//span[@class="primary-heading"]');
-	if (primaryHeading) {
-		primaryHeading = primaryHeading.trim();
-		if (primaryHeading.match(/(Book Review)|(Review Essays?)|(reviews?)/))
-			item.tags.push(primaryHeading);
+	if (primaryHeading.match(/Book Review|Review Essays?|Reviews?/i)) {
+		item.tags.push('Book Review');
 	}
-}
-
-function validatePageCount(item) {
-	// clear page count if invalid
-	if (item.pages && (item.pages.match(/e[0-9]+/) || item.pages.match(/inside_front_cover/)))
-		item.pages = "";
 }
 
 function addPages (doc, item) {
@@ -104,6 +79,12 @@ function addPages (doc, item) {
 		let pagesMatch = pagePath.innerText.match(/\d+\-\d+/);
 		if (pagesMatch)
 			item.pages = pagesMatch;
+	}
+}
+//ubtue: write article number in $y
+function addArticleNumber (doc, item) {
+	if (item.pages && item.pages.match(/\d{5,}/)) {
+		item.pages = 'article ' + item.pages;	
 	}
 }
 
@@ -159,8 +140,6 @@ function scrapeBook(doc, url) {
 			'/following-sibling::p'].join(''), null, "\n") || "");
 	newItem.accessDate = 'CURRENT_TIMESTAMP';
 
-	processSubtitles(doc, newItem);
-	validatePageCount(newItem);
 	newItem.complete();
 }
 
@@ -217,8 +196,6 @@ function scrapeEM(doc, url) {
 		//set correct print publication date
 		if (date) item.date = date;
 
-		processSubtitles(doc, item);
-
 		//remove pdf attachments
 		for (var i=0, n=item.attachments.length; i<n; i++) {
 			if (item.attachments[i].mimeType == 'application/pdf') {
@@ -227,22 +204,12 @@ function scrapeEM(doc, url) {
 				n--;
 			}
 		}
-
-		var pdfURL = attr(doc, 'meta[name="citation_pdf_url"]', "content");
-		if (pdfURL) {
-			pdfURL = pdfURL.replace('/pdf/', '/pdfdirect/');
-			Z.debug("PDF URL: " + pdfURL);
-			item.attachments.push({
-				url: pdfURL,
-				title: 'Full Text PDF',
-				mimeType: 'application/pdf'
-			});
-		}
 		item.complete();
 	});
 
 	addBookReviewTag(doc, item);
-	validatePageCount(item);
+	addArticleNumber(doc, item);
+	addFreeAccessTag(doc, item)
 	item.complete();
 
 	translator.getTranslatorObject(function(em) {
@@ -388,10 +355,8 @@ function scrapeBibTeX(doc, url) {
 			item.rights = ZU.xpathText(doc,
 				'//p[@class="copyright" or @id="copyright"]');
 
-			processSubtitles(doc, item);
-			validatePageCount(item);
+			addArticleNumber(doc, item);
 			addPages(doc, item);
-
 			//attachments
 			item.attachments = [{
 				title: 'Snapshot',
@@ -399,19 +364,9 @@ function scrapeBibTeX(doc, url) {
 				mimeType: 'text/html'
 			}];
 
-			var pdfURL = attr(doc, 'meta[name="citation_pdf_url"]', "content");
-			if (pdfURL) {
-				pdfURL = pdfURL.replace('/pdf/', '/pdfdirect/');
-				Z.debug("PDF URL: " + pdfURL);
-				item.attachments.push({
-					url: pdfURL,
-					title: 'Full Text PDF',
-					mimeType: 'application/pdf'
-				});
-			}
 			addBookReviewTag(doc, item);
 			// adding author(s) for Short Reviews
-			if (!item.creators[0]) {
+			if (!item.creators[0] && getAuthorNameShortReview(doc).length > 20) {
 				for (let author of getAuthorNameShortReview(doc))
 					item.creators.push(ZU.cleanAuthor(author));
 			}
@@ -419,13 +374,21 @@ function scrapeBibTeX(doc, url) {
 			// Make sure we pass only the DOI not the whole URL
 			doiURLRegex = /^https:\/\/doi.org\/(.*)/;
 			if (item.DOI && item.DOI.match(doiURLRegex))
-			    item.DOI = item.DOI.replace(/^https:\/\/doi.org\/(.*)/, "$1");
-
+				item.DOI = item.DOI.replace(/^https:\/\/doi.org\/(.*)/, "$1");
+			addFreeAccessTag(doc, item);
 			item.complete();
 		});
 
 		translator.translate();
 	});
+}
+
+//ubtue:tag an article as open access
+function addFreeAccessTag(doc, item) {
+	let tagEntry = ZU.xpathText(doc, '//div[@class="doi-access"]');
+	if (tagEntry && tagEntry.match(/Free Access/i)) {
+		item.notes.push('LF:');
+	};
 }
 
 function scrapeCochraneTrial(doc, url){
@@ -472,10 +435,8 @@ function scrapeCochraneTrial(doc, url){
 		}
 	}
 
-	processSubtitles(doc, item);
 	addBookReviewTag(doc, item);
-	validatePageCount(item);
-
+	addArticleNumber(doc, item);
 	item.complete();
 }
 
@@ -570,11 +531,12 @@ function doWeb(doc, url) {
 			scrape(doc, url);
 		}
 	}
-}/** BEGIN TEST CASES **/
+}
+/** BEGIN TEST CASES **/
 var testCases = [
 	{
 		"type": "web",
-		"url": "https://onlinelibrary.wiley.com/action/doSearch?field1=AllField&text1=zotero&field2=AllField&text2=&field3=AllField&text3=&Ppub=&AfterMonth=&AfterYear=&BeforeMonth=&BeforeYear=",
+		"url": "https://onlinelibrary.wiley.com/action/doSearch?AfterMonth=&AfterYear=&BeforeMonth=&BeforeYear=&Ppub=&field1=AllField&field2=AllField&field3=AllField&text1=zotero&text2=&text3=",
 		"items": "multiple"
 	},
 	{
@@ -585,24 +547,20 @@ var testCases = [
 				"itemType": "bookSection",
 				"title": "Endnotes",
 				"creators": [],
-				"date": "2012",
+				"date": "2012-01-11",
 				"ISBN": "9781118269381",
 				"bookTitle": "The World is Open",
 				"extra": "DOI: 10.1002/9781118269381.notes",
-				"itemID": "doi:10.1002/9781118269381.notes",
+				"itemID": "doi:https://doi.org/10.1002/9781118269381.notes",
 				"language": "en",
 				"libraryCatalog": "Wiley Online Library",
 				"pages": "427-467",
-				"publisher": "Wiley-Blackwell",
+				"publisher": "John Wiley & Sons, Ltd",
 				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118269381.notes",
 				"attachments": [
 					{
 						"title": "Snapshot",
 						"mimeType": "text/html"
-					},
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
 					}
 				],
 				"tags": [],
@@ -618,7 +576,7 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "http://onlinelibrary.wiley.com/book/10.1002/9783527610853",
+		"url": "https://onlinelibrary.wiley.com/doi/book/10.1002/9783527610853",
 		"items": "multiple"
 	},
 	{
@@ -629,25 +587,21 @@ var testCases = [
 				"itemType": "bookSection",
 				"title": "Silent Cinema and its Pioneers (1906–1930)",
 				"creators": [],
-				"date": "2009",
+				"date": "2008",
 				"ISBN": "9781444304794",
 				"abstractNote": "This chapter contains sections titled: Historical and Political Overview of the Period Context11 Film Scenes: Close Readings Directors (Life and Works) Critical Commentary",
 				"bookTitle": "100 Years of Spanish Cinema",
 				"extra": "DOI: 10.1002/9781444304794.ch1",
-				"itemID": "doi:10.1002/9781444304794.ch1",
+				"itemID": "doi:https://doi.org/10.1002/9781444304794.ch1",
 				"language": "en",
 				"libraryCatalog": "Wiley Online Library",
 				"pages": "1-20",
-				"publisher": "Wiley-Blackwell",
+				"publisher": "John Wiley & Sons, Ltd",
 				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/9781444304794.ch1",
 				"attachments": [
 					{
 						"title": "Snapshot",
 						"mimeType": "text/html"
-					},
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
 					}
 				],
 				"tags": [
@@ -698,17 +652,17 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "http://onlinelibrary.wiley.com/book/10.1002/9781444390124",
+		"url": "https://onlinelibrary.wiley.com/doi/book/10.1002/9781444390124",
 		"items": "multiple"
 	},
 	{
 		"type": "web",
-		"url": "http://onlinelibrary.wiley.com/book/10.1002/9780470320419",
+		"url": "https://ceramics.onlinelibrary.wiley.com/doi/book/10.1002/9780470320419",
 		"items": "multiple"
 	},
 	{
 		"type": "web",
-		"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/pmic.201100327",
+		"url": "https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/pmic.201100327",
 		"items": [
 			{
 				"itemType": "journalArticle",
@@ -735,26 +689,22 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "2012-01-01",
+				"date": "2012",
 				"DOI": "10.1002/pmic.201100327",
 				"ISSN": "1615-9861",
 				"abstractNote": "Amidation is a post-translational modification found at the C-terminus of ∼50% of all neuropeptide hormones. Cleavage of the Cα–N bond of a C-terminal glycine yields the α-amidated peptide in a reaction catalyzed by peptidylglycine α-amidating monooxygenase (PAM). The mass of an α-amidated peptide decreases by 58 Da relative to its precursor. The amino acid sequences of an α-amidated peptide and its precursor differ only by the C-terminal glycine meaning that the peptides exhibit similar RP-HPLC properties and tandem mass spectral (MS/MS) fragmentation patterns. Growth of cultured cells in the presence of a PAM inhibitor ensured the coexistence of α-amidated peptides and their precursors. A strategy was developed for precursor and α-amidated peptide pairing (PAPP): LC-MS/MS data of peptide extracts were scanned for peptide pairs that differed by 58 Da in mass, but had similar RP-HPLC retention times. The resulting peptide pairs were validated by checking for similar fragmentation patterns in their MS/MS data prior to identification by database searching or manual interpretation. This approach significantly reduced the number of spectra requiring interpretation, decreasing the computing time required for database searching and enabling manual interpretation of unidentified spectra. Reported here are the α-amidated peptides identified from AtT-20 cells using the PAPP method.",
 				"issue": "2",
-				"itemID": "doi:10.1002/pmic.201100327",
+				"itemID": "https://doi.org/10.1002/pmic.201100327",
 				"language": "en",
 				"libraryCatalog": "Wiley Online Library",
 				"pages": "173-182",
 				"publicationTitle": "PROTEOMICS",
-				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/pmic.201100327",
+				"url": "https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/pmic.201100327",
 				"volume": "12",
 				"attachments": [
 					{
 						"title": "Snapshot",
 						"mimeType": "text/html"
-					},
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
 					}
 				],
 				"tags": [
@@ -778,7 +728,7 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "https://onlinelibrary.wiley.com/doi/full/10.1002/pmic.201100327",
+		"url": "https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/pmic.201100327",
 		"items": [
 			{
 				"itemType": "journalArticle",
@@ -805,26 +755,22 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "2012-01-01",
+				"date": "2012",
 				"DOI": "10.1002/pmic.201100327",
 				"ISSN": "1615-9861",
 				"abstractNote": "Amidation is a post-translational modification found at the C-terminus of ∼50% of all neuropeptide hormones. Cleavage of the Cα–N bond of a C-terminal glycine yields the α-amidated peptide in a reaction catalyzed by peptidylglycine α-amidating monooxygenase (PAM). The mass of an α-amidated peptide decreases by 58 Da relative to its precursor. The amino acid sequences of an α-amidated peptide and its precursor differ only by the C-terminal glycine meaning that the peptides exhibit similar RP-HPLC properties and tandem mass spectral (MS/MS) fragmentation patterns. Growth of cultured cells in the presence of a PAM inhibitor ensured the coexistence of α-amidated peptides and their precursors. A strategy was developed for precursor and α-amidated peptide pairing (PAPP): LC-MS/MS data of peptide extracts were scanned for peptide pairs that differed by 58 Da in mass, but had similar RP-HPLC retention times. The resulting peptide pairs were validated by checking for similar fragmentation patterns in their MS/MS data prior to identification by database searching or manual interpretation. This approach significantly reduced the number of spectra requiring interpretation, decreasing the computing time required for database searching and enabling manual interpretation of unidentified spectra. Reported here are the α-amidated peptides identified from AtT-20 cells using the PAPP method.",
 				"issue": "2",
-				"itemID": "doi:10.1002/pmic.201100327",
+				"itemID": "https://doi.org/10.1002/pmic.201100327",
 				"language": "en",
 				"libraryCatalog": "Wiley Online Library",
 				"pages": "173-182",
 				"publicationTitle": "PROTEOMICS",
-				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/pmic.201100327",
+				"url": "https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/pmic.201100327",
 				"volume": "12",
 				"attachments": [
 					{
 						"title": "Snapshot",
 						"mimeType": "text/html"
-					},
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
 					}
 				],
 				"tags": [
@@ -848,7 +794,7 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "https://onlinelibrary.wiley.com/doi/full/10.1002/pmic.201100327#references-section",
+		"url": "https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/pmic.201100327#references-section",
 		"items": [
 			{
 				"itemType": "journalArticle",
@@ -875,26 +821,22 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "2012-01-01",
+				"date": "2012",
 				"DOI": "10.1002/pmic.201100327",
 				"ISSN": "1615-9861",
 				"abstractNote": "Amidation is a post-translational modification found at the C-terminus of ∼50% of all neuropeptide hormones. Cleavage of the Cα–N bond of a C-terminal glycine yields the α-amidated peptide in a reaction catalyzed by peptidylglycine α-amidating monooxygenase (PAM). The mass of an α-amidated peptide decreases by 58 Da relative to its precursor. The amino acid sequences of an α-amidated peptide and its precursor differ only by the C-terminal glycine meaning that the peptides exhibit similar RP-HPLC properties and tandem mass spectral (MS/MS) fragmentation patterns. Growth of cultured cells in the presence of a PAM inhibitor ensured the coexistence of α-amidated peptides and their precursors. A strategy was developed for precursor and α-amidated peptide pairing (PAPP): LC-MS/MS data of peptide extracts were scanned for peptide pairs that differed by 58 Da in mass, but had similar RP-HPLC retention times. The resulting peptide pairs were validated by checking for similar fragmentation patterns in their MS/MS data prior to identification by database searching or manual interpretation. This approach significantly reduced the number of spectra requiring interpretation, decreasing the computing time required for database searching and enabling manual interpretation of unidentified spectra. Reported here are the α-amidated peptides identified from AtT-20 cells using the PAPP method.",
 				"issue": "2",
-				"itemID": "doi:10.1002/pmic.201100327",
+				"itemID": "https://doi.org/10.1002/pmic.201100327",
 				"language": "en",
 				"libraryCatalog": "Wiley Online Library",
 				"pages": "173-182",
 				"publicationTitle": "PROTEOMICS",
-				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/pmic.201100327",
+				"url": "https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/pmic.201100327",
 				"volume": "12",
 				"attachments": [
 					{
 						"title": "Snapshot",
 						"mimeType": "text/html"
-					},
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
 					}
 				],
 				"tags": [
@@ -918,7 +860,7 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "https://onlinelibrary.wiley.com/doi/full/10.1002/pmic.201100327#citedBy",
+		"url": "https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/pmic.201100327#citedBy",
 		"items": [
 			{
 				"itemType": "journalArticle",
@@ -945,26 +887,22 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "2012-01-01",
+				"date": "2012",
 				"DOI": "10.1002/pmic.201100327",
 				"ISSN": "1615-9861",
 				"abstractNote": "Amidation is a post-translational modification found at the C-terminus of ∼50% of all neuropeptide hormones. Cleavage of the Cα–N bond of a C-terminal glycine yields the α-amidated peptide in a reaction catalyzed by peptidylglycine α-amidating monooxygenase (PAM). The mass of an α-amidated peptide decreases by 58 Da relative to its precursor. The amino acid sequences of an α-amidated peptide and its precursor differ only by the C-terminal glycine meaning that the peptides exhibit similar RP-HPLC properties and tandem mass spectral (MS/MS) fragmentation patterns. Growth of cultured cells in the presence of a PAM inhibitor ensured the coexistence of α-amidated peptides and their precursors. A strategy was developed for precursor and α-amidated peptide pairing (PAPP): LC-MS/MS data of peptide extracts were scanned for peptide pairs that differed by 58 Da in mass, but had similar RP-HPLC retention times. The resulting peptide pairs were validated by checking for similar fragmentation patterns in their MS/MS data prior to identification by database searching or manual interpretation. This approach significantly reduced the number of spectra requiring interpretation, decreasing the computing time required for database searching and enabling manual interpretation of unidentified spectra. Reported here are the α-amidated peptides identified from AtT-20 cells using the PAPP method.",
 				"issue": "2",
-				"itemID": "doi:10.1002/pmic.201100327",
+				"itemID": "https://doi.org/10.1002/pmic.201100327",
 				"language": "en",
 				"libraryCatalog": "Wiley Online Library",
 				"pages": "173-182",
 				"publicationTitle": "PROTEOMICS",
-				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/pmic.201100327",
+				"url": "https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/abs/10.1002/pmic.201100327",
 				"volume": "12",
 				"attachments": [
 					{
 						"title": "Snapshot",
 						"mimeType": "text/html"
-					},
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
 					}
 				],
 				"tags": [
@@ -1005,25 +943,21 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "2005",
+				"date": "2002",
 				"ISBN": "9783527603015",
 				"abstractNote": "Immunoassay Hochleistungsflüssigkeitschromatographie (HPLC) Gaschromatographie Medizinische Beurteilung und klinische Interpretation Literatur",
 				"bookTitle": "Klinisch-toxikologische Analytik",
 				"extra": "DOI: 10.1002/3527603018.ch17",
-				"itemID": "doi:10.1002/3527603018.ch17",
+				"itemID": "doi:https://doi.org/10.1002/3527603018.ch17",
 				"language": "de",
 				"libraryCatalog": "Wiley Online Library",
 				"pages": "365-370",
-				"publisher": "Wiley-Blackwell",
+				"publisher": "John Wiley & Sons, Ltd",
 				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/3527603018.ch17",
 				"attachments": [
 					{
 						"title": "Snapshot",
 						"mimeType": "text/html"
-					},
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
 					}
 				],
 				"tags": [
@@ -1038,7 +972,7 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1468-5930.2011.00548.x",
+		"url": "https://onlinelibrary.wiley.com/doi/full/10.1111/j.1468-5930.2011.00548.x",
 		"items": [
 			{
 				"itemType": "journalArticle",
@@ -1055,12 +989,12 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "2012-02-01",
+				"date": "2012",
 				"DOI": "10.1111/j.1468-5930.2011.00548.x",
 				"ISSN": "1468-5930",
 				"abstractNote": "The possibility of using private military and security companies to bolster the capacity to undertake intervention for human rights purposes (humanitarian intervention and peacekeeping) has been increasingly debated. The focus of such discussions has, however, largely been on practical issues and the contingent problems posed by private force. By contrast, this article considers the principled case for privatising humanitarian intervention. It focuses on two central issues. First, does outsourcing humanitarian intervention to private military and security companies pose some fundamental, deeper problems in this context, such as an abdication of a state's duties? Second, on the other hand, is there a case for preferring these firms to other, state-based agents of humanitarian intervention? For instance, given a state's duties to their own military personnel, should the use of private military and security contractors be preferred to regular soldiers for humanitarian intervention?",
 				"issue": "1",
-				"itemID": "doi:10.1111/j.1468-5930.2011.00548.x",
+				"itemID": "https://doi.org/10.1111/j.1468-5930.2011.00548.x",
 				"language": "en",
 				"libraryCatalog": "Wiley Online Library",
 				"pages": "1-18",
@@ -1071,10 +1005,6 @@ var testCases = [
 					{
 						"title": "Snapshot",
 						"mimeType": "text/html"
-					},
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
 					}
 				],
 				"tags": [],
@@ -1102,12 +1032,12 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "1986-09-01",
+				"date": "1986",
 				"DOI": "10.1111/j.1540-6261.1986.tb04559.x",
 				"ISSN": "1540-6261",
 				"abstractNote": "Capital gains taxes create incentives to trade. Our major finding is that turnover is higher for winners (stocks, the prices of which have increased) than for losers, which is not consistent with the tax prediction. However, the turnover in December and January is evidence of tax-motivated trading; there is a relatively high turnover for losers in December and for winners in January. We conclude that taxes influence turnover, but other motives for trading are more important. We were unable to find evidence that changing the length of the holding period required to qualify for long-term capital gains treatment affected turnover.",
 				"issue": "4",
-				"itemID": "doi:10.1111/j.1540-6261.1986.tb04559.x",
+				"itemID": "https://doi.org/10.1111/j.1540-6261.1986.tb04559.x",
 				"language": "en",
 				"libraryCatalog": "Wiley Online Library",
 				"pages": "951-974",
@@ -1119,10 +1049,6 @@ var testCases = [
 					{
 						"title": "Snapshot",
 						"mimeType": "text/html"
-					},
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
 					}
 				],
 				"tags": [],
@@ -1133,7 +1059,7 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/%28SICI%291521-3773%2820000103%2939%3A1%3C165%3A%3AAID-ANIE165%3E3.0.CO%3B2-B",
+		"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/(SICI)1521-3773(20000103)39:1%3C165::AID-ANIE165%3E3.0.CO;2-B",
 		"items": [
 			{
 				"itemType": "journalArticle",
@@ -1150,12 +1076,12 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "2000-01-03",
+				"date": "2000",
 				"DOI": "10.1002/(SICI)1521-3773(20000103)39:1<165::AID-ANIE165>3.0.CO;2-B",
 				"ISSN": "1521-3773",
 				"abstractNote": "Nanosized palladium colloids, generated in situ by reduction of PdII to Pd0 [Eq. (a)], are involved in the catalysis of phosphane-free Heck and Suzuki reactions with simple palladium salts such as PdCl2 or Pd(OAc)2, as demonstrated by transmission electron microscopic investigations.",
 				"issue": "1",
-				"itemID": "doi:10.1002/(SICI)1521-3773(20000103)39:1<165::AID-ANIE165>3.0.CO;2-B",
+				"itemID": "https://doi.org/10.1002/(SICI)1521-3773(20000103)39:1<165::AID-ANIE165>3.0.CO;2-B",
 				"language": "en",
 				"libraryCatalog": "Wiley Online Library",
 				"pages": "165-168",
@@ -1167,10 +1093,6 @@ var testCases = [
 					{
 						"title": "Snapshot",
 						"mimeType": "text/html"
-					},
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
 					}
 				],
 				"tags": [
@@ -1211,12 +1133,12 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "1983-07-01",
+				"date": "1983",
 				"DOI": "10.1002/jhet.5570200408",
 				"ISSN": "1943-5193",
 				"abstractNote": "The representative mono- and dialkyl-substituted derivatives of 4-carbamoylimidazolium-5-olate (1) were synthesized unequivocally. On the basis of their spectral data for ultraviolet absorption spectra in acidic, basic and neutral solutions, we have found some spectral characteristics which make it facile to clarify the position of substituents.",
 				"issue": "4",
-				"itemID": "doi:10.1002/jhet.5570200408",
+				"itemID": "https://doi.org/10.1002/jhet.5570200408",
 				"language": "en",
 				"libraryCatalog": "Wiley Online Library",
 				"pages": "875-885",
@@ -1227,10 +1149,6 @@ var testCases = [
 					{
 						"title": "Snapshot",
 						"mimeType": "text/html"
-					},
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
 					}
 				],
 				"tags": [],
@@ -1258,12 +1176,12 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "2014-03-01",
+				"date": "2014",
 				"DOI": "10.1002/ev.20077",
 				"ISSN": "1534-875X",
 				"abstractNote": "Research on organizational evaluation capacity building (ECB) has focused very much on the capacity to do evaluation, neglecting organizational demand for evaluation and the capacity to use it. This qualitative multiple case study comprises a systematic examination of organizational capacity within eight distinct organizations guided by a common conceptual framework. Described in this chapter are the rationale and methods for the study and then the sequential presentation of findings for each of the eight case organizations. Data collection and analyses for these studies occurred six years ago; findings are cross-sectional and do not reflect changes in organizations or their capacity for evaluation since that time. The format for presenting the findings was standardized so as to foster cross-case analyses, the focus for the next and final chapter of this volume.",
 				"issue": "141",
-				"itemID": "doi:10.1002/ev.20077",
+				"itemID": "https://doi.org/10.1002/ev.20077",
 				"language": "en",
 				"libraryCatalog": "Wiley Online Library",
 				"pages": "25-99",
@@ -1274,10 +1192,6 @@ var testCases = [
 					{
 						"title": "Snapshot",
 						"mimeType": "text/html"
-					},
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
 					}
 				],
 				"tags": [],
@@ -1288,17 +1202,17 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/teth.12436?af=R",
+		"url": "https://onlinelibrary.wiley.com/doi/full/10.1111/teth.12436?af=R",
 		"items": [
 			{
 				"itemType": "journalArticle",
 				"title": "Book Reviews",
 				"creators": [],
+				"date": "2018",
 				"DOI": "10.1111/teth.12436",
-				"date": "2018-04-02",
 				"ISSN": "1467-9647",
 				"issue": "2",
-				"itemID": "doi:10.1111/teth.12436",
+				"itemID": "https://doi.org/10.1111/teth.12436",
 				"language": "en",
 				"libraryCatalog": "Wiley Online Library",
 				"pages": "158-158",
@@ -1309,14 +1223,274 @@ var testCases = [
 					{
 						"title": "Snapshot",
 						"mimeType": "text/html"
-					},
+					}
+				],
+				"tags": [
 					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
+						"tag": "Book Review"
+					}
+				],
+				"notes": [],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://onlinelibrary.wiley.com/doi/full/10.1111/hic3.12657",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "Magic, Genderfluidity, and queer Vikings, ca. 750-1050",
+				"creators": [
+					{
+						"firstName": "Jacob",
+						"lastName": "Bell",
+						"creatorType": "author"
+					}
+				],
+				"date": "2021",
+				"DOI": "10.1111/hic3.12657",
+				"ISSN": "1478-0542",
+				"abstractNote": "From the Nazi Reich to the deadly storming of the U.S. Capital building on January 6, 2021, symbols of pre-Christian Norse religious practices, especially magic, have come to represent androcentricity, authoritarianism, and White nationalism. This modern misrepresentation contrasts how the Norse people themselves potentially saw these same signs and images: as subversive, subaltern, and queer. Rather than the austere and distorted image left to us by monastic chroniclers of later centuries, recent historical, archaeological, and literary studies have taken into consideration new evidence that suggests magic was a vibrant and interwoven part of everyday life for the Norse people in the Viking Age. New methodological approaches and material discoveries have enabled scholars to re-evaluate the socio-sexual systems of Viking-Age Scandinavia and theorize about the potential for ungendered, transgendered, and gender-fluid readings of how individuals subverted these regimes through sorcery. This article surveys this recent turn in Old Norse studies and explores the possibilities for such scholarship to revolutionize how we think of the Vikings' place in the circum-polar history of Shamanism, gender-bending, and queer magic.",
+				"issue": "5",
+				"itemID": "https://doi.org/10.1111/hic3.12657",
+				"language": "en",
+				"libraryCatalog": "Wiley Online Library",
+				"pages": "article e12657",
+				"publicationTitle": "History Compass",
+				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/hic3.12657",
+				"volume": "19",
+				"attachments": [
+					{
+						"title": "Snapshot",
+						"mimeType": "text/html"
 					}
 				],
 				"tags": [],
 				"notes": [],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://onlinelibrary.wiley.com/doi/10.1111/erev.12591",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "Aruna Gnanadason, With Courage and Compassion: Women and the Ecumenical Movement. Minneapolis: Fortress Press, 2020. 171 + xiv pp.",
+				"creators": [
+					{
+						"firstName": "Lois M.",
+						"lastName": "Wilson",
+						"creatorType": "author"
+					}
+				],
+				"date": "2021",
+				"DOI": "10.1111/erev.12591",
+				"ISSN": "1758-6623",
+				"issue": "1",
+				"itemID": "https://doi.org/10.1111/erev.12591",
+				"language": "en",
+				"libraryCatalog": "Wiley Online Library",
+				"pages": "194-195",
+				"publicationTitle": "The Ecumenical Review",
+				"shortTitle": "Aruna Gnanadason, With Courage and Compassion",
+				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/erev.12591",
+				"volume": "73",
+				"attachments": [
+					{
+						"title": "Snapshot",
+						"mimeType": "text/html"
+					}
+				],
+				"tags": [
+					{
+						"tag": "Book Review"
+					}
+				],
+				"notes": [],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://onlinelibrary.wiley.com/doi/10.1111/erev.12515",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "Issue Information",
+				"creators": [],
+				"date": "2021",
+				"DOI": "10.1111/erev.12515",
+				"ISSN": "1758-6623",
+				"issue": "2",
+				"itemID": "https://doi.org/10.1111/erev.12515",
+				"language": "en",
+				"libraryCatalog": "Wiley Online Library",
+				"publicationTitle": "The Ecumenical Review",
+				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/erev.12515",
+				"volume": "73",
+				"attachments": [
+					{
+						"title": "Snapshot",
+						"mimeType": "text/html"
+					}
+				],
+				"tags": [],
+				"notes": [
+					"LF:"
+				],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://onlinelibrary.wiley.com/doi/10.1111/erev.12592",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "Ecumenical Chronicle",
+				"creators": [],
+				"date": "2021",
+				"DOI": "10.1111/erev.12592",
+				"ISSN": "1758-6623",
+				"issue": "1",
+				"itemID": "https://doi.org/10.1111/erev.12592",
+				"language": "en",
+				"libraryCatalog": "Wiley Online Library",
+				"pages": "182-190",
+				"publicationTitle": "The Ecumenical Review",
+				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/erev.12592",
+				"volume": "73",
+				"attachments": [
+					{
+						"title": "Snapshot",
+						"mimeType": "text/html"
+					}
+				],
+				"tags": [],
+				"notes": [],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://onlinelibrary.wiley.com/doi/10.1111/zygo.12687",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "Religion and the Philosophy of Life. By Gavin Flood. Oxford: Oxford University Press, 2019. 464 pages. $50.00. (Hardback).",
+				"creators": [
+					{
+						"firstName": "Lluis",
+						"lastName": "Oviedo",
+						"creatorType": "author"
+					}
+				],
+				"date": "2021",
+				"DOI": "10.1111/zygo.12687",
+				"ISSN": "1467-9744",
+				"issue": "2",
+				"itemID": "https://doi.org/10.1111/zygo.12687",
+				"language": "en",
+				"libraryCatalog": "Wiley Online Library",
+				"pages": "533-536",
+				"publicationTitle": "Zygon®",
+				"shortTitle": "Religion and the Philosophy of Life. By Gavin Flood. Oxford",
+				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/zygo.12687",
+				"volume": "56",
+				"attachments": [
+					{
+						"title": "Snapshot",
+						"mimeType": "text/html"
+					}
+				],
+				"tags": [
+					{
+						"tag": "Book Review"
+					}
+				],
+				"notes": [],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://onlinelibrary.wiley.com/doi/10.1111/jssr.12702",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "Religion and Refugee Well-Being: The Importance of Inclusive Community",
+				"creators": [
+					{
+						"firstName": "Stephen",
+						"lastName": "Wu",
+						"creatorType": "author"
+					},
+					{
+						"firstName": "Stephen",
+						"lastName": "Ellingson",
+						"creatorType": "author"
+					},
+					{
+						"firstName": "Paul",
+						"lastName": "Hagstrom",
+						"creatorType": "author"
+					},
+					{
+						"firstName": "Jaime",
+						"lastName": "Kucinskas",
+						"creatorType": "author"
+					}
+				],
+				"date": "2021",
+				"DOI": "10.1111/jssr.12702",
+				"ISSN": "1468-5906",
+				"abstractNote": "We use a large sample of refugees in Utica, New York to investigate how religiosity and the ability to practice religion are related to happiness in one's community. We analyze religious and secular facets of the community in which they live, such as perceived ability to practice their religion, sense of safety, and experiences of discrimination. Contrary to the literature on broader populations, we find that religiosity is unrelated to refugees’ happiness in their community, but their perceived ability to practice is strongly related to this measure of well-being. Ability to practice religion remains strongly related to happiness in the community even for refugees who are not religious and for ones who do not regularly attend services. These findings point to the need for more studies to include measures not only of individual religiosity, but facets of religion in people's larger communities, especially for vulnerable populations like refugees.",
+				"issue": "2",
+				"itemID": "https://doi.org/10.1111/jssr.12702",
+				"language": "en",
+				"libraryCatalog": "Wiley Online Library",
+				"pages": "291-308",
+				"publicationTitle": "Journal for the Scientific Study of Religion",
+				"shortTitle": "Religion and Refugee Well-Being",
+				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/jssr.12702",
+				"volume": "60",
+				"attachments": [
+					{
+						"title": "Snapshot",
+						"mimeType": "text/html"
+					}
+				],
+				"tags": [
+					{
+						"tag": "Utica"
+					},
+					{
+						"tag": "community"
+					},
+					{
+						"tag": "inclusive"
+					},
+					{
+						"tag": "refugees"
+					},
+					{
+						"tag": "religion"
+					},
+					{
+						"tag": "well-being"
+					}
+				],
+				"notes": [
+					"LF:"
+				],
 				"seeAlso": []
 			}
 		]
