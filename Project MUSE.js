@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-06-23 16:41:28"
+	"lastUpdated": "2021-07-08 07:38:29"
 }
 
 /*
@@ -55,6 +55,9 @@ function getSearchResults(doc, checkOnly) {
 	var rows = ZU.xpath(doc, '//li[@class="title"]//a[contains(@href, "/article/") or contains(@href, "/book/")]');
 	for (var i = 0; i < rows.length; i++) {
 		var href = rows[i].href;
+		if (href.match(/\/pdf/)!==null) {
+			href = href.replace('/pdf', '/summary');
+		}
 		var title = ZU.trimInternal(rows[i].textContent);
 		if (!href || !title) continue;
 		if (checkOnly) return true;
@@ -116,11 +119,17 @@ function scrape(doc) {
 			}
 			
 			item.notes = [];
+			if (ZU.xpathText(doc, '//span[@class="abstractheader"]')) {
+			if (ZU.xpathText(doc, '//span[@class="abstractheader"]').match(/^In lieu of an abstract/) != null) {
+				item.abstractNote = '';
+			}
+			}
 			item.complete();
 		});
 		translator.translate();
 	});
-}/** BEGIN TEST CASES **/
+}
+/** BEGIN TEST CASES **/
 var testCases = [
 	{
 		"type": "web",
@@ -350,6 +359,71 @@ var testCases = [
 				"tags": [
 					{
 						"tag": "Book Review"
+					}
+				],
+				"notes": [],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://muse.jhu.edu/issue/40342",
+		"items": "multiple"
+	},
+	{
+		"type": "web",
+		"url": "https://muse.jhu.edu/article/724069",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "Recovering the Multiple Worlds of the Medieval Church: Thoughtful Lives, Inspired Critics, and Changing Narratives",
+				"creators": [
+					{
+						"lastName": "Van Engen",
+						"firstName": "John",
+						"creatorType": "author"
+					}
+				],
+				"date": "2019",
+				"DOI": "10.1353/cat.2019.0012",
+				"ISSN": "1534-0708",
+				"abstractNote": "The author describes his formative influences, his mentors, and his scholarship in Medieval history at the University of Notre Dame.",
+				"issue": "4",
+				"libraryCatalog": "Project MUSE",
+				"pages": "vi-613",
+				"publicationTitle": "The Catholic Historical Review",
+				"shortTitle": "Recovering the Multiple Worlds of the Medieval Church",
+				"url": "https://muse.jhu.edu/article/724069",
+				"volume": "104",
+				"attachments": [],
+				"tags": [
+					{
+						"tag": " Bernard of Clairvaux"
+					},
+					{
+						"tag": " Cenobitism"
+					},
+					{
+						"tag": " Christianization"
+					},
+					{
+						"tag": " Devotio Moderna"
+					},
+					{
+						"tag": " Dutch Reformed Communities."
+					},
+					{
+						"tag": " Hildegard of Bingen"
+					},
+					{
+						"tag": " Marguerite Porete"
+					},
+					{
+						"tag": " Rupert of Deutz"
+					},
+					{
+						"tag": "Gerhart Ladner"
 					}
 				],
 				"notes": [],

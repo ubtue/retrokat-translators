@@ -6,10 +6,10 @@
 	"minVersion": "3.0",
 	"maxVersion": "",
 	"priority": 80,
-	"inRepository": false,
+	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2020-09-03 15:15:00"
+	"lastUpdated": "2021-07-08 08:37:06"
 }
 
 /*
@@ -37,19 +37,18 @@
 
 function detectWeb(doc, url) {
 	if (url.includes('/article/')) return "journalArticle";
-	else if (url.match(/issue/) && getSearchResults(doc)) return "multiple";
+	else if (url.match(/(issue)|(journal)/) && getSearchResults(doc)) return "multiple";
 	else return false;
 }
 
 function getSearchResults(doc, checkOnly) {
 	var items = {};
 	var found = false;
-	var rows = doc.querySelectorAll('.c-Button--link, c-Button--primary');
+	var rows = ZU.xpath(doc, '//div[@class="issueArticle"]//a[contains(@class, "issueContentsArticleLink")]');
 	for (let row of rows) {
-		var href = row.href.match(/article/);
+		var href = row.href.match(/document/);
 		let title = ZU.trimInternal(row.textContent);
 		if (!href || !title) continue;
-		if (checkOnly) return true;
 		found = true;
 		items[href.input] = title;
 	}
@@ -79,7 +78,13 @@ function invokeEMTranslator(doc) {
 	translator.setDocument(doc);
 	translator.setHandler("itemDone", function (t, i) {
 		if (i.title.match(/ISBN/)) i.tags.push('Book Review') && delete i.abstractNote;
-		if (i.abstractNote) i.abstractNote += ZU.xpathText(doc, '//*[(@id = "transAbstract")]//p');
+		if (i.abstractNote) {
+			i.abstractNote += ZU.xpathText(doc, '//*[(@id = "transAbstract")]//p');
+			if (i.abstractNote.match(/Der Artikel .* wurde .* in der Zeitschrift .* veröffentlicht\.null$/) !== null) {
+				i.abstractNote = '';
+			}
+		}
+		i.abstractNote = i.abstractNote.replace('\.null', '.');
 		i.complete();
 	});
 	translator.translate();

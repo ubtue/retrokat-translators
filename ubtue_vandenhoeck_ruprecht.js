@@ -2,14 +2,14 @@
 	"translatorID": "dc098d90-7a52-4938-89ee-bc027d2f70df",
 	"label": "ubtue_vandenhoeck_ruprecht",
 	"creator": "Timotheus Kim",
-	"target": "https://www.vr-elibrary.de/(toc|doi)",
+	"target": "https:\\/\\/www.vr-elibrary.de\\/(toc|doi)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 99,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-05-27 07:57:56"
+	"lastUpdated": "2021-07-08 09:05:19"
 }
 
 /*
@@ -134,6 +134,7 @@ function scrape(doc, url) {
 		});
 	});
 }
+
 /** BEGIN TEST CASES **/
 var testCases = [
 	{
