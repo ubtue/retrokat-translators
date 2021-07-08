@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-07-02 13:37:43"
+	"lastUpdated": "2021-07-08 06:52:50"
 }
 
 /*
@@ -106,6 +106,15 @@ function scrape(doc, url) {
 		item.title = ZU.unescapeHTML(item.title);
 		item.libraryCatalog = "Cambridge Core";
 		addOpenAccessTag(doc, item);
+		let tags_found = ZU.xpath(doc, '//dd[@class="col content"]');
+			for (let tag in tags_found) {
+				if (tags_found[tag].textContent.match(/^Book Review/i) !== null) {
+				item.tags.push('Book Review');
+			}
+			}
+			if (item.abstractNote.match(/\/\/static.cambridge.org\/.*\.jpg/) !== null) {
+				item.abstractNote = '';
+			}
 		item.complete();
 	});
 
@@ -114,6 +123,7 @@ function scrape(doc, url) {
 		trans.doWeb(doc, url);
 	});
 }
+
 
 /** BEGIN TEST CASES **/
 var testCases = [
