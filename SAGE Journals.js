@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-03-11 11:09:30"
+	"lastUpdated": "2021-07-23 11:35:30"
 }
 
 /*
@@ -105,6 +105,7 @@ function scrape(doc, url) {
 
 		var translator = Zotero.loadTranslator("import");
 		translator.setTranslator("32d59d2d-b65a-4da4-b0a3-bdd3cfb979e7");
+		Z.debug(translator);
 		translator.setString(text);
 		translator.setHandler("itemDone", function (obj, item) {
 			// The subtitle will be neglected in RIS and is only present in
@@ -129,7 +130,7 @@ function scrape(doc, url) {
 			//scrape ORCID from website e.g. https://journals.sagepub.com/doi/full/10.1177/0084672419883339
 			let authorSectionEntries = doc.querySelectorAll('.author-section-div');
 			for (let authorSectionEntry of authorSectionEntries) {
-				    let entryHTML = authorSectionEntry.innerHTML;
+					let entryHTML = authorSectionEntry.innerHTML;
 					let regexOrcid = /\d+-\d+-\d+-\d+x?/i;
 					let regexName = /author=.*"/;
 					if(entryHTML.match(regexOrcid)) {
@@ -208,11 +209,21 @@ function scrape(doc, url) {
 				title: "SAGE PDF Full Text",
 				mimeType: "application/pdf"
 			});
+			if (item.title.match(/^(errat|correction|corrigend)/gi)) {
+				let relatedLink = ZU.xpathText(doc, '//div[@class="related-articles single-relation"]//a/@href');
+				if (relatedLink) {
+				item.notes.push({note: "#ErratumCorrigendumTo#https://doi.org/" + relatedLink.replace('/doi/full/', '')});
+				}
+				else {
+					item.notes.push({note: "#ErratumCorrigendumNoSource#"});
+				}
+			}
 			item.complete();
 		});
 		translator.translate();
 	});
 }
+
 /** BEGIN TEST CASES **/
 var testCases = [
 	{
