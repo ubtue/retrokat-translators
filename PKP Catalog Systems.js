@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-07-29 16:31:19"
+	"lastUpdated": "2021-07-29 17:18:35"
 }
 
 /*
@@ -71,12 +71,20 @@ function getSearchResults(doc, checkOnly) {
 	var items = {};
 	var found = false;
 	var rows = doc.querySelectorAll('.title a[href*="/view/"], .title a[href*="/catalog/"]');
-	if (rows != undefined) {
-		rows = ZU.xpath(doc, '//div[@class="tocTitle"]/a');
-	}
 	for (let row of rows) {
 		let href = row.href;
 		let title = ZU.trimInternal(row.textContent);
+		if (!href || !title) continue;
+		if (checkOnly) return true;
+		found = true;
+		items[href] = title;
+	}
+	if (rows[0] == undefined) {
+		rows = ZU.xpath(doc, '//table[@class="tocArticle"]');
+	}
+	for (let row of rows) {
+		let href = ZU.xpathText(row, './/div[@class="tocGalleys"]/a/@href');
+		let title = ZU.xpathText(row, './/div[@class="tocTitle"]');
 		if (!href || !title) continue;
 		if (checkOnly) return true;
 		found = true;
@@ -220,7 +228,9 @@ function scrape(doc, url) {
 				}
 			}
 		}
-		
+		if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content') == "Recensioni") {
+			item.tags.push("Book Review");
+		}
 		item.complete();
 	});
 
