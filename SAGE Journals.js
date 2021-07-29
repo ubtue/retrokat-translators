@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-07-23 11:35:30"
+	"lastUpdated": "2021-07-29 10:46:03"
 }
 
 /*
@@ -178,7 +178,15 @@ function scrape(doc, url) {
 						item.abstractNote = '';	
 					}
 				}
-			}	
+			}
+			if (item.abstractNote && item.abstractNote.match(/,\s(,\s*)+/g)) {
+						item.abstractNote = '';	
+					}
+			for (let n in item.notes) {
+				if (item.notes[n]['note'].match(/doi:\s/)) {
+					item.notes.splice(n, 1);
+				}
+			}
 			// numbering issues with slash, e.g. in case of  double issue "1-2" > "1/2"
 			if (item.issue) item.issue = item.issue.replace('-', '/');
 
