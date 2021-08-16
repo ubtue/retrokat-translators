@@ -6,10 +6,10 @@
 	"minVersion": "3.0",
 	"maxVersion": "",
 	"priority": 90,
-	"inRepository": false,
+	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-05-10 16:20:25"
+	"lastUpdated": "2021-08-16 12:09:23"
 }
 
 /*
@@ -69,6 +69,11 @@ function postProcess(doc, item) {
 
 	if (!item.language)
 		item.language = ZU.xpathText(doc, '//meta[@name="language"]/@content');
+	if (!item.URL)
+		item.URL = 'https://doi.org/' + item.DOI;
+	if (ZU.xpathText(doc, '//div[@itemid="#periodical"]').match(/Rubrik:\s+Einzelbesprechungen/)) {
+		item.tags.push('Book review');
+	}
 }
 
 function invokeCoinsTranslator(doc, url) {
@@ -97,6 +102,7 @@ function doWeb(doc, url) {
 	} else
 		invokeCoinsTranslator(doc, url);
 }
+
 /** BEGIN TEST CASES **/
 var testCases = [
 	{
