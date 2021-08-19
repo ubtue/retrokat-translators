@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-07-02 13:32:15"
+	"lastUpdated": "2021-08-19 10:20:18"
 }
 
 /*
@@ -31,6 +31,9 @@
  */
 
 // attr()/text() v2
+
+var reviewURLs = [];
+
 function attr(docOrElem,selector,attr,index){var elem=index?docOrElem.querySelectorAll(selector).item(index):docOrElem.querySelector(selector);return elem?elem.getAttribute(attr):null;}function text(docOrElem,selector,index){var elem=index?docOrElem.querySelectorAll(selector).item(index):docOrElem.querySelector(selector);return elem?elem.textContent:null;}
 
 function fixCase(authorName) {
@@ -370,7 +373,12 @@ function scrapeBibTeX(doc, url) {
 				for (let author of getAuthorNameShortReview(doc))
 					item.creators.push(ZU.cleanAuthor(author));
 			}
-
+			// adding review tags for Short Reviews
+			if (reviewURLs.includes(url)) {
+				item.tags.push('Book Review');
+			}
+			
+			
 			// Make sure we pass only the DOI not the whole URL
 			doiURLRegex = /^https:\/\/doi.org\/(.*)/;
 			if (item.DOI && item.DOI.match(doiURLRegex))
@@ -504,6 +512,18 @@ function detectWeb(doc, url) {
 function doWeb(doc, url) {
 	var type = detectWeb(doc, url);
 	if (type == "multiple") {
+		sections = ZU.xpath(doc, '//div[contains(@class, "issue-items-container")]');
+		for (i = 0; i < sections.length; i++) {
+			if (ZU.xpath(sections[i], './h3[@title="BOOK REVIEWS"]').length > 0) {
+				let review_urls = ZU.xpath(sections[i], './/a');
+				for (let i in review_urls) {
+					if (review_urls[i].href.match(/doi\/10/)) {
+					reviewURLs.push(review_urls[i].href);
+					}
+				}
+			}
+		
+		}
 		Zotero.selectItems(getSearchResults(doc, false), function (items) {
 			if (!items) {
 				return true;
@@ -532,6 +552,7 @@ function doWeb(doc, url) {
 		}
 	}
 }
+
 /** BEGIN TEST CASES **/
 var testCases = [
 	{
