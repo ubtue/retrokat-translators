@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-07-29 17:18:35"
+	"lastUpdated": "2021-08-20 08:08:15"
 }
 
 /*
@@ -190,6 +190,11 @@ function scrape(doc, url) {
 			item.institution = '';
 		}
 		
+		if (ZU.xpath(doc, '//meta[@name="DC.Type.articleType"]/@content')) {
+			if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content').match(/Recensioni/)) {
+				item.tags.push('Book Review');
+			}
+		}
 		var pdfAttachment = false;
 		
 		// some journals link to a PDF view page in the header, not the PDF itself
