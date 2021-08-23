@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-08-19 10:20:18"
+	"lastUpdated": "2021-08-20 15:45:21"
 }
 
 /*
@@ -70,7 +70,7 @@ function getAuthorName(text) {
 
 function addBookReviewTag(doc, item) {
 	var primaryHeading = ZU.xpathText(doc, '//span[@class="primary-heading"]');
-	if (primaryHeading.match(/Book Review|Review Essays?|Reviews?/i)) {
+	if (primaryHeading.match(/(Book Reviews?)|(Review Essays?)|(Reviews?)/i)) {
 		item.tags.push('Book Review');
 	}
 }
@@ -373,12 +373,12 @@ function scrapeBibTeX(doc, url) {
 				for (let author of getAuthorNameShortReview(doc))
 					item.creators.push(ZU.cleanAuthor(author));
 			}
-			// adding review tags for Short Reviews
+			//adding review tags for Short Reviews
 			if (reviewURLs.includes(url)) {
+				if (!item.tags.includes('Book Review')) {
 				item.tags.push('Book Review');
+				}
 			}
-			
-			
 			// Make sure we pass only the DOI not the whole URL
 			doiURLRegex = /^https:\/\/doi.org\/(.*)/;
 			if (item.DOI && item.DOI.match(doiURLRegex))

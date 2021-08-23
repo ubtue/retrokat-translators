@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-07-08 08:37:06"
+	"lastUpdated": "2021-08-23 13:57:43"
 }
 
 /*
@@ -35,6 +35,8 @@
 	***** END LICENSE BLOCK *****
 */
 
+var reviewURLs = [];
+
 function detectWeb(doc, url) {
 	if (url.includes('/article/')) return "journalArticle";
 	else if (url.match(/(issue)|(journal)/) && getSearchResults(doc)) return "multiple";
@@ -46,11 +48,17 @@ function getSearchResults(doc, checkOnly) {
 	var found = false;
 	var rows = ZU.xpath(doc, '//div[@class="issueArticle"]//a[contains(@class, "issueContentsArticleLink")]');
 	for (let row of rows) {
-		var href = row.href.match(/document/);
+		let href = row.href.match(/document/);
 		let title = ZU.trimInternal(row.textContent);
 		if (!href || !title) continue;
 		found = true;
 		items[href.input] = title;
+	}
+	let reviewSection = ZU.xpath(doc, '//div[contains(@class, "issueSubjectGroup")][./h3[@class="issueSubjectGroupHeading"]="II. ABTEILUNG"]');
+    var reviewRows = ZU.xpath(reviewSection, './/div[@class="issueArticle"]//a[contains(@class, "issueContentsArticleLink")]');
+	for (let row of reviewRows) {
+		let href = row.href.match(/document/).input;
+		reviewURLs.push(href);
 	}
 	return found ? items : false;
 }
@@ -72,7 +80,7 @@ function doWeb(doc, url) {
 	}
 }
 
-function invokeEMTranslator(doc) {
+function invokeEMTranslator(doc, url) {
 	var translator = Zotero.loadTranslator("web");
 	translator.setTranslator("951c027d-74ac-47d4-a107-9c3069ab7b48");
 	translator.setDocument(doc);
@@ -85,6 +93,11 @@ function invokeEMTranslator(doc) {
 			}
 		}
 		i.abstractNote = i.abstractNote.replace('\.null', '.');
+		if (i.ISSN == "1868-9027") {
+			if (reviewURLs.includes(i.url)) {
+			i.tags.push('Book Review');
+		}
+		}
 		i.complete();
 	});
 	translator.translate();
