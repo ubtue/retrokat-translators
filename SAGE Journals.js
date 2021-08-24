@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-08-06 11:42:27"
+	"lastUpdated": "2021-08-24 13:20:12"
 }
 
 /*
@@ -105,7 +105,7 @@ function scrape(doc, url) {
 
 		var translator = Zotero.loadTranslator("import");
 		translator.setTranslator("32d59d2d-b65a-4da4-b0a3-bdd3cfb979e7");
-		Z.debug(translator);
+		//Z.debug(translator);
 		translator.setString(text);
 		translator.setHandler("itemDone", function (obj, item) {
 			// The subtitle will be neglected in RIS and is only present in
@@ -217,13 +217,10 @@ function scrape(doc, url) {
 				title: "SAGE PDF Full Text",
 				mimeType: "application/pdf"
 			});
-			if (item.title.match(/^(errat|correction|corrigend)/gi)) {
-				let relatedLink = ZU.xpathText(doc, '//div[@class="related-articles single-relation"]//a/@href');
-				if (relatedLink) {
-				item.notes.push({note: "#ErratumCorrigendumTo#https://doi.org/" + relatedLink.replace('/doi/full/', '')});
-				}
-				else {
-					item.notes.push({note: "#ErratumCorrigendumNoSource#"});
+			var articleType = ZU.xpathText(doc, '//span[@class="ArticleType"]');
+			if (articleType != undefined) {
+				if (articleType.match(/Review( Article)?/)) {
+					item.tags.push('Book Review');
 				}
 			}
 			item.complete();
