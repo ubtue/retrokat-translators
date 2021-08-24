@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-07-08 06:52:50"
+	"lastUpdated": "2021-08-24 07:40:55"
 }
 
 /*
@@ -115,6 +115,9 @@ function scrape(doc, url) {
 			if (item.abstractNote.match(/\/\/static.cambridge.org\/.*\.jpg/) !== null) {
 				item.abstractNote = '';
 			}
+		if (ZU.xpath(doc, '//div[@class="article book-review NLM"]').length > 0) {
+			item.tags.push('Book Review');
+		}
 		item.complete();
 	});
 
@@ -123,6 +126,7 @@ function scrape(doc, url) {
 		trans.doWeb(doc, url);
 	});
 }
+
 
 
 /** BEGIN TEST CASES **/
