@@ -2,14 +2,14 @@
 	"translatorID": "9ef1752e-bd32-49bb-9d9b-f06c039712ab",
 	"label": "ubtue_DeGruyter",
 	"creator": "Timotheus Kim",
-	"target": "^https?://www\\.degruyter\\.com",
+	"target": "^https?:\\/\\/www\\.degruyter\\.com",
 	"minVersion": "3.0",
 	"maxVersion": "",
 	"priority": 80,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-08-23 13:57:43"
+	"lastUpdated": "2021-08-24 16:17:57"
 }
 
 /*
@@ -46,7 +46,7 @@ function detectWeb(doc, url) {
 function getSearchResults(doc, checkOnly) {
 	var items = {};
 	var found = false;
-	var rows = ZU.xpath(doc, '//div[@class="issueArticle"]//a[contains(@class, "issueContentsArticleLink")]');
+	var rows = ZU.xpath(doc, '//div[@class="resultTitle"]//a[contains(@class, "issueContentsArticleLink")]');
 	for (let row of rows) {
 		let href = row.href.match(/document/);
 		let title = ZU.trimInternal(row.textContent);
@@ -55,7 +55,7 @@ function getSearchResults(doc, checkOnly) {
 		items[href.input] = title;
 	}
 	let reviewSection = ZU.xpath(doc, '//div[contains(@class, "issueSubjectGroup")][./h3[@class="issueSubjectGroupHeading"]="II. ABTEILUNG"]');
-    var reviewRows = ZU.xpath(reviewSection, './/div[@class="issueArticle"]//a[contains(@class, "issueContentsArticleLink")]');
+	var reviewRows = ZU.xpath(reviewSection, './/div[@class="issueArticle"]//a[contains(@class, "issueContentsArticleLink")]');
 	for (let row of reviewRows) {
 		let href = row.href.match(/document/).input;
 		reviewURLs.push(href);
