@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-08-24 07:58:03"
+	"lastUpdated": "2021-08-26 08:56:47"
 }
 
 /*
@@ -169,7 +169,9 @@ function scrape(doc, url) {
 		}
 		
 		if (!item.ISBN) {
+			if (text(doc, '.identification_code .value') != null) {
 			item.ISBN = ZU.cleanISBN(text(doc, '.identification_code .value'));
+			}
 		}
 		
 		if (item.date) {
