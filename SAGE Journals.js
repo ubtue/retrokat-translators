@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-08-24 13:20:12"
+	"lastUpdated": "2021-09-07 08:20:09"
 }
 
 /*
@@ -157,6 +157,7 @@ function scrape(doc, url) {
 			if (tagentry) {
 				item.tags = tagentry.replace(/.*Keywords/, ',').replace(/Mots-clés/, ',').split(",");
 			}
+				item.tags.push('Geier');
 			// ubtue: add tags "Book Review" if ""Book Review"
 			if (articleType) {
 				for (let r of articleType) {
