@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-07 09:51:11"
+	"lastUpdated": "2021-09-07 16:01:16"
 }
 
 /*
@@ -71,18 +71,26 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 		// if the article are review article, then the full text extract is scraped from the HTML
 		let extractText = ZU.xpathText(doc, '//p[@class="chapter-para"]');
 		if (tagreview.match(/Reviews+|Book Reviews+/i) && extractText) i.abstractNote = extractText;
-		if (ZU.xpath(doc, '//div[@class="product"]').length > 0) {
-			let reviewed_title = ZU.xpathText(doc, '//div[@class="product"]/div[contains(@class, "source")]');
-			let reviewed_author_given = ZU.xpathText(doc, '//div[@class="product"]/div[@class="name"]/div[@class="given-names"]');
-			let reviewed_author_surname = ZU.xpathText(doc, '//div[@class="product"]/div[@class="name"]/div[@class="surname"]');
-			let reviewed_year = ZU.xpathText(doc, '//div[@class="product"]/div[@class="year"]');
-			let reviewed_publisher = ZU.xpathText(doc, '//div[@class="product"]/div[@class="publisher-name"]');
-			let reviewed_place = ZU.xpathText(doc, '//div[@class="product"]/div[@class="publisher-loc"]');
-			i.tags.push('#reviewed_pub#title::' + reviewed_title + '#name::' + reviewed_author_surname + ', ' +  
-			reviewed_author_given + '#year::' + reviewed_year + '#publisher::' + reviewed_publisher + '#place::' + reviewed_place + '#');
+		let publications = ZU.xpath(doc, '//div[@class="product"]');
+		for (let p = 0; p < publications.length; p++) {
+			let reviewed_title = ZU.xpathText(publications[p], './/div[contains(@class, "source")]');
+			if (reviewed_title == null) {reviewed_title = ZU.xpathText(publications[p], './/em');}
+			// mehrere Namen auch noch trennen!
+			let namesString = '';
+			let names = ZU.xpath(publications[p], './/div[@class="name"]');
+			for (let n = 0; n < names.length; n++) {
+			let reviewed_author_given = ZU.xpathText(names[n], './/div[@class="given-names"]');
+			let reviewed_author_surname = ZU.xpathText(names[n], './/div[@class="surname"]');
+			namesString += '::' + reviewed_author_surname + ', ' +  reviewed_author_given;
+			}
+			let reviewed_year = ZU.xpathText(publications[p], './/div[@class="year"]');
+			let reviewed_publisher = ZU.xpathText(publications[p], './/div[@class="publisher-name"]');
+			let reviewed_place = ZU.xpathText(publications[p], './/div[@class="publisher-loc"]');
+			i.tags.push('#reviewed_pub#title::' + reviewed_title + '#name' + namesString + '#year::' + reviewed_year + '#publisher::' + reviewed_publisher + '#place::' + reviewed_place + '#');
 			
 			
 		}
+		i.attachments = [];
 		i.complete();
 	});
 	translator.translate();
