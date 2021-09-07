@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-08-26 15:39:50"
+	"lastUpdated": "2021-09-07 08:02:24"
 }
 
 /*
@@ -80,6 +80,8 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 			let reviewed_place = ZU.xpathText(doc, '//div[@class="product"]/div[@class="publisher-loc"]');
 			i.tags.push('#reviewed_pub#title::' + reviewed_title + '#name::' + reviewed_author_surname + ', ' +  
 			reviewed_author_given + '#year::' + reviewed_year + '#publisher::' + reviewed_publisher + '#place::' + reviewed_place + '#');
+			i.tags.push('Geier');
+			
 		}
 		i.complete();
 	});
