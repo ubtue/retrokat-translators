@@ -2,14 +2,14 @@
 	"translatorID": "68643a57-3182-4e27-b34a-326347044d89",
 	"label": "ubtue_Oxford Academic",
 	"creator": "Madeesh Kannan",
-	"target": "^https?://academic.oup.com",
+	"target": "^https?://academic\\.oup\\.com",
 	"minVersion": "3.0",
 	"maxVersion": "",
 	"priority": 100,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-06-29 14:36:50"
+	"lastUpdated": "2021-08-26 15:39:50"
 }
 
 /*
@@ -70,7 +70,17 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 		if (tagreview.match(/Reviews+|Book Reviews+/i)) i.tags.push('Book Review');
 		// if the article are review article, then the full text extract is scraped from the HTML
 		let extractText = ZU.xpathText(doc, '//p[@class="chapter-para"]');
-		if (tagreview.match(/Reviews+|Book Reviews+/i) && extractText) i.abstractNote = extractText
+		if (tagreview.match(/Reviews+|Book Reviews+/i) && extractText) i.abstractNote = extractText;
+		if (ZU.xpath(doc, '//div[@class="product"]').length > 0) {
+			let reviewed_title = ZU.xpathText(doc, '//div[@class="product"]/div[contains(@class, "source")]');
+			let reviewed_author_given = ZU.xpathText(doc, '//div[@class="product"]/div[@class="name"]/div[@class="given-names"]');
+			let reviewed_author_surname = ZU.xpathText(doc, '//div[@class="product"]/div[@class="name"]/div[@class="surname"]');
+			let reviewed_year = ZU.xpathText(doc, '//div[@class="product"]/div[@class="year"]');
+			let reviewed_publisher = ZU.xpathText(doc, '//div[@class="product"]/div[@class="publisher-name"]');
+			let reviewed_place = ZU.xpathText(doc, '//div[@class="product"]/div[@class="publisher-loc"]');
+			i.tags.push('#reviewed_pub#title::' + reviewed_title + '#name::' + reviewed_author_surname + ', ' +  
+			reviewed_author_given + '#year::' + reviewed_year + '#publisher::' + reviewed_publisher + '#place::' + reviewed_place + '#');
+		}
 		i.complete();
 	});
 	translator.translate();
@@ -92,6 +102,7 @@ function doWeb(doc, url) {
 		invokeEmbeddedMetadataTranslator(doc, url);
 	}
 }
+
 /** BEGIN TEST CASES **/
 var testCases = [
 	{
