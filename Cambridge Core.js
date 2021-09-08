@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-08-24 07:40:55"
+	"lastUpdated": "2021-09-08 15:42:03"
 }
 
 /*
@@ -111,6 +111,9 @@ function scrape(doc, url) {
 				if (tags_found[tag].textContent.match(/^Book Review/i) !== null) {
 				item.tags.push('Book Review');
 			}
+				if (tags_found[tag].textContent.match(/^Short Notices/i) !== null) {
+					item.tags.push('Book Review');
+				}
 			}
 			if (item.abstractNote.match(/\/\/static.cambridge.org\/.*\.jpg/) !== null) {
 				item.abstractNote = '';
