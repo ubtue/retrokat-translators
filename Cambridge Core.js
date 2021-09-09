@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-08 15:42:03"
+	"lastUpdated": "2021-09-09 08:01:33"
 }
 
 /*
@@ -108,12 +108,9 @@ function scrape(doc, url) {
 		addOpenAccessTag(doc, item);
 		let tags_found = ZU.xpath(doc, '//dd[@class="col content"]');
 			for (let tag in tags_found) {
-				if (tags_found[tag].textContent.match(/^Book Review/i) !== null) {
+				if (tags_found[tag].textContent.match(/(^Book Review)|(^Reviews?)|(^Review Article)|(^Short Notices?)/i) !== null) {
 				item.tags.push('Book Review');
 			}
-				if (tags_found[tag].textContent.match(/^Short Notices/i) !== null) {
-					item.tags.push('Book Review');
-				}
 			}
 			if (item.abstractNote.match(/\/\/static.cambridge.org\/.*\.jpg/) !== null) {
 				item.abstractNote = '';
@@ -121,6 +118,7 @@ function scrape(doc, url) {
 		if (ZU.xpath(doc, '//div[@class="article book-review NLM"]').length > 0) {
 			item.tags.push('Book Review');
 		}
+		item.attachments = [];
 		item.complete();
 	});
 
