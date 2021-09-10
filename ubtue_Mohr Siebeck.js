@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-08-16 12:09:23"
+	"lastUpdated": "2021-09-10 14:30:26"
 }
 
 /*
@@ -69,8 +69,8 @@ function postProcess(doc, item) {
 
 	if (!item.language)
 		item.language = ZU.xpathText(doc, '//meta[@name="language"]/@content');
-	if (!item.URL)
-		item.URL = 'https://doi.org/' + item.DOI;
+	if (!item.url)
+		item.url = 'https://doi.org/' + item.DOI;
 	if (ZU.xpathText(doc, '//div[@itemid="#periodical"]').match(/Rubrik:\s+Einzelbesprechungen/)) {
 		item.tags.push('Book review');
 	}
