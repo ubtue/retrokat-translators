@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-09 15:35:22"
+	"lastUpdated": "2021-09-10 14:09:19"
 }
 
 /*
@@ -67,10 +67,11 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 		if (abstractText) i.abstractNote = abstractText;
 		
 		let tagreview = ZU.xpathText(doc, '//*[(@id = "ContentTab")]//a');
-		if (tagreview.match(/(^Reviews?)|(^Book Reviews?)/i)) i.tags.push('Book Review');
+		Z.debug(tagreview);
+		if (tagreview.match(/(^Reviews?)|(\bBook\s+Reviews?\b)|(\bReview Article\b)/i)) i.tags.push('Book Review');
 		// if the article are review article, then the full text extract is scraped from the HTML
 		let extractText = ZU.xpathText(doc, '//p[@class="chapter-para"]');
-		if (tagreview.match(/(^Reviews?)|(^Book Reviews?)/i) && extractText) i.abstractNote = extractText;
+		if (tagreview.match(/(\bBook\s+Reviews?\b)|(\bReview Article\b)/i) && extractText) i.abstractNote = extractText;
 		let publications = ZU.xpath(doc, '//div[@class="product"]');
 		for (let p = 0; p < publications.length; p++) {
 			let reviewed_title = ZU.xpathText(publications[p], './/div[contains(@class, "source")]');
