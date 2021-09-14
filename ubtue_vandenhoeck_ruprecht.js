@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-07-08 09:05:19"
+	"lastUpdated": "2021-09-14 10:30:50"
 }
 
 /*
@@ -29,6 +29,8 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	***** END LICENSE BLOCK *****
 */
+
+var reviewURLs = [];
 
 function detectWeb(doc, url) {
 	if (url.includes('/doi/')) return "journalArticle";
@@ -60,6 +62,15 @@ function doWeb(doc, url) {
 			for (var i in items) {
 				articles.push(i);
 			}
+			let section = ZU.xpath(doc, '//div[@class="titled_issues"][contains(./h4[@class="toc__heading section__header bordered to-section"], "Besprechungen")]');
+			Z.debug(section.length);
+			if (section.length == 0) {
+				section = ZU.xpath(doc, '//div[@class="titled_issues"][contains(./h4[@class="toc__heading section__header bordered to-section"], "Literatur")]');}
+			var reviewRows = ZU.xpath(section, './/*[@class="issue-item__title"]/a');
+			for (let reviewRow of reviewRows) {
+				let href = reviewRow.href;
+				reviewURLs.push(href);
+				}
 			ZU.processDocuments(articles, scrape);
 		});
 	} else {
@@ -110,11 +121,15 @@ function scrape(doc, url) {
 				}
 				
 				item.url = url;
-				
+				//remove issue-tag "jg"
+				if (item.issue == "jg") {
+					item.issue = "";
+				}
 				//book review
 				let docType = ZU.xpathText(doc, '//meta[@name="dc.Type"]/@content');
 				if (docType === "book-review")
 					item.tags.push("Book Review");
+				if (reviewURLs.includes(item.url)) {item.tags.push('Book Review')}
 				if (!item.language) {
 					var metaLang = doc.querySelector("meta[name='dc.Language']");
 					if (metaLang && metaLang.getAttribute("content"))
@@ -134,6 +149,7 @@ function scrape(doc, url) {
 		});
 	});
 }
+
 
 /** BEGIN TEST CASES **/
 var testCases = [
