@@ -5,11 +5,11 @@
 	"target": "^https?://academic\\.oup\\.com",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-13 11:27:12"
+	"lastUpdated": "2021-09-14 13:51:09"
 }
 
 /*
