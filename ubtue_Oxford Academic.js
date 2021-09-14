@@ -5,11 +5,11 @@
 	"target": "^https?://academic\\.oup\\.com",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 95,
+	"priority": 100,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-14 15:38:35"
+	"lastUpdated": "2021-09-14 16:01:28"
 }
 
 /*
@@ -35,9 +35,9 @@
 
 
 function detectWeb(doc, url) {
-	if (url.match(/\/issue\/[0-9]+\/[0-9]+/)) {
+	if (url.match(/\/issue\/.+\/.+/)) {
 		return "multiple";
-	} else if (url.match(/\/article\/[0-9]+\/[0-9]+/)) {
+	} else if (url.match(/\/article\/.+\/.+\//)) {
 		// placeholder, actual type determined by the embedded metadata translator
 		return "journalArticle";
 	}
@@ -80,12 +80,12 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 		}
 		// if the article are review article, then the full text extract is scraped from the HTML
 		let extractText = ZU.xpathText(doc, '//p[@class="chapter-para"]');
-		Z.debug(extractText);
 		if (tagreview != null) {
 		if (tagreview.match(/(\bReviews?\b)|(\bBook\s+Reviews?\b)|(\bReview Article\b)/i) && extractText) i.abstractNote = extractText;
 		}
 		let publications = ZU.xpath(doc, '//div[@class="product"]');
 		for (let p = 0; p < publications.length; p++) {
+			Z.debug(p.text);
 			let reviewed_title = ZU.xpathText(publications[p], './/div[contains(@class, "source")]');
 			if (reviewed_title == null) {reviewed_title = ZU.xpathText(publications[p], './/em');}
 			// mehrere Namen auch noch trennen!
