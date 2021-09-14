@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-14 14:09:13"
+	"lastUpdated": "2021-09-14 15:38:35"
 }
 
 /*
@@ -65,21 +65,24 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 		// update abstract from the webpage as the embedded data is often incomplete
 		var abstractText = ZU.xpathText(doc, '//section[@class="abstract"]');
 		if (abstractText) i.abstractNote = abstractText;
-		
+		let section = ZU.xpathText(doc, '//div[(@class="article-metadata-tocSections")]//a');
 		let tagreview = ZU.xpathText(doc, '//*[(@id = "ContentTab")]//a');
-		Z.debug(tagreview);
 		if (tagreview != null) {
-		if (tagreview.match(/(^Reviews?)|(\bBook\s+Reviews?\b)|(\bReview Article\b)/i)) i.tags.push('Book Review');
+		if (tagreview.match(/(\bReviews?\b)|(\bBook\s+Reviews?\b)|(\bReview Article\b)/i)) i.tags.push('Book Review');
 		}
 		if (i.ISSN == "0021-969X") {
 			if (tagreview != null) {
 			if (tagreview.match(/(\bBook notes\b)/i)) i.tags.push('Book Review');
 		}
 		}
+		if (section != 0) {
+			if (section.match(/(^Reviews?\b)|(^Book\s+Reviews?\b)|(^Review Article\b)/i)) i.tags.push('Book Review');
+		}
 		// if the article are review article, then the full text extract is scraped from the HTML
 		let extractText = ZU.xpathText(doc, '//p[@class="chapter-para"]');
+		Z.debug(extractText);
 		if (tagreview != null) {
-		if (tagreview.match(/(\bBook\s+Reviews?\b)|(\bReview Article\b)/i) && extractText) i.abstractNote = extractText;
+		if (tagreview.match(/(\bReviews?\b)|(\bBook\s+Reviews?\b)|(\bReview Article\b)/i) && extractText) i.abstractNote = extractText;
 		}
 		let publications = ZU.xpath(doc, '//div[@class="product"]');
 		for (let p = 0; p < publications.length; p++) {
