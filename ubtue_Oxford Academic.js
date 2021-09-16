@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-15 13:49:09"
+	"lastUpdated": "2021-09-16 07:54:46"
 }
 
 /*
@@ -67,22 +67,17 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 		if (abstractText) i.abstractNote = abstractText;
 		let section = ZU.xpathText(doc, '//div[(@class="article-metadata-tocSections")]//a');
 		let tagreview = ZU.xpathText(doc, '//*[(@id = "ContentTab")]//a');
+		let extractText = ZU.xpathText(doc, '//p[@class="chapter-para"]');
 		if (tagreview != null) {
-		if (tagreview.match(/(\bReviews?\b)|(\bBook\s+Reviews?\b)|(\bReview Article\b)/i)) i.tags.push('Book Review');
-		}
-		if (i.ISSN == "0021-969X") {
-			if (tagreview != null) {
-			if (tagreview.match(/(\bBook notes\b)/i)) i.tags.push('Book Review');
+		if (tagreview.match(/(\bReviews?\b)|(\bBook(\s+)?Reviews?\b)|(\bReview(\s+)?Article\b)|(\bBook(s)?(\s+)?Note(s)?\b)|(\bShort(\s+)?notice(s)?)/i)) {
+			i.tags.push('Book Review');
+			i.abstractNote = extractText;
 		}
 		}
 		if (section != 0) {
-			if (section.match(/(^Reviews?\b)|(^Book(s)?(\s+)?Reviews?\b)|(^Review Article\b)/i)) i.tags.push('Book Review');
+			if (section.match(/(\bReviews?\b)|(\bBook(\s+)?Reviews?\b)|(\bReview(\s+)?Article\b)|(\bBook(s)?(\s+)?Note(s)?\b)|(\bShort(\s+)?notice(s)?)/i)) i.tags.push('Book Review');
 		}
 		// if the article are review article, then the full text extract is scraped from the HTML
-		let extractText = ZU.xpathText(doc, '//p[@class="chapter-para"]');
-		if (tagreview != null) {
-		if (tagreview.match(/(\bReviews?\b)|(\bBook\s+Reviews?\b)|(\bReview Article\b)/i) && extractText) i.abstractNote = extractText;
-		}
 		let publications = ZU.xpath(doc, '//div[@class="product"]');
 		for (let p = 0; p < publications.length; p++) {
 			Z.debug(p.text);
