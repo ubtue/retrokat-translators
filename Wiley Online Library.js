@@ -5,11 +5,11 @@
 	"target": "^https?://([\\w-]+\\.)?onlinelibrary\\.wiley\\.com[^/]*/(book|doi|toc|advanced/search|search-web/cochrane|cochranelibrary/search|o/cochrane/(clcentral|cldare|clcmr|clhta|cleed|clabout)/articles/.+/sect0\\.html)",
 	"minVersion": "3.1",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-08-20 15:45:21"
+	"lastUpdated": "2021-09-20 07:51:21"
 }
 
 /*
@@ -524,6 +524,7 @@ function doWeb(doc, url) {
 			}
 		
 		}
+		Z.debug(reviewURLs);
 		Zotero.selectItems(getSearchResults(doc, false), function (items) {
 			if (!items) {
 				return true;
@@ -552,6 +553,7 @@ function doWeb(doc, url) {
 		}
 	}
 }
+
 
 /** BEGIN TEST CASES **/
 var testCases = [
