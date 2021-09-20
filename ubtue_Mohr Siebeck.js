@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-10 14:30:26"
+	"lastUpdated": "2021-09-20 15:32:41"
 }
 
 /*
@@ -71,8 +71,8 @@ function postProcess(doc, item) {
 		item.language = ZU.xpathText(doc, '//meta[@name="language"]/@content');
 	if (!item.url)
 		item.url = 'https://doi.org/' + item.DOI;
-	if (ZU.xpathText(doc, '//div[@itemid="#periodical"]').match(/Rubrik:\s+Einzelbesprechungen/)) {
-		item.tags.push('Book review');
+	if (ZU.xpathText(doc, '//div[@itemid="#periodical"]').match(/Rubrik:\s+((Einzelbesprechung(en)?)|(Kurzbesprechung(en?))|(Book(s)?(\s+)?Review(s)?)|(Kurzanzeige(n)?))/)) {
+		item.tags.push('Book Review');
 	}
 }
 
@@ -102,6 +102,7 @@ function doWeb(doc, url) {
 	} else
 		invokeCoinsTranslator(doc, url);
 }
+
 
 /** BEGIN TEST CASES **/
 var testCases = [
