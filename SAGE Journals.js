@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-07 09:47:26"
+	"lastUpdated": "2021-09-20 11:55:50"
 }
 
 /*
@@ -223,11 +223,17 @@ function scrape(doc, url) {
 					item.tags.push('Book Review');
 				}
 			}
+			item.attachments = [];
+			if (item.creators.length == 0) {
+				let authorName = ZU.xpathText(doc, '//meta[@name="dc.Contributor"]/@content');
+				item.creators.push(ZU.cleanAuthor(authorName, "author")) ;
+			}
 			item.complete();
 		});
 		translator.translate();
 	});
 }
+
 
 /** BEGIN TEST CASES **/
 var testCases = [
