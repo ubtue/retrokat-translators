@@ -5,11 +5,11 @@
 	"target": "^https?://[^?#]+(/doi/((abs|abstract|full|figure|ref|citedby|book)/)?10\\.|/action/doSearch\\?)|^https?://[^/]+/toc/",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 270,
+	"priority": 99,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2020-05-26 16:59:28"
+	"lastUpdated": "2021-09-20 14:39:30"
 }
 
 /*
@@ -274,12 +274,14 @@ function scrape(doc, url, extras) {
 				});
 				item.libraryCatalog = url.replace(/^https?:\/\/(?:www\.)?/, '')
 					.replace(/[\/:].*/, '') + " (Atypon)";
+				item.attachments = [];
 				item.complete();
 			});
 			translator.translate();
 		});
 	});
-}/** BEGIN TEST CASES **/
+}
+/** BEGIN TEST CASES **/
 var testCases = [
 	{
 		"type": "web",
