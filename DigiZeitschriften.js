@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsv",
-	"lastUpdated": "2021-08-19 15:16:04"
+	"lastUpdated": "2021-09-22 13:42:01"
 }
 
 /*
@@ -33,8 +33,6 @@
 
 	***** END LICENSE BLOCK *****
 */
-
-var lastItem = {};
 
 function detectWeb(doc, url) {
 	if (url.indexOf("/img/") != -1 || url.indexOf("index.php?id=274") != -1 ) {//e.g. http://www.digizeitschriften.de/index.php?id=274&PPN=PPN342672002_0020&DMDID=dmdlog84&L=2
@@ -104,13 +102,11 @@ function scrape(doc, url) {
 				item.attachments == {};
 				}
 			if (ZU.xpathText(doc, '//span[@class="goobit3-image__struct"]').match(/Rezension/)) {
+				item.title = 'Rezension';
 				item.tags.push('Book Review');
 			}
 			if (item.title.match(/DigiZeitschriften:\s+/) == null) {
-				if (lastItem.title != item.title) {
 					item.complete();
-					lastItem = item;
-				}
 			}
 		});
 		
@@ -134,6 +130,7 @@ function extractField(fieldName, text) {
 		return false;
 	}
 }
+
 
 /** BEGIN TEST CASES **/
 var testCases = [
