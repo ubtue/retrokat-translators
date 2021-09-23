@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsv",
-	"lastUpdated": "2021-09-22 13:42:01"
+	"lastUpdated": "2021-09-23 10:20:31"
 }
 
 /*
@@ -102,7 +102,9 @@ function scrape(doc, url) {
 				item.attachments == {};
 				}
 			if (ZU.xpathText(doc, '//span[@class="goobit3-image__struct"]').match(/Rezension/)) {
+				if (item.title == "") {
 				item.title = 'Rezension';
+				}
 				item.tags.push('Book Review');
 			}
 			if (item.title.match(/DigiZeitschriften:\s+/) == null) {
