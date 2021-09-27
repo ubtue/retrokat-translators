@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-27 11:42:17"
+	"lastUpdated": "2021-09-27 13:13:50"
 }
 
 /*
@@ -235,8 +235,9 @@ function scrape(doc, url) {
 				mimeType: "application/pdf"
 			});
 			var articleType = ZU.xpathText(doc, '//span[@class="ArticleType"]');
+			Z.debug(articleType);
 			if (articleType != undefined) {
-				if (articleType.match(/^Review( Article)?/)) {
+				if (articleType.match(/^(\s+)?Review( Article)?/)) {
 					item.tags.push('Book Review');
 				}
 			}
