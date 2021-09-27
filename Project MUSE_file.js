@@ -2,14 +2,14 @@
 	"translatorID": "506ede09-344a-4397-bc66-a48cbf57735a",
 	"label": "Project MUSE_file",
 	"creator": "Helena Nebel",
-	"target": "",
+	"target": "134\\.2\\.66",
 	"minVersion": "3.0",
 	"maxVersion": "",
 	"priority": 100,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-24 09:03:26"
+	"lastUpdated": "2021-09-27 11:49:12"
 }
 
 /*
