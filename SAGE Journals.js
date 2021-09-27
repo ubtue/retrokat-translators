@@ -5,11 +5,11 @@
 	"target": "^https?://journals\\.sagepub\\.com(/doi/((abs|full|pdf)/)?10\\.|/action/doSearch\\?|/toc/)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 95,
+	"priority": 100,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-27 11:10:04"
+	"lastUpdated": "2021-09-27 11:28:31"
 }
 
 /*
@@ -243,7 +243,9 @@ function scrape(doc, url) {
 			item.attachments = [];
 			if (item.creators.length == 0) {
 				let authorName = ZU.xpathText(doc, '//meta[@name="dc.Contributor"]/@content');
+				if (authorName != null) {
 				item.creators.push(ZU.cleanAuthor(authorName, "author")) ;
+			}
 			}
 			item.complete();
 		});
