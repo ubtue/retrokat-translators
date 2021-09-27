@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-20 11:55:50"
+	"lastUpdated": "2021-09-27 10:58:10"
 }
 
 /*
@@ -34,6 +34,8 @@
 
 // attr()/text() v2
 // eslint-disable-next-line
+var reviewURLs = [];
+
 function attr(docOrElem,selector,attr,index){var elem=index?docOrElem.querySelectorAll(selector).item(index):docOrElem.querySelector(selector);return elem?elem.getAttribute(attr):null;}function text(docOrElem,selector,index){var elem=index?docOrElem.querySelectorAll(selector).item(index):docOrElem.querySelector(selector);return elem?elem.textContent:null;}
 
 function detectWeb(doc, url) {
@@ -50,6 +52,18 @@ function getSearchResults(doc, checkOnly) {
 	var items = {};
 	var found = false;
 	let rows = ZU.xpath(doc, '//span[contains(@class, "art_title")]/a[contains(@href, "/doi/full/10.") or contains(@href, "/doi/abs/10.") or contains(@href, "/doi/pdf/10.")][1] | //a[contains(concat( " ", @class, " " ), concat( " ", "ref", " " )) and contains(concat( " ", @class, " " ), concat( " ", "nowrap", " " ))] | //*[contains(concat( " ", @class, " " ), concat( " ", "hlFld-Title", " " ))]');
+	let new_rows = ZU.xpath(doc, '//td[@valign="top"][contains(./span[@class="ArticleType"], "Review Section")]');
+	Z.debug(new_rows.length);
+	for (var i = 0; i < new_rows.length; i++) {
+		let links = ZU.xpath(new_rows[i], './/a');
+		for (var l = 0; l < links.length; l++) {
+			if (links[l].href.match(/\/abs\//)) {
+				reviewURLs.push(links[l].href);
+				break;
+			}
+			
+		}
+	}
 	for (var i = 0; i < rows.length; i++) {
 		var href = rows[i].href;
 		var title = ZU.trimInternal(rows[i].textContent.replace(/Citation|ePub.*|Abstract/, ''));
@@ -168,6 +182,9 @@ function scrape(doc, url) {
 					}
 				}
 			}
+			if (reviewURLs.includes(url)) {
+				item.tags.push('Book Review');
+			}
 			//ubtue: add tag "Book Review" in every issue 5 of specific journals if the dc.Type is "others"
 			let reviewType = ZU.xpathText(doc, '//meta[@name="dc.Type"]/@content');
 			if (item.ISSN === '0142-064X' || item.ISSN === '0309-0892') {
@@ -219,7 +236,7 @@ function scrape(doc, url) {
 			});
 			var articleType = ZU.xpathText(doc, '//span[@class="ArticleType"]');
 			if (articleType != undefined) {
-				if (articleType.match(/Review( Article)?/)) {
+				if (articleType.match(/^Review( Article)?/)) {
 					item.tags.push('Book Review');
 				}
 			}
