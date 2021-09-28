@@ -2,14 +2,14 @@
 	"translatorID": "338ea029-1536-4575-ba9b-42094095f65d",
 	"label": "ubtue_University of Chicago Press Journal",
 	"creator": "Timotheus Kim",
-	"target": "https://www\\.journals\\.uchicago\\.edu/doi|toc",
+	"target": "https://www\\.journals\\.uchicago\\.edu/((doi)|(toc))",
 	"minVersion": "3.0",
 	"maxVersion": "",
 	"priority": 80,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-06-25 08:14:04"
+	"lastUpdated": "2021-09-28 08:57:15"
 }
 
 /*
@@ -94,6 +94,7 @@ function scrape(doc, url) {
 		translator.translate();
 	});
 }
+
 
 
 /** BEGIN TEST CASES **/

@@ -5,11 +5,11 @@
 	"target": "https:\\/\\/www.vr-elibrary.de\\/(toc|doi)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 99,
+	"priority": 98,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-14 10:30:50"
+	"lastUpdated": "2021-09-27 14:28:56"
 }
 
 /*
@@ -149,6 +149,7 @@ function scrape(doc, url) {
 		});
 	});
 }
+
 
 
 /** BEGIN TEST CASES **/
