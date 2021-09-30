@@ -2,14 +2,14 @@
 	"translatorID": "d921155f-0186-1684-615c-ca57682ced9b",
 	"label": "JSTOR",
 	"creator": "Simon Kornblith, Sean Takats, Michael Berkowitz, Eli Osherovich, czar",
-	"target": "^https?://([^/]+\\.)?jstor\\.org/(discover/|action/(showArticle|doBasicSearch|doAdvancedSearch|doLocatorSearch|doAdvancedResults|doBasicResults)|stable/|pss/|openurl\\?|sici\\?)",
+	"target": "^https?://([^/]+\\.)?jstor\\.org/(discover/|action/(showArticle|doBasicSearch|doAdvancedSearch|doLocatorSearch|doAdvancedResults|doBasicResults)|(stable/)|(pss/)|(openurl\\?)|(sici\\?))",
 	"minVersion": "3.0.12",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 98,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2019-12-22 17:00:53"
+	"lastUpdated": "2021-09-30 09:07:18"
 }
 
 /*
@@ -204,7 +204,6 @@ function processRIS(text, jid, doc, doi) {
 									.trim();
 		}
 		// Don't save HTML snapshot from 'UR' tag
-		item.attachments = [];
 
 		if (/stable\/(\d+)/.test(item.url)) {
 			pdfurl = "/stable/pdfplus/" + jid + ".pdf?acceptTC=true";
@@ -216,7 +215,7 @@ function processRIS(text, jid, doc, doi) {
 				mimeType: "application/pdf"
 			});
 		}
-
+		item.attachments = [];
 		if (item.ISSN) {
 			item.ISSN = ZU.cleanISSN(item.ISSN);
 		}
@@ -235,21 +234,36 @@ function processRIS(text, jid, doc, doi) {
 		}
 		// reviews don't have titles in RIS - we get them from the item page
 		if (!item.title && review) {
+			item.tags.push('Book Review');
 			var reviewedTitle = review[1];
 			// A2 for reviews is actually the reviewed author
 			var reviewedAuthors = [];
+			var reviewedAuthorsInverted = [];
+			var reviewedTitles = [];
 			for (i = 0; i < item.creators.length; i++) {
 				if (item.creators[i].creatorType == "editor") {
 					reviewedAuthors.push(item.creators[i].firstName + " " + item.creators[i].lastName);
+					reviewedAuthorsInverted.push(item.creators[i].lastName + ", " + item.creators[i].firstName);
 					item.creators[i].creatorType = "reviewedAuthor";
 				}
 			}
 			// remove any reviewed authors from the title
 			for (i = 0; i < reviewedAuthors.length; i++) {
-				reviewedTitle = reviewedTitle.replace(reviewedAuthors[i], "");
+				let reviewedTitleNew = reviewedTitle.split(reviewedAuthors[i])[0];
+				reviewedTitleNew = reviewedTitleNew.replace(/(^[;,.\s]+)|([;,.\s]+$)/, '');
+				reviewedTitles.push(reviewedTitleNew);
+				item.tags.push('#reviewed_pub#title::' + reviewedTitleNew + '#name::' + reviewedAuthorsInverted[i] + '#');
 			}
 			reviewedTitle = reviewedTitle.replace(/[\s.,]+$/, "");
-			item.title = "Review of " + reviewedTitle;
+			if (reviewedTitles.length > 1 && reviewedAuthors.length != 0) {
+				item.title = "[Rezension von: " + reviewedAuthors[0] + ', ' + reviewedTitles[0] + '...]';
+			}
+			else if (reviewedAuthors.length != 0) {
+			item.title = "[Rezension von: " + reviewedAuthors[0] + ', ' + reviewedTitles[0] + ']';
+			}
+			else {
+			item.title = "[Rezension von: " + reviewedTitles[0] + ']';
+			}
 		}
 
 		item.url = item.url.replace('http:', 'https:'); // RIS still lists http addresses while JSTOR's stable URLs use https
@@ -261,6 +275,7 @@ function processRIS(text, jid, doc, doi) {
 		trans.doImport();
 	});
 }
+
 
 /** BEGIN TEST CASES **/
 var testCases = [
