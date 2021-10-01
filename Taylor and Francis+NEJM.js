@@ -5,11 +5,11 @@
 	"target": "^https?://(www\\.)?(tandfonline\\.com|nejm\\.org)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 98,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-04-28 12:46:55"
+	"lastUpdated": "2021-10-01 08:48:19"
 }
 
 /*
@@ -217,6 +217,7 @@ function finalizeItem(item, doc, doi, baseUrl) {
 
 	item.complete();
 }
+
 
 
 /** BEGIN TEST CASES **/
