@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-30 09:07:18"
+	"lastUpdated": "2021-10-01 12:42:59"
 }
 
 /*
@@ -238,36 +238,59 @@ function processRIS(text, jid, doc, doi) {
 			var reviewedTitle = review[1];
 			// A2 for reviews is actually the reviewed author
 			var reviewedAuthors = [];
-			var reviewedAuthorsInverted = [];
-			var reviewedTitles = [];
+			reviewedAuthorNum = 0;
 			for (i = 0; i < item.creators.length; i++) {
 				if (item.creators[i].creatorType == "editor") {
+					reviewedAuthor = item.creators[i].firstName + " " + item.creators[i].lastName;
+					if (reviewedAuthorNum > 0) {
+						if (reviewedTitle.includes(reviewedAuthors[reviewedAuthorNum-1] + ', ' + reviewedAuthor)) {
+							reviewedAuthors[reviewedAuthorNum-1] = reviewedAuthors[reviewedAuthorNum-1] + ', ' + reviewedAuthor;
+							continue
+						}
+					}
 					reviewedAuthors.push(item.creators[i].firstName + " " + item.creators[i].lastName);
-					reviewedAuthorsInverted.push(item.creators[i].lastName + ", " + item.creators[i].firstName);
 					item.creators[i].creatorType = "reviewedAuthor";
+					reviewedAuthorNum += 1;
 				}
 			}
+			item.creators.splice(1);
+			item.title = '';
 			// remove any reviewed authors from the title
 			for (i = 0; i < reviewedAuthors.length; i++) {
 				let reviewedTitleNew = reviewedTitle.split(reviewedAuthors[i])[0];
-				reviewedTitleNew = reviewedTitleNew.replace(/(^[;,.\s]+)|([;,.\s]+$)/, '');
-				reviewedTitles.push(reviewedTitleNew);
-				item.tags.push('#reviewed_pub#title::' + reviewedTitleNew + '#name::' + reviewedAuthorsInverted[i] + '#');
+				reviewedTitleNew = reviewedTitleNew.replace(/(^[;,.\s]+)|([;,.\s]+$)/, '')
+				reviewedAuthorsByTitle = reviewedAuthors[i].split(', ');
+				reviewedAuthorString = '';
+				for (n = 0; n < reviewedAuthorsByTitle.length; n++) {
+					reviewedAuthor = ZU.cleanAuthor(reviewedAuthorsByTitle[n]);
+					reviewedAuthorString += reviewedAuthor.lastName + ", " + reviewedAuthor.firstName + '::';
+				}
+				reviewedAuthorString = reviewedAuthorString.replace(/::$/, '');
+				item.tags.push('#reviewed_pub#title::' + reviewedTitleNew + '#name::' + reviewedAuthorString + '#');
+				reviewedAuthorString = reviewedAuthorString.split('::')[0];
+				if (i == 0) {
+					item.title += reviewedAuthorString + ', ' + reviewedTitleNew;
+				}
+				else if (i == 1) {
+					item.title += '...'
+				}
 			}
-			reviewedTitle = reviewedTitle.replace(/[\s.,]+$/, "");
-			if (reviewedTitles.length > 1 && reviewedAuthors.length != 0) {
-				item.title = "[Rezension von: " + reviewedAuthors[0] + ', ' + reviewedTitles[0] + '...]';
+			Z.debug(item.title);
+			if (item.title.length == 0) {
+				item.title = reviewedTitle;
 			}
-			else if (reviewedAuthors.length != 0) {
-			item.title = "[Rezension von: " + reviewedAuthors[0] + ', ' + reviewedTitles[0] + ']';
-			}
-			else {
-			item.title = "[Rezension von: " + reviewedTitles[0] + ']';
-			}
+			item.title = "[Rezension von: " + item.title + ']'
 		}
 
 		item.url = item.url.replace('http:', 'https:'); // RIS still lists http addresses while JSTOR's stable URLs use https
 		if (item.url && !item.url.startsWith("http")) item.url = "https://" + item.url;
+		if (ZU.xpathText(doc, '//script[@data-analytics-provider="ga"]') != undefined) {
+			
+			if (ZU.xpathText(doc, '//script[@data-analytics-provider="ga"]').match('"userAuthorization" : "Free')) {
+				item.notes.push({note: 'LF:'});
+			}
+		}
+		
 		item.complete();
 	});
 
