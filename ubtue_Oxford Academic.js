@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-16 07:54:46"
+	"lastUpdated": "2021-10-01 12:43:53"
 }
 
 /*
@@ -69,7 +69,7 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 		let tagreview = ZU.xpathText(doc, '//*[(@id = "ContentTab")]//a');
 		let extractText = ZU.xpathText(doc, '//p[@class="chapter-para"]');
 		if (tagreview != null) {
-		if (tagreview.match(/(\bReviews?\b)|(\bBook(\s+)?Reviews?\b)|(\bReview(\s+)?Article\b)|(\bBook(s)?(\s+)?Note(s)?\b)|(\bShort(\s+)?notice(s)?)/i)) {
+		if (tagreview.match(/(\bReviews?\b)|(\bBook(\s+)?Reviews?\b)|(\bReview(\s+)?Article\b)|(\bBook(s)?(\s+)?Note(s)?\b)|(\bShort(\s+)?not(ic)?e(s)?)/i)) {
 			i.tags.push('Book Review');
 			i.abstractNote = extractText;
 		}
@@ -120,6 +120,7 @@ function doWeb(doc, url) {
 		invokeEmbeddedMetadataTranslator(doc, url);
 	}
 }
+
 
 /** BEGIN TEST CASES **/
 var testCases = [
