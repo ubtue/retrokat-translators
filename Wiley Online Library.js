@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-28 08:55:44"
+	"lastUpdated": "2021-10-04 08:53:30"
 }
 
 /*
@@ -295,10 +295,7 @@ function scrapeBibTeX(doc, url) {
 			}
 
 			//title
-			if (item.title && item.title.toUpperCase() == item.title) {
-				item.title = ZU.capitalizeTitle(item.title, true);
-			}
-
+			
 			if (!item.date) {
 				item.date = ZU.xpathText(doc, '//meta[@name="citation_publication_date"]/@content');
 			}
