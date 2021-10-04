@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-04 08:53:30"
+	"lastUpdated": "2021-10-04 13:20:35"
 }
 
 /*
@@ -214,6 +214,7 @@ function scrapeEM(doc, url) {
 	addBookReviewTag(doc, item);
 	addArticleNumber(doc, item);
 	addFreeAccessTag(doc, item)
+	item.attachments = [];
 	item.complete();
 
 	translator.getTranslatorObject(function(em) {
@@ -359,11 +360,7 @@ function scrapeBibTeX(doc, url) {
 			addArticleNumber(doc, item);
 			addPages(doc, item);
 			//attachments
-			item.attachments = [{
-				title: 'Snapshot',
-				document: doc,
-				mimeType: 'text/html'
-			}];
+			item.attachments = [];
 
 			addBookReviewTag(doc, item);
 			// adding author(s) for Short Reviews
@@ -417,7 +414,7 @@ function scrapeCochraneTrial(doc, url){
 	for (var i in tags){
 		item.tags.push(tags[i]);
 	}
-	item.attachments.push({document: doc, title: "Cochrane Snapshot", mimType: "text/html"});
+	item.attachments = [];
 	var authors = ZU.xpathText(doc, '//meta[@name="orderedAuthors"]/@content');
 	if (!authors) authors = ZU.xpathText(doc, '//meta[@name="Author"]/@content');
 
@@ -512,7 +509,7 @@ function doWeb(doc, url) {
 	if (type == "multiple") {
 		sections = ZU.xpath(doc, '//div[contains(@class, "issue-items-container")]');
 		for (i = 0; i < sections.length; i++) {
-			if (ZU.xpath(sections[i], './h3[@title="BOOK REVIEWS"]').length > 0) {
+			if (ZU.xpath(sections[i], './h3[@title="BOOK REVIEWS"]').length > 0 || ZU.xpath(sections[i], './h3[@title="Reviews"]').length > 0 || ZU.xpath(sections[i], './h3[@title="Review"]').length > 0) {
 				let review_urls = ZU.xpath(sections[i], './/a');
 				for (let i in review_urls) {
 					if (review_urls[i].href.match(/doi\/10/)) {
