@@ -2,14 +2,14 @@
 	"translatorID": "9ef1752e-bd32-49bb-9d9b-f06c039712ab",
 	"label": "ubtue_DeGruyter",
 	"creator": "Timotheus Kim",
-	"target": "^https?:\\/\\/www\\.degruyter\\.com",
+	"target": "^https?:\\/\\/www\\.degruyter\\.c",
 	"minVersion": "3.0",
 	"maxVersion": "",
 	"priority": 80,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-08-24 16:17:57"
+	"lastUpdated": "2021-10-11 07:56:40"
 }
 
 /*
@@ -55,6 +55,9 @@ function getSearchResults(doc, checkOnly) {
 		items[href.input] = title;
 	}
 	let reviewSection = ZU.xpath(doc, '//div[contains(@class, "issueSubjectGroup")][./h3[@class="issueSubjectGroupHeading"]="II. ABTEILUNG"]');
+	if (reviewSection.length == 0) {
+		reviewSection = ZU.xpath(doc, '//div[contains(@class, "issueSubjectGroup")][./h3[@class="issueSubjectGroupHeading"]="II. Abteilung"]');
+	}
 	var reviewRows = ZU.xpath(reviewSection, './/div[@class="issueArticle"]//a[contains(@class, "issueContentsArticleLink")]');
 	for (let row of reviewRows) {
 		let href = row.href.match(/document/).input;
@@ -98,6 +101,7 @@ function invokeEMTranslator(doc, url) {
 			i.tags.push('Book Review');
 		}
 		}
+		i.attachments = [];
 		i.complete();
 	});
 	translator.translate();
