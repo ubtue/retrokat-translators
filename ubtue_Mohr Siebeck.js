@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-20 15:32:41"
+	"lastUpdated": "2021-10-11 14:25:43"
 }
 
 /*
@@ -73,6 +73,9 @@ function postProcess(doc, item) {
 		item.url = 'https://doi.org/' + item.DOI;
 	if (ZU.xpathText(doc, '//div[@itemid="#periodical"]').match(/Rubrik:\s+((Einzelbesprechung(en)?)|(Kurzbesprechung(en?))|(Book(s)?(\s+)?Review(s)?)|(Kurzanzeige(n)?))/)) {
 		item.tags.push('Book Review');
+	}
+	if (item.ISSN == "0944-5706") {
+		item.language = "en";
 	}
 }
 
