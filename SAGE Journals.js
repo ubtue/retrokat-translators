@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-27 13:13:50"
+	"lastUpdated": "2021-10-12 09:19:48"
 }
 
 /*
@@ -237,7 +237,7 @@ function scrape(doc, url) {
 			var articleType = ZU.xpathText(doc, '//span[@class="ArticleType"]');
 			Z.debug(articleType);
 			if (articleType != undefined) {
-				if (articleType.match(/^(\s+)?Review( Article)?/)) {
+				if (articleType.match(/^(\s+Book\s+)?(\s+)?Review( Article)?/)) {
 					item.tags.push('Book Review');
 				}
 			}
@@ -271,33 +271,20 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "July 1, 2020",
+				"date": "Juli 1, 2020",
 				"DOI": "10.1177/0040573620918177",
 				"ISSN": "0040-5736",
 				"issue": "2",
 				"journalAbbreviation": "Theology Today",
 				"language": "en",
-				"libraryCatalog": "ubtue_SAGE Journals",
+				"libraryCatalog": "SAGE Journals",
 				"pages": "210-217",
 				"publicationTitle": "Theology Today",
 				"url": "https://doi.org/10.1177/0040573620918177",
 				"volume": "77",
-				"attachments": [
-					{
-						"title": "SAGE PDF Full Text",
-						"mimeType": "application/pdf"
-					}
-				],
-				"tags": [
-					{
-						"tag": "Article Commentary"
-					}
-				],
-				"notes": [
-					{
-						"note": "<p>doi: 10.1177/0040573620918177</p>"
-					}
-				],
+				"attachments": [],
+				"tags": [],
+				"notes": [],
 				"seeAlso": []
 			}
 		]
@@ -316,33 +303,24 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "October 1, 2019",
+				"date": "Oktober 1, 2019",
 				"DOI": "10.1177/0040573619865711",
 				"ISSN": "0040-5736",
 				"issue": "3",
 				"journalAbbreviation": "Theology Today",
 				"language": "en",
-				"libraryCatalog": "ubtue_SAGE Journals",
+				"libraryCatalog": "SAGE Journals",
 				"pages": "261-265",
 				"publicationTitle": "Theology Today",
 				"url": "https://doi.org/10.1177/0040573619865711",
 				"volume": "76",
-				"attachments": [
-					{
-						"title": "SAGE PDF Full Text",
-						"mimeType": "application/pdf"
-					}
-				],
+				"attachments": [],
 				"tags": [
 					{
-						"tag": "Review Article"
+						"tag": "Book Review"
 					}
 				],
-				"notes": [
-					{
-						"note": "<p>doi: 10.1177/0040573619865711</p>"
-					}
-				],
+				"notes": [],
 				"seeAlso": []
 			}
 		]
@@ -367,28 +345,19 @@ var testCases = [
 				"issue": "1",
 				"journalAbbreviation": "Theology Today",
 				"language": "en",
-				"libraryCatalog": "ubtue_SAGE Journals",
+				"libraryCatalog": "SAGE Journals",
 				"pages": "83-84",
 				"publicationTitle": "Theology Today",
 				"shortTitle": "The Myth of Rebellious Angels",
 				"url": "https://doi.org/10.1177/0040573619826522",
 				"volume": "76",
-				"attachments": [
-					{
-						"title": "SAGE PDF Full Text",
-						"mimeType": "application/pdf"
-					}
-				],
+				"attachments": [],
 				"tags": [
 					{
 						"tag": "Book Review"
 					}
 				],
-				"notes": [
-					{
-						"note": "<p>doi: 10.1177/0040573619826522</p>"
-					}
-				],
+				"notes": [],
 				"seeAlso": []
 			}
 		]
@@ -417,24 +386,19 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "December 1, 2020",
+				"date": "Dezember 1, 2020",
 				"DOI": "10.1177/0969733020929062",
 				"ISSN": "0969-7330",
 				"abstractNote": "Background:Ideas of patient involvement are related to notions of self-determination and autonomy, which are not always in alignment with complex interactions and communication in clinical practice.Aim:To illuminate and discuss patient involvement in routine clinical care situations in nursing practice from an ethical perspective.Method:A case study based on an anthropological field study among patients with advanced cancer in Denmark.Ethical considerations:Followed the principles of the Helsinki Declaration.Findings:Two cases illustrated situations where nurses refused patient involvement in their own case.Discussion:Focus on two ethical issues, namely ‘including patients’ experiences in palliative nursing care’ and ‘relational distribution of power and knowledge’, inspired primarily by Hannah Arendt’s concept of thoughtlessness and a Foucauldian perspective on the medical clinic and power. The article discusses how patients’ palliative care needs and preferences, knowledge and statements become part of the less significant background of nursing practice, when nurses have a predefined agenda for acting with and involvement of patients. Both structurally conditioned ‘thoughtlessness’ of the nurses and distribution of power and knowledge between patients and nurses condition nurses to set the agenda and assess when and at what level it is relevant to take up patients’ invitations to involve them in their own case.Conclusion:The medical and institutional logic of the healthcare service sets the framework for the exchange between professional and patient, which has an embedded risk that ‘thoughtlessness’ appears among nurses. The consequences of neglecting the spontaneous nature of human action and refusing the invitations of the patients to be involved in their life situation call for ethical and practical reflection among nurses. The conditions for interaction with humans as unpredictable and variable challenge nurses’ ways of being ethically attentive to ensure that patients receive good palliative care, despite the structurally conditioned logic of healthcare.",
 				"issue": "8",
 				"journalAbbreviation": "Nurs Ethics",
 				"language": "en",
-				"libraryCatalog": "ubtue_SAGE Journals",
+				"libraryCatalog": "SAGE Journals",
 				"pages": "1618-1630",
 				"publicationTitle": "Nursing Ethics",
 				"url": "https://doi.org/10.1177/0969733020929062",
 				"volume": "27",
-				"attachments": [
-					{
-						"title": "SAGE PDF Full Text",
-						"mimeType": "application/pdf"
-					}
-				],
+				"attachments": [],
 				"tags": [
 					{
 						"tag": " Patient involvement"
@@ -454,7 +418,10 @@ var testCases = [
 				],
 				"notes": [
 					{
-						"note": "<p>doi: 10.1177/0969733020929062</p>"
+						"note": "orcid:0000-0002-0893-3054 | author=Glasdam, Stinne"
+					},
+					{
+						"note": "LF:"
 					}
 				],
 				"seeAlso": []
@@ -487,18 +454,13 @@ var testCases = [
 				"issue": "3",
 				"journalAbbreviation": "Social Compass",
 				"language": "en",
-				"libraryCatalog": "ubtue_SAGE Journals",
+				"libraryCatalog": "SAGE Journals",
 				"pages": "428-443",
 				"publicationTitle": "Social Compass",
 				"shortTitle": "Bridging sociology of religion to transition to adulthood",
 				"url": "https://doi.org/10.1177/0037768620920172",
 				"volume": "67",
-				"attachments": [
-					{
-						"title": "SAGE PDF Full Text",
-						"mimeType": "application/pdf"
-					}
-				],
+				"attachments": [],
 				"tags": [
 					{
 						"tag": " minority"
@@ -539,9 +501,6 @@ var testCases = [
 				],
 				"notes": [
 					{
-						"note": "<p>doi: 10.1177/0037768620920172</p>"
-					},
-					{
 						"note": "abs:La littérature n’a accordé que peu d’attention à la religion en tant que force sociale affectant les transitions des rôles sociaux des jeunes et leurs perceptions subjectives de l’âge adulte. La sociologie de la religion n’a pas systématiquement exploré les rôles émergents de la religion dans des contextes changeants de transitions retardées et compliquées vers l’âge adulte. En cherchant à rapprocher les deux domaines différents de la sociologie, nous identifions quatre directions de recherches : (1) une approche multidimensionnelle de la religion qui identifie différentes dimensions de la religion avec des degrés variables de relation avec la vie des jeunes adultes ; (2) une attention particulière aux variations raciales/ethniques dans les rôles de la religion dans la transition vers l’âge adulte ; (3) une enquête ouverte sur l’évolution de l’importance de la religion pour les jeunes adultes dans une économie mondiale néolibérale en mutation rapide ; et (4) les effets néfastes de la religion dans la transition vers l’âge adulte. Nous appelons à davantage de recherches sur la relation de plus en plus complexe entre la religion et la transition vers l’âge adulte."
 					}
 				],
@@ -570,18 +529,13 @@ var testCases = [
 				"issue": "4",
 				"journalAbbreviation": "Biblical Theology Bulletin",
 				"language": "en",
-				"libraryCatalog": "ubtue_SAGE Journals",
+				"libraryCatalog": "SAGE Journals",
 				"pages": "180-190",
 				"publicationTitle": "Biblical Theology Bulletin",
 				"shortTitle": "“The Land Is Mine” (Leviticus 25",
 				"url": "https://doi.org/10.1177/0146107920958985",
 				"volume": "50",
-				"attachments": [
-					{
-						"title": "SAGE PDF Full Text",
-						"mimeType": "application/pdf"
-					}
-				],
+				"attachments": [],
 				"tags": [
 					{
 						"tag": " Jubilee Year"
@@ -596,11 +550,7 @@ var testCases = [
 						"tag": " Peace & Nonviolence"
 					}
 				],
-				"notes": [
-					{
-						"note": "<p>doi: 10.1177/0146107920958985</p>"
-					}
-				],
+				"notes": [],
 				"seeAlso": []
 			}
 		]
@@ -624,7 +574,7 @@ var testCases = [
 						"creatorType": "translator"
 					}
 				],
-				"date": "October 1, 2020",
+				"date": "Oktober 1, 2020",
 				"DOI": "10.1177/0040573620947051",
 				"ISSN": "0040-5736",
 				"abstractNote": "Johann Baptist Metz died on December 2, 2019. He and Jürgen Moltmann shared a theological and personal friendship marked by affection and respect. It was an honest friendship and it lasted for over fifty years. It started when two texts met: Metz’s essay “God before Us” and Moltmann’s essay “The Category of Novum in Christian Theology.” Both were published in the volume To Honor Ernst Bloch (1965). This article is a personal reminiscence.",
@@ -636,12 +586,7 @@ var testCases = [
 				"publicationTitle": "Theology Today",
 				"url": "https://doi.org/10.1177/0040573620947051",
 				"volume": "77",
-				"attachments": [
-					{
-						"title": "SAGE PDF Full Text",
-						"mimeType": "application/pdf"
-					}
-				],
+				"attachments": [],
 				"tags": [
 					{
 						"tag": " Catholic"
@@ -659,11 +604,7 @@ var testCases = [
 						"tag": " political theology"
 					}
 				],
-				"notes": [
-					{
-						"note": "<p>doi: 10.1177/0040573620947051</p>"
-					}
-				],
+				"notes": [],
 				"seeAlso": []
 			}
 		]
@@ -710,12 +651,7 @@ var testCases = [
 				"shortTitle": "Which psychology(ies) serves us best?",
 				"url": "https://doi.org/10.1177/0084672420926259",
 				"volume": "42",
-				"attachments": [
-					{
-						"title": "SAGE PDF Full Text",
-						"mimeType": "application/pdf"
-					}
-				],
+				"attachments": [],
 				"tags": [
 					{
 						"tag": " Cross-cultural research"
@@ -737,9 +673,6 @@ var testCases = [
 					}
 				],
 				"notes": [
-					{
-						"note": "<p>doi: 10.1177/0084672420926259</p>"
-					},
 					{
 						"note": "orcid:0000-0001-6906-3104 | author=Anczyk, Adam"
 					},
