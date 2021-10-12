@@ -2,14 +2,14 @@
 	"translatorID": "dac476e4-401d-430a-8571-a97c31c3b65e",
 	"label": "Taylor and Francis+NEJM",
 	"creator": "Sebastian Karcher",
-	"target": "^https?://(www\\.)?(tandfonline\\.com|nejm\\.org)",
+	"target": "^https?://(www\\.)?((tandfonline\\.com)|(nejm\\.org))",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 98,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-01 08:48:19"
+	"lastUpdated": "2021-10-12 14:10:59"
 }
 
 /*
@@ -186,7 +186,7 @@ function finalizeItem(item, doc, doi, baseUrl) {
 		if (authorInfo && orcidHref) {
 			let author = authorInfo.childNodes[0].textContent;
 			let orcid = orcidHref.textContent.replace(/.*(\d{4}-\d{4}-\d{4}-\d+x?)$/i, '$1');
-			item.notes.push({note: "orcid:" + orcid + '|' + author});
+			item.notes.push({note: "orcid:" + orcid + ' | ' + author});
 		}
 	}
 	//deduplicate
@@ -197,23 +197,7 @@ function finalizeItem(item, doc, doi, baseUrl) {
 	if (AccessIconLocation && AccessIconLocation.alt.match(/open\s+access/gi)) item.notes.push('LF:');
 
 	//add attachments
-	item.attachments = [{
-		title: 'Full Text PDF',
-		url: pdfurl + doi,
-		mimeType: 'application/pdf'
-	}];
-	if (doc) {
-		item.attachments.push({
-			title: 'Snapshot',
-			document: doc
-		});
-	} else {
-		item.attachments.push({
-			title: 'Snapshot',
-			url: item.url || absurl + doi,
-			mimeType: 'text/html'
-		});
-	}
+	item.attachments = [];
 
 	item.complete();
 }
