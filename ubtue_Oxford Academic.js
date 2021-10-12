@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-01 12:43:53"
+	"lastUpdated": "2021-10-12 13:53:37"
 }
 
 /*
@@ -97,6 +97,26 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 			i.tags.push('#reviewed_pub#title::' + reviewed_title + '#name' + namesString + '#year::' + reviewed_year + '#publisher::' + reviewed_publisher + '#place::' + reviewed_place + '#');
 			
 			
+		}
+		if (ZU.xpathText(doc, '//i[@class="icon-availability_open"]/@title') != null) {
+			if (ZU.xpathText(doc, '//i[@class="icon-availability_open"]/@title').match(/open access/i)) {
+				i.notes.push("LF:");
+			}
+		}
+		else if (ZU.xpathText(doc, '//i[@class="icon-availability_free"]/@title') != null) {
+			if (ZU.xpathText(doc, '//i[@class="icon-availability_free"]/@title').match(/free/i)) {
+				i.notes.push("LF:");
+			}
+		}
+		let orcid = 'lala';
+		let author_information_tags = ZU.xpath(doc, '//div[@id="authorInfo_OUP_ArticleTop_Info_Widget"]');
+		for (let a = 0; a < author_information_tags.length; a++) {
+			Z.debug(author_information_tags[a].innerHTML);
+			if (ZU.xpathText(author_information_tags[a], './/div[@class="info-card-location"]') != null) {
+				let orcid = ZU.xpathText(author_information_tags[a], './/div[@class="info-card-location"]').trim();
+				let author = ZU.xpathText(author_information_tags[a], './/div[@class="info-card-name"]').trim();
+				i.notes.push({note: "orcid:" + orcid + ' | ' + author});
+			}
 		}
 		i.attachments = [];
 		i.complete();
