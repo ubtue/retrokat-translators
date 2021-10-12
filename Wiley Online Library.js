@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-12 07:02:31"
+	"lastUpdated": "2021-10-12 15:06:40"
 }
 
 /*
@@ -213,7 +213,7 @@ function scrapeEM(doc, url) {
 
 	addBookReviewTag(doc, item);
 	addArticleNumber(doc, item);
-	addFreeAccessTag(doc, item)
+	addFreeAccessTag(doc, item);
 	item.attachments = [];
 	item.complete();
 
@@ -379,6 +379,20 @@ function scrapeBibTeX(doc, url) {
 			if (item.DOI && item.DOI.match(doiURLRegex))
 				item.DOI = item.DOI.replace(/^https:\/\/doi.org\/(.*)/, "$1");
 			addFreeAccessTag(doc, item);
+			Z.debug('Snargle');
+			let author_tags = ZU.xpath(doc, './/span[@class="accordion-tabbed__tab-mobile  accordion__closed"]');
+			allOrcids = [];
+			for (let author_tag of author_tags) {
+				//Z.debug(author_tag.innerHTML);
+				let author = ZU.xpath(author_tag, './/span')[0].textContent;
+				let orcid = ZU.xpathText(author_tag, './/a[@class="sm-account__link"][@class="sm-account__link" and contains(@href, "orcid.org")]/@href');
+				if (orcid != null) {
+				orcid = orcid.replace('https://orcid.org/' ,'')
+				if (!allOrcids.includes(orcid)) {
+					item.notes.push({note: "orcid:" + orcid + ' | ' + author});
+					allOrcids.push(orcid);
+				}
+			}}
 			item.complete();
 		});
 
@@ -389,7 +403,7 @@ function scrapeBibTeX(doc, url) {
 //ubtue:tag an article as open access
 function addFreeAccessTag(doc, item) {
 	let tagEntry = ZU.xpathText(doc, '//div[@class="doi-access"]');
-	if (tagEntry && tagEntry.match(/Free Access/i)) {
+	if (tagEntry && tagEntry.match(/(Free Access)|(Open Access)/i)) {
 		item.notes.push('LF:');
 	};
 }

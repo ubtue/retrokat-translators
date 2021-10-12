@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-11 14:08:03"
+	"lastUpdated": "2021-10-12 15:31:00"
 }
 
 /*
@@ -118,6 +118,17 @@ function scrape(doc, url) {
 		if (ZU.xpath(doc, '//div[@class="article book-review NLM"]').length > 0) {
 			item.tags.push('Book Review');
 		}
+		let orcid_tags = ZU.xpath(doc, '//a[@class="app-link contributor-type__contributor__orcid app-link__icon app-link--"]');
+		for (let o in orcid_tags) {
+			let orcid = orcid_tags[o].href;
+			if (orcid != null) {
+				Z.debug(orcid_tags[o]);
+				let author = ZU.xpathText(orcid_tags[o], './/@data-test-orcid');
+				item.notes.push({note: "orcid:" + orcid + ' | ' + author});
+			}
+			
+		}
+		
 		item.attachments = [];
 		item.complete();
 	});
