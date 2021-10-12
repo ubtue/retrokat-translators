@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-12 13:56:37"
+	"lastUpdated": "2021-10-12 14:09:39"
 }
 
 /*
@@ -111,9 +111,9 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 		let orcid = 'lala';
 		let author_information_tags = ZU.xpath(doc, '//div[@id="authorInfo_OUP_ArticleTop_Info_Widget"]');
 		for (let a = 0; a < author_information_tags.length; a++) {
-			Z.debug(author_information_tags[a].innerHTML);
 			if (ZU.xpathText(author_information_tags[a], './/div[@class="info-card-location"]') != null) {
 				let orcid = ZU.xpathText(author_information_tags[a], './/div[@class="info-card-location"]').trim();
+				orcid = orcid.replace('https://orcid.org/', '');
 				let author = ZU.xpathText(author_information_tags[a], './/div[@class="info-card-name"]').trim();
 				i.notes.push({note: "orcid:" + orcid + ' | ' + author});
 			}
