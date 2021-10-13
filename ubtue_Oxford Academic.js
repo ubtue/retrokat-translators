@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-12 14:09:39"
+	"lastUpdated": "2021-10-13 08:29:55"
 }
 
 /*
@@ -72,6 +72,12 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 		if (tagreview.match(/(\bReviews?\b)|(\bBook(\s+)?Reviews?\b)|(\bReview(\s+)?Article\b)|(\bBook(s)?(\s+)?Note(s)?\b)|(\bShort(\s+)?not(ic)?e(s)?)/i)) {
 			i.tags.push('Book Review');
 			i.abstractNote = extractText;
+			if (extractText.length > 800) {
+				i.abstractNote = extractText.substring(0, 800);
+				let lastIndex = i.abstractNote.lastIndexOf('.');
+				i.abstractNote = i.abstractNote.substring(0, lastIndex + 1);
+				Z.debug(i.abstractNote);
+			}
 		}
 		}
 		if (section != 0) {
@@ -80,7 +86,6 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 		// if the article are review article, then the full text extract is scraped from the HTML
 		let publications = ZU.xpath(doc, '//div[@class="product"]');
 		for (let p = 0; p < publications.length; p++) {
-			Z.debug(p.text);
 			let reviewed_title = ZU.xpathText(publications[p], './/div[contains(@class, "source")]');
 			if (reviewed_title == null) {reviewed_title = ZU.xpathText(publications[p], './/em');}
 			// mehrere Namen auch noch trennen!
