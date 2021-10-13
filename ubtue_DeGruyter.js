@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-11 07:56:40"
+	"lastUpdated": "2021-10-13 09:47:49"
 }
 
 /*
@@ -99,6 +99,25 @@ function invokeEMTranslator(doc, url) {
 		if (i.ISSN == "1868-9027") {
 			if (reviewURLs.includes(i.url)) {
 			i.tags.push('Book Review');
+		}
+		}
+		if (ZU.xpathText(doc, '//span[@class="accessOpenAccess mr-2"]') != null) {
+			if (ZU.xpathText(doc, '//span[@class="accessOpenAccess mr-2"]').match(/Open Access/i)) {
+				i.notes.push('LF:');
+			}
+		}
+		let orcidTag = ZU.xpath(doc, '//span[@class="metadataAndContributorsFont"]');
+		if (orcidTag.length != 0) {
+		//Z.debug(orcidTag[0].innerHTML);
+		orcidMatches = orcidTag[0].innerHTML.match(/<span class="contributor"[^>]+>([^<]+)<\/span>\s+<span class="orcidLink"[^>]+><a href="https:\/\/orcid\.org\/([^"]+)"/gi);
+		for (let o in orcidMatches) {
+			let authorTag = orcidMatches[o].match(/<span class="contributor"[^>]+>([^<]+)<\/span>\s+<span class="orcidLink"[^>]+><a href="https:\/\/orcid\.org\/([^"]+)"/i);
+			if (authorTag[2] != undefined) {
+				let author = authorTag[1];
+				let orcid = authorTag[2];
+				i.notes.push({note: "orcid:" + orcid + ' | ' + author});
+			}
+			
 		}
 		}
 		i.attachments = [];
