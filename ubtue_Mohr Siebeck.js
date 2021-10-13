@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-11 14:25:43"
+	"lastUpdated": "2021-10-13 15:22:32"
 }
 
 /*
@@ -71,12 +71,40 @@ function postProcess(doc, item) {
 		item.language = ZU.xpathText(doc, '//meta[@name="language"]/@content');
 	if (!item.url)
 		item.url = 'https://doi.org/' + item.DOI;
-	if (ZU.xpathText(doc, '//div[@itemid="#periodical"]').match(/Rubrik:\s+((Einzelbesprechung(en)?)|(Kurzbesprechung(en?))|(Book(s)?(\s+)?Review(s)?)|(Kurzanzeige(n)?))/)) {
+	let section = ZU.xpathText(doc, '//div[@itemid="#periodical"]');
+	if (section != null) {
+	if (section.match(/Rubrik:\s+((Einzelbesprechung(en)?)|(Kurzbesprechung(en?))|(Book(s)?(\s+)?Review(s)?)|(Kurzanzeige(n)?))/)) {
 		item.tags.push('Book Review');
+	}
 	}
 	if (item.ISSN == "0944-5706") {
 		item.language = "en";
 	}
+	let accessTag = ZU.xpathText(doc, '//span[@class="middle font_green"]');
+	if (accessTag != null) {
+	if (accessTag.match(/(Freier\s+Zugang)|(Open\s+Access)/i)) {
+		item.notes.push('LF:');
+	}
+	}
+	let orcidTag = ZU.xpath(doc, '//div[@id="aboutAuthorContent"]');
+	
+	if (orcidTag.length != 0) {
+		orcidMatches = orcidTag[0].innerHTML.split('<strong>');
+		for (let o in orcidMatches) {
+			if (orcidMatches[o].match(/(<strong>)?.+?<\/strong>.+?<a href="/gi) != null) {
+				let authorTag = orcidMatches[o].match(/(?:<strong>)?(.+?)<\/strong>.+?<a href="https:\/\/orcid.org\/([^"]+?)"/i);
+			if (authorTag[2] != undefined) {
+				let author = authorTag[1];
+				let orcid = authorTag[2];
+				item.notes.push({note: "orcid:" + orcid + ' | ' + author});
+			}
+			}
+			
+		}
+		}
+	
+	
+	
 }
 
 function invokeCoinsTranslator(doc, url) {
