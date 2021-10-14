@@ -5,11 +5,11 @@
 	"target": "^https?://[^/]*muse\\.jhu\\.edu/(book/|article/|issue/|search\\?)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-07-08 07:38:29"
+	"lastUpdated": "2021-10-14 15:57:32"
 }
 
 /*
@@ -117,8 +117,24 @@ function scrape(doc) {
 			if (dcType && dcType.match(/Review/i)) {
 				item.tags.push("Book Review");
 			}
-			
 			item.notes = [];
+			let detailRows = ZU.xpath(doc, '//div[@class="details_row"][contains(./div[@class="cell label"], "Open Access")]');
+			for (let row of detailRows) {
+				if (ZU.xpathText(row, './/div[@class="cell"]').match(/yes/i)) {
+					item.notes.push('LF:')
+				}
+			}
+			let authorTags = ZU.xpath(doc, '//div[@class="bio"]');
+			for (let authorTag of authorTags) {
+				if (authorTag.textContent.match(/orcid.+?((?:\w{4}-){3}\w{4})/i)) {
+					let orcid = authorTag.textContent.match(/orcid.+?((?:\w{4}-){3}\w{4})/i)[1];
+					let author = ZU.xpathText(authorTag, './/a[@class="bio"]');
+					item.notes.push({note: "orcid:" + orcid + ' | ' + author});
+				}
+			}
+			
+			
+				//<div class="details_row">
 			if (ZU.xpathText(doc, '//span[@class="abstractheader"]')) {
 			if (ZU.xpathText(doc, '//span[@class="abstractheader"]').match(/^In lieu of an abstract/) != null) {
 				item.abstractNote = '';
@@ -129,6 +145,7 @@ function scrape(doc) {
 		translator.translate();
 	});
 }
+
 /** BEGIN TEST CASES **/
 var testCases = [
 	{
