@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsv",
-	"lastUpdated": "2021-09-23 10:20:31"
+	"lastUpdated": "2021-10-14 14:16:53"
 }
 
 /*
@@ -98,9 +98,8 @@ function scrape(doc, url) {
 			item.url = url;
 			item.tags = [];
 			delete item.abstractNote;
-			if (item.attachments != undefined) {
-				item.attachments == {};
-				}
+			item.attachments = [];
+			item.notes.push('LF:');
 			if (ZU.xpathText(doc, '//span[@class="goobit3-image__struct"]').match(/Rezension/)) {
 				if (item.title == "") {
 				item.title = 'Rezension';
