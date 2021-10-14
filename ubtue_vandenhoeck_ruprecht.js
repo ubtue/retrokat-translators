@@ -5,11 +5,11 @@
 	"target": "https:\\/\\/www.vr-elibrary.de\\/(toc|doi)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 98,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-27 14:28:56"
+	"lastUpdated": "2021-10-14 14:58:22"
 }
 
 /*
@@ -134,6 +134,20 @@ function scrape(doc, url) {
 					var metaLang = doc.querySelector("meta[name='dc.Language']");
 					if (metaLang && metaLang.getAttribute("content"))
 						item.language = metaLang.getAttribute("content")
+				}
+				if (ZU.xpathText(doc, '//span[@class="citation__access__type"]') != null) {
+					if (ZU.xpathText(doc, '//span[@class="citation__access__type"]').match(/(open(\s+)?access)|(kostenlos)/i)) {
+						item.notes.push('LF:');
+					}
+				}
+				let authorTags = ZU.xpath(doc, '//div[contains(@class, "accordion-tabbed__tab-mobile")]');
+				for (let authorTag of authorTags) {
+					if (ZU.xpathText(authorTag, './/a[@class="orcid-link"]') != null) {
+						let author = ZU.xpathText(authorTag, './a/@title');
+						let orcid = ZU.xpathText(authorTag, './/a[@class="orcid-link"]');
+						orcid = orcid.replace('https://orcid.org/', '')
+					item.notes.push({note: "orcid:" + orcid + ' | ' + author});	
+					}
 				}
 				//
 				let switchToDE = "https://www.vr-elibrary.de/action/doLocaleChange?locale=de&requestUri=/doi/"+ doi;
