@@ -6,10 +6,10 @@
 	"minVersion": "3.0",
 	"maxVersion": "",
 	"priority": 100,
-	"inRepository": false,
+	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2020-09-03 15:15:00"
+	"lastUpdated": "2021-10-14 14:12:04"
 }
 
 /*
@@ -35,6 +35,9 @@
 	***** END LICENSE BLOCK *****
 */
 // attr()/text() v2
+
+var lfDOIs = [];
+
 function attr(docOrElem, selector, attr, index){ var elem=index?docOrElem.querySelectorAll(selector).item(index):docOrElem.querySelector(selector); return elem?elem.getAttribute(attr):null;}function text(docOrElem,selector,index){ var elem=index?docOrElem.querySelectorAll(selector).item(index):docOrElem.querySelector(selector); return elem?elem.textContent:null; }
 
 function detectWeb(doc, url) {
@@ -46,15 +49,21 @@ function detectWeb(doc, url) {
 function getSearchResults(doc, checkOnly) {
 	var items = {};
 	var found = false;
-	var rows = doc.querySelectorAll('.hlFld-Title');
+	var rows = ZU.xpath(doc, '//table[@class="articleEntry"]');
 	for (let row of rows) {
-		let href = row.parentElement;
-		let title = ZU.trimInternal(row.innerHTML);
+		//Z.debug(row.innerHTML);
+		let href = ZU.xpathText(row, './/a[@class="ref nowrap"]/@href');
+		let title = ZU.trimInternal(ZU.xpathText(row, './/span[@class="hlFld-Title"]'));
+		if (ZU.xpath(row, './/td[@class="accessIconContainer"]//img[@title="Free Access"]').length != 0) {
+			let doi = href.replace('/doi/abs/', '');
+			lfDOIs.push(doi);
+		}
 		if (!href || !title) continue;
 		if (checkOnly) return true;
 		found = true;
 		items[href] = title;
 	}
+	Z.debug(lfDOIs);
 	return found ? items : false;
 }
 
@@ -83,19 +92,34 @@ function invokeEMTranslator(doc, url) {
 		var rows = doc.querySelectorAll('.hlFld-Abstract');
 		for (let row of rows) {
 			var abstractsEntry = row.innerText;
-		}
-		let abstractsOneTwo = abstractsEntry.split('\n\n');
+			if (abstractsEntry != undefined) {
+			let abstractsOneTwo = abstractsEntry.split('\n\n');
 		if (i.abstractNote) i.abstractNote = abstractsOneTwo[1];
 		if (abstractsOneTwo[2]) {
 			i.notes.push({
 				note: "abs:" + abstractsOneTwo[2],
 			});
 		}
+		}
+		}
+		let docType = ZU.xpathText(doc, '//meta[@name="dc.Type"]/@content');
+				if (docType === "book-review")
+					item.tags.push("Book Reviews");
 		if (i.reportType === "book-review") i.tags.push('Book Review') && delete i.abstractNote;
+		i.attachments = [];
+		if (lfDOIs.includes(i.DOI)) {
+			i.notes.push('LF:');
+		}
+		else if (ZU.xpathText(doc, '//img[@class="accessIconLocation"]/@src') != null) {
+			if (ZU.xpathText(doc, '//img[@class="accessIconLocation"]/@src').match(/open(\s+)?access/i)) {
+				i.notes.push('LF:');
+				}
+		}
 		i.complete();
 	});
 	translator.translate();
 }
+
 
 /** BEGIN TEST CASES **/
 var testCases = [
