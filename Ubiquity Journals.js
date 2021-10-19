@@ -5,7 +5,7 @@
 	"target": "^https?://[^/]+(/articles?/10\\.\\d{4,9}/[-._;()/:a-z0-9A-Z]+|/articles/?$|/\\d+/volume/\\d+/issue/\\d+)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 250,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

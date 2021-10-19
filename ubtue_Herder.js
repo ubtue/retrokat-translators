@@ -5,7 +5,7 @@
 	"target": "https://www.herder.de/[a-zA-Z]+",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

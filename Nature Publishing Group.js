@@ -5,7 +5,7 @@
 	"target": "^https?://(www\\.)?nature\\.com/([^?/]+/)?(journal|archive|research|topten|search|full|abs|current_issue\\.htm|most\\.htm|articles/)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

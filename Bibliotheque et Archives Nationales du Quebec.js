@@ -6,7 +6,7 @@
 	"target": "^https?://catalogue\\.banq\\.qc\\.ca/",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"browserSupport": "gcsibv",
 	"inRepository": true,
 	"lastUpdated": "2015-06-29 17:02:02"

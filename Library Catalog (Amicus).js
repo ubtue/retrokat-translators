@@ -5,7 +5,7 @@
 	"target": "^https?://amicus\\.collectionscanada\\.ca/aaweb-bin/aamain",
 	"minVersion": "2.1.9",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

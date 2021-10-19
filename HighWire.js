@@ -5,7 +5,7 @@
 	"target": "^https?://[^/]+/(cgi/searchresults|cgi/search|cgi/content/(abstract|full|short|summary)|current\\.dtl$|content/vol[0-9]+/issue[0-9]+/(index\\.dtl)?$)",
 	"minVersion": "2.1",
 	"maxVersion": "",
-	"priority": 250,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsbv",

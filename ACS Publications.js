@@ -5,7 +5,7 @@
 	"target": "^https?://pubs\\.acs\\.org/(toc/|journal/|topic/|isbn/\\d|doi/(full/|abs/)?10\\.|action/doSearch\\?)",
 	"minVersion": "4.0.5",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

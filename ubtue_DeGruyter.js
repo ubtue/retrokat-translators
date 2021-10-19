@@ -5,7 +5,7 @@
 	"target": "^https?:\\/\\/www\\.degruyter\\.c",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 80,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

@@ -5,7 +5,7 @@
     "target": "^https?:\/\/(www\\.)?protokollezurbibel.at\/index.php\/.+\/article\/view.*\/[0-9]+",
     "minVersion": "3.0",
     "maxVersion": "",
-    "priority": 90,
+    "priority": 150,
     "inRepository": false,
     "translatorType": 4,
     "browserSupport": "gcsibv",

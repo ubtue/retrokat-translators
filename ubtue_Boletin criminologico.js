@@ -5,7 +5,7 @@
 	"target": "http://www.boletincriminologico.uma.es/lista_boletines.php\\?edicion=\\d{4}",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

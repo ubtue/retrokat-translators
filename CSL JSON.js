@@ -5,7 +5,7 @@
 	"target": "json",
 	"minVersion": "4.0.27",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"configOptions": {
 		"async": true
 	},

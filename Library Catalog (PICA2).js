@@ -5,7 +5,7 @@
 	"target": "^https?://[^/]+/DB=[\\dA-Z]",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 249,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsbv",

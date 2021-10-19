@@ -5,7 +5,7 @@
 	"target": "^https?://www\\.lulu\\.com/shop/",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 101,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 12,
 	"browserSupport": "gcsibv",

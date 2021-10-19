@@ -5,7 +5,7 @@
 	"target": "^https?://(www\\.plos(one|ntds|compbiol|pathogens|genetics|medicine|biology)\\.org|journals\\.plos\\.org(/\\w+)?)/(search|\\w+/article)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

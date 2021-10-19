@@ -6,7 +6,7 @@
 	"target": null,
 	"minVersion": "3.0.4",
 	"maxVersion": null,
-	"priority": 320,
+	"priority": 150,
 	"inRepository": true,
 	"browserSupport": "gcsibv",
 	"lastUpdated": "2021-03-10 04:50:00"

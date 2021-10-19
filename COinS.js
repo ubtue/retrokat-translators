@@ -5,7 +5,7 @@
 	"target": "",
 	"minVersion": "2.1",
 	"maxVersion": "",
-	"priority": 310,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 6,
 	"browserSupport": "gcsv",

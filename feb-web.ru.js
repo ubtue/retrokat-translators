@@ -5,7 +5,7 @@
 	"target": "^https?://(www\\.)?feb-web\\.ru/.*cmd=2",
 	"minVersion": "1.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

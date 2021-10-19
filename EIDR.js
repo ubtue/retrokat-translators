@@ -5,7 +5,7 @@
 	"target": "",
 	"minVersion": "1.0",
 	"maxVersion": "",
-	"priority": 80,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 8,
 	"browserSupport": "gcsibv",

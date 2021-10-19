@@ -5,7 +5,7 @@
 	"target": "^https?://bd\\.archivescanadafrance\\.org",
 	"minVersion": "1.0.0b4.r5",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"browserSupport": "gcsibv",
 	"inRepository": true,
 	"translatorType": 4,

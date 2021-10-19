@@ -5,7 +5,7 @@
 	"target": "^https?://magazines\\.russ\\.ru/[a-zA-Z -_]+/[0-9]+/[0-9]+/",
 	"minVersion": "2.1.9",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

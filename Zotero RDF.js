@@ -6,7 +6,7 @@
 	"target": "rdf",
 	"minVersion": "1.0.0b4.r1",
 	"maxVersion": "",
-	"priority": 25,
+	"priority": 150,
 	"configOptions": {
 		"getCollections": "true",
 		"dataMode": "rdf/xml"

@@ -5,7 +5,7 @@
 	"target": "^https?://(theoryofcomputing\\.org|toc\\.cse\\.iitk\\.ac\\.in|www\\.cims\\.nyu\\.edu/~regev/toc|toc\\.ilab\\.sztaki\\.hu|toc\\.nada\\.kth\\.se|tocmirror\\.cs\\.tau\\.ac\\.il)/articles/[vg].*(/|html?)$",
 	"minVersion": "1.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcv",

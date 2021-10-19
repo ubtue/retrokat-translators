@@ -6,7 +6,7 @@
 	"target": "",
 	"minVersion": "5.0.0",
 	"maxVersion": null,
-	"priority": 90,
+	"priority": 150,
 	"inRepository": true,
 	"browserSupport": "gcsibv",
 	"lastUpdated": "2018-06-16 12:00:00"

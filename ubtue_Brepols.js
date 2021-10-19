@@ -5,7 +5,7 @@
 	"target": "https?://www\\.brepolsonline\\.net",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

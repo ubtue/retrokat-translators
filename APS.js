@@ -5,7 +5,7 @@
 	"target": "^https?://journals\\.aps\\.org/([^/]+/(abstract|supplemental|references|cited-by|issues)/|search(\\?|/))",
 	"minVersion": "3.0.12",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

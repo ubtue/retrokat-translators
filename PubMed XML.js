@@ -5,7 +5,7 @@
 	"target": "xml",
 	"minVersion": "2.1.9",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"configOptions": {
 		"dataMode": "xml/dom"
 	},

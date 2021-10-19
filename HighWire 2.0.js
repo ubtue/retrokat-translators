@@ -5,7 +5,7 @@
 	"target": "^[^?#]+(/content/([0-9]+[A-Z\\-]*/|current|firstcite|early)|/search\\?.*?\\bsubmit=|/search(/results)?\\?fulltext=|/cgi/collection/.|/search/.)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 250,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsv",

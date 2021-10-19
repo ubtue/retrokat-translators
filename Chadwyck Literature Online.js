@@ -5,7 +5,7 @@
 	"target": "^https?://(lion|collections)\\.chadwyck\\.com/search",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsib",

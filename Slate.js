@@ -5,7 +5,7 @@
 	"target": "^https?://(.*)slate\\.com",
 	"minVersion": "2.1",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

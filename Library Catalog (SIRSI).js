@@ -5,7 +5,7 @@
 	"target": "/uhtbin/(cgisirsi|quick_keyword)",
 	"minVersion": "2.1",
 	"maxVersion": "",
-	"priority": 250,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

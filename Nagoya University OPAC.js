@@ -5,7 +5,7 @@
 	"target": "^https?://opac\\.nul\\.nagoya-u\\.ac\\.jp/webopac/(catdbl\\.do|ctlsrh\\.do)",
 	"minVersion": "2.0b7",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

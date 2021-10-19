@@ -5,7 +5,7 @@
 	"target": "^https?://(www\\.)?citeulike\\.org(.*/tag/[^/]*$|/search/|/journal/|/user/|/group/[0-9]+/library$|/\\?page=[0-9]+$|/.*article/[0-9]+$|/$)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

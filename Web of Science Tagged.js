@@ -5,7 +5,7 @@
 	"target": "txt",
 	"minVersion": "2.1",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 1,
 	"browserSupport": "gcsibv",

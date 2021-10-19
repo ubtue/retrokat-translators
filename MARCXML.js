@@ -5,7 +5,7 @@
 	"target": "xml",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 1,
 	"lastUpdated": "2019-07-11 13:12:18"

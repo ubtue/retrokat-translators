@@ -5,7 +5,7 @@
 	"target": "",
 	"minVersion": "4.0.29.11",
 	"maxVersion": "",
-	"priority": 50,
+	"priority": 150,
 	"inRepository": false,
 	"translatorType": 8,
 	"browserSupport": "gcs",

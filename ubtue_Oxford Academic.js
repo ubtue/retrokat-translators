@@ -5,11 +5,11 @@
 	"target": "^https?://academic\\.oup\\.com",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-13 08:29:55"
+	"lastUpdated": "2021-10-19 13:48:36"
 }
 
 /*
@@ -72,11 +72,13 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 		if (tagreview.match(/(\bReviews?\b)|(\bBook(\s+)?Reviews?\b)|(\bReview(\s+)?Article\b)|(\bBook(s)?(\s+)?Note(s)?\b)|(\bShort(\s+)?not(ic)?e(s)?)/i)) {
 			i.tags.push('Book Review');
 			i.abstractNote = extractText;
+			if (extractText != null) {
 			if (extractText.length > 800) {
 				i.abstractNote = extractText.substring(0, 800);
 				let lastIndex = i.abstractNote.lastIndexOf('.');
 				i.abstractNote = i.abstractNote.substring(0, lastIndex + 1);
 				Z.debug(i.abstractNote);
+			}
 			}
 		}
 		}
@@ -151,7 +153,7 @@ function doWeb(doc, url) {
 var testCases = [
 	{
 		"type": "web",
-		"url": "https://academic.oup.com/jss/article-abstract/65/1/245/5738633?redirectedFrom=fulltext",
+		"url": "https://academic.oup.com/jss/article/65/1/245/5738633?login=true",
 		"items": [
 			{
 				"itemType": "journalArticle",
@@ -175,17 +177,14 @@ var testCases = [
 				"shortTitle": "Nevada Levi Delapp, Theophanic “Type-Scenes” in the Pentateuch",
 				"url": "https://academic.oup.com/jss/article/65/1/245/5738633",
 				"volume": "65",
-				"attachments": [
+				"attachments": [],
+				"tags": [
 					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
+						"tag": "#reviewed_pub#title::Theophanic “Type-Scenes” in the Pentateuch: Visions of YHWH#name::Delapp, Nevada Levi#year::2018#publisher::Bloomsbury T & T Clark#place::London#"
 					},
 					{
-						"title": "Snapshot",
-						"mimeType": "text/html"
-					}
-				],
-				"tags": [
+						"tag": "Book Review"
+					},
 					{
 						"tag": "Book Review"
 					}
@@ -197,7 +196,7 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "https://academic.oup.com/litthe/article-abstract/34/1/122/5245305?redirectedFrom=fulltext",
+		"url": "https://academic.oup.com/litthe/article/34/1/122/5245305?login=true",
 		"items": [
 			{
 				"itemType": "journalArticle",
@@ -212,7 +211,7 @@ var testCases = [
 				"date": "2020/03/01",
 				"DOI": "10.1093/litthe/fry035",
 				"ISSN": "0269-1205",
-				"abstractNote": "This is an ambitious revisionary study. Malcolm Guite combines literary, theological, and ecological perspectives to shed new light on the ‘rich spirituality’ of Coleridge’s work, in the sacramental theology of his Rime of the Ancient Mariner (p. 8). Guite recounts Coleridge’s life story around a religious and ecological, ultimately polemical, reading of the Rime. Guite’s rationale for the biographical strand of his study is based on the poet’s retrospective self-identification with his protagonist. The book is divided into two sections. In Part One, Guite narrates Coleridge’s life up to the year of extraordinary creativity at Nether Stowey, which spanned summer 1797 to summer 1798. The seven chapters in Part Two...",
+				"abstractNote": "This is an ambitious revisionary study. Malcolm Guite combines literary, theological, and ecological perspectives to shed new light on the ‘rich spirituality’ of Coleridge’s work, in the sacramental theology of his Rime of the Ancient Mariner (p. 8). Guite recounts Coleridge’s life story around a religious and ecological, ultimately polemical, reading of the Rime. Guite’s rationale for the biographical strand of his study is based on the poet’s retrospective self-identification with his protagonist. The book is divided into two sections. In Part One, Guite narrates Coleridge’s life up to the year of extraordinary creativity at Nether Stowey, which spanned summer 1797 to summer 1798.",
 				"issue": "1",
 				"journalAbbreviation": "Literature and Theology",
 				"language": "en",
@@ -222,17 +221,14 @@ var testCases = [
 				"shortTitle": "Mariner",
 				"url": "https://academic.oup.com/litthe/article/34/1/122/5245305",
 				"volume": "34",
-				"attachments": [
+				"attachments": [],
+				"tags": [
 					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
+						"tag": "#reviewed_pub#title::Mariner: A Voyage with Samuel Taylor Coleridge#name::Guite, Malcolm#year::2017#publisher::Hodder & Stoughton#place::London#"
 					},
 					{
-						"title": "Snapshot",
-						"mimeType": "text/html"
-					}
-				],
-				"tags": [
+						"tag": "Book Review"
+					},
 					{
 						"tag": "Book Review"
 					}

@@ -5,7 +5,7 @@
 	"target": "^https?://(books|www)\\.google\\.[a-z]+(\\.[a-z]+)?/(books(/.*)?\\?(.*id=.*|.*q=.*)|search\\?.*?(btnG=Search\\+Books|tbm=bks)|books/edition/)|^https?://play\\.google\\.[a-z]+(\\.[a-z]+)?/(store/)?(books|search\\?.*c=books)",
 	"minVersion": "2.1.9",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsbv",

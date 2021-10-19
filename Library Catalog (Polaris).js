@@ -5,7 +5,7 @@
 	"target": "/polaris/search/(searchresults|title)\\.aspx\\?",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 250,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

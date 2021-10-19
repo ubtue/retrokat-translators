@@ -5,7 +5,7 @@
 	"target": "https?://journals.openedition.org",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": false,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

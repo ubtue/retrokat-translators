@@ -5,7 +5,7 @@
 	"target": "^https?://(\\\\w+\\\\.)*digitalcommons.andrews.edu/auss/vol[0-9]+/iss[0-9]+",
 	"minVersion": "5.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": false,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

@@ -5,7 +5,7 @@
 	"target": "^https?://ccfr\\.bnf\\.fr/portailccfr/.*\\b(action=search|menu=menu_view_grappage|search\\.jsp)\\b",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "g",

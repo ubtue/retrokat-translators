@@ -5,7 +5,7 @@
 	"target": "^https?://([^/]+\\.)?ieeexplore\\.ieee\\.org/([^#]+[&?]arnumber=\\d+|(abstract/)?document/|search/(searchresult|selected)\\.jsp|xpl/(mostRecentIssue|tocresult)\\.jsp\\?|xpl/conhome/\\d+/proceeding)",
 	"minVersion": "4.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

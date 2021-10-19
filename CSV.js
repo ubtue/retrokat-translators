@@ -5,7 +5,7 @@
 	"target": "csv",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"displayOptions": {
 		"exportCharset": "UTF-8xBOM",
 		"exportNotes": false

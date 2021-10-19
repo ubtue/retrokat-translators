@@ -6,7 +6,7 @@
 	"target": "^https?://pistard\\.banq\\.qc\\.ca",
 	"minVersion": "1.0.0b4.r5",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"lastUpdated": "2008-08-06 17:00:00"
 }

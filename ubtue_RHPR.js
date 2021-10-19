@@ -5,7 +5,7 @@
 	"target": "^https?://classiques-garnier\\.com",
 	"minVersion": "2.1",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": false,
 	"translatorType": 4,
 	"browserSupport": "gcsbv",

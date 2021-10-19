@@ -5,7 +5,7 @@
 	"target": "ctx",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"configOptions": {
 		"dataMode": "xml/dom"
 	},

@@ -5,7 +5,7 @@
 	"target": "^https?://www\\.uco\\.es/revistas/index\\.php/cco/(issue|article)/view/",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 80,
+	"priority": 150,
 	"inRepository": false,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

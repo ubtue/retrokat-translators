@@ -5,7 +5,7 @@
 	"target": "/(pipermail|archives)/[A-Za-z0-9_-]*/[0-9]{4}-(January|February|March|April|May|June|July|August|September|October|November|December)/[0-9]{6}\\.html",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 260,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

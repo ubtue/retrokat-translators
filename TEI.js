@@ -6,7 +6,7 @@
 	"target": "xml",
 	"minVersion": "4.0.27",
 	"maxVersion": null,
-	"priority": 25,
+	"priority": 150,
 	"inRepository": true,
 	"configOptions": {
 		"dataMode": "xml/dom",

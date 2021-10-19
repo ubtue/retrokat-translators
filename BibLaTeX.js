@@ -6,7 +6,7 @@
 	"target": "bib",
 	"minVersion": "2.1.9",
 	"maxVersion": "null",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"configOptions": {
 		"getCollections": true

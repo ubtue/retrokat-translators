@@ -5,7 +5,7 @@
 	"target": "^https?://([^/]+\\.)?(www|preview)\\.ncbi\\.nlm\\.nih\\.gov[^/]*/(m/)?(books|pubmed|labs/pubmed|sites/pubmed|sites/entrez|entrez/query\\.fcgi\\?.*db=PubMed|myncbi/browse/collection/?|myncbi/collections/)|^https?://pubmed\\.ncbi\\.nlm\\.nih\\.gov/(\\d|\\?)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 12,
 	"browserSupport": "gcsibv",

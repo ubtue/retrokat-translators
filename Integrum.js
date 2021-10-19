@@ -5,7 +5,7 @@
 	"target": "^https?://aafnet\\.integrum\\.ru/",
 	"minVersion": "3",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

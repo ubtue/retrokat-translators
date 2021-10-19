@@ -5,7 +5,7 @@
 	"target": "^https?://iopscience\\.iop\\.org/((article/10\\.[^/]+/)?[0-9-X]+/.+|n?search\\?.+)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 99,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsbv",

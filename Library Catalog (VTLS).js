@@ -5,7 +5,7 @@
 	"target": "/chameleon(\\?|$)",
 	"minVersion": "1.0.0b3.r1",
 	"maxVersion": "",
-	"priority": 250,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

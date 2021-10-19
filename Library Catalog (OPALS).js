@@ -5,7 +5,7 @@
 	"target": "^https?://[^?#&]+/bin/(search|pf|rs)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 250,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsib",

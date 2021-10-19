@@ -5,7 +5,7 @@
 	"target": "^https?://((www\\.)?(tagesanzeiger|(bo\\.)?bernerzeitung|bazonline|derbund|lematin|24heures|landbote|zuonline|zsz|tdg|letemps)\\.ch/.)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

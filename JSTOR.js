@@ -5,7 +5,7 @@
 	"target": "^https?://([^/]+\\.)?jstor\\.org/(discover/|action/(showArticle|doBasicSearch|doAdvancedSearch|doLocatorSearch|doAdvancedResults|doBasicResults)|(stable/)|(pss/)|(openurl\\?)|(sici\\?))",
 	"minVersion": "3.0.12",
 	"maxVersion": "",
-	"priority": 98,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

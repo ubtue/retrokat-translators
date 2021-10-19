@@ -5,7 +5,7 @@
 	"target": "^https?://(www|search)\\.japantimes\\.co\\.jp/(cgi-bin|gsearch|search-results|features|entertainment|sports|life|news|rss|\\?)",
 	"minVersion": "2.1.9",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

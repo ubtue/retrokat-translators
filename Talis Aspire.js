@@ -5,7 +5,7 @@
 	"target": "^https?://([^/]+\\.)?(((my)?reading|resource|lib|cyprus|)lists|aspire\\.surrey|rl\\.talis)\\..+/(lists|items)/",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 270,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsbv",

@@ -5,7 +5,7 @@
 	"target": "^https?://artflsrv\\d+\\.uchicago\\.edu/cgi-bin/philologic/(getobject\\.pl\\?[cp]\\.[0-9]+:[0-9]+(:[0-9]+)?\\.encyclopedie|navigate\\.pl\\?encyclopedie|search3t\\?dbname=encyclopedie)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcv",

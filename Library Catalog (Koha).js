@@ -5,7 +5,7 @@
 	"target": "^https?://[^/]+/cgi-bin/koha/opac-(detail|search|shelves)\\.pl\\?",
 	"minVersion": "2.1.9",
 	"maxVersion": "",
-	"priority": 260,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

@@ -5,7 +5,7 @@
 	"target": "html",
 	"minVersion": "2.1b6",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 3,
 	"browserSupport": "gcsibv",

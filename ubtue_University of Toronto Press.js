@@ -5,7 +5,7 @@
     "target": "^https?:\/\/www.utpjournals.press\/((doi)|(toc))\/",
     "minVersion": "3.0",
     "maxVersion": "",
-    "priority": 90,
+    "priority": 150,
     "inRepository": false,
     "translatorType": 4,
     "browserSupport": "gcsibv",

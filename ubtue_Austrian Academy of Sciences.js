@@ -5,7 +5,7 @@
 	"target": "^https?:\/\/www.austriaca.at\/",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 90,
+	"priority": 150,
 	"inRepository": false,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

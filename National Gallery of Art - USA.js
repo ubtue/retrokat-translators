@@ -5,7 +5,7 @@
 	"target": "^https?://www\\.nga\\.gov/content/ngaweb",
 	"minVersion": "1.0.0b4.r5",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

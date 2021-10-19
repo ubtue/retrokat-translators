@@ -5,7 +5,7 @@
 	"target": "^https?://[^/]+\\.worldcat\\.org/",
 	"minVersion": "3.0.9",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 12,
 	"browserSupport": "gcsbv",

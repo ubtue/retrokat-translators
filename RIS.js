@@ -5,7 +5,7 @@
 	"target": "ris",
 	"minVersion": "3.0.4",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"configOptions": {
 		"async": true,
 		"getCollections": "true"

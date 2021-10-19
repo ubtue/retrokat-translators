@@ -5,7 +5,7 @@
 	"target": "enex",
 	"minVersion": "2.1.9",
 	"maxVersion": "",
-	"priority": 50,
+	"priority": 150,
 	"displayOptions": {
 		"exportNotes": true
 	},

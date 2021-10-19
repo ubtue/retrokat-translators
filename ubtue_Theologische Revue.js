@@ -5,7 +5,7 @@
 	"target": "^https?://www\\.uni-muenster\\.de/Ejournals/index\\.php/thrv/(article|issue)/view",
 	"minVersion": "3",
 	"maxVersion": "",
-	"priority": 80,
+	"priority": 150,
 	"inRepository": false,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

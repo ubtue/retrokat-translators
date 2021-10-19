@@ -5,7 +5,7 @@
 	"target": "^https?://([^/]+\\.)?airitilibrary\\.com/Publication/alDetailedMesh",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 110,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 12,
 	"browserSupport": "gcsib",

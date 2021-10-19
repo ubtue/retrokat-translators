@@ -5,7 +5,7 @@
 	"target": "http://www.mikado-ac.info/starweb/MIS/DEU/OPAC/",
 	"minVersion": "5.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": false,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

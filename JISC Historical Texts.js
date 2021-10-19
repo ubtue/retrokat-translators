@@ -5,7 +5,7 @@
 	"target": "^https?://(data.)?[^/]*historicaltexts\\.jisc\\.ac\\.uk/(view|results)\\?",
 	"minVersion": "4.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

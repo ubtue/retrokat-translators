@@ -5,7 +5,7 @@
 	"target": "/iii/encore/(record|search)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 270,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

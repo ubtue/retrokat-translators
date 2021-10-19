@@ -6,7 +6,7 @@
 	"target": "xml",
 	"minVersion": "3.0",
 	"maxVersion": null,
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"browserSupport": "gcsibv",
 	"configOptions": {

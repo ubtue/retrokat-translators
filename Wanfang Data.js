@@ -5,7 +5,7 @@
 	"target": "^https?://[ds]\\.(g\\.)?wanfangdata\\.com\\.cn",
 	"minVersion": "2.0rc1",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcs",

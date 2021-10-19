@@ -5,7 +5,7 @@
 	"target": "/(article|preprint|issue)/view/|/catalog/book/|/search/search",
 	"minVersion": "2.1.9",
 	"maxVersion": "",
-	"priority": 99,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

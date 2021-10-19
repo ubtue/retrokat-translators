@@ -5,7 +5,7 @@
 	"target": "https?://www.mohrsiebeck.com/",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 90,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

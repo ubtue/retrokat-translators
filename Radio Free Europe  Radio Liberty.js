@@ -5,7 +5,7 @@
 	"target": "^https?://(www\\.rferl\\.org/|www\\.azatliq\\.org/|www\\.azattyq\\.org/|rus\\.azattyq\\.org/|da\\.azadiradio\\.org/|pa\\.azadiradio\\.org/|www\\.azattyk\\.org/|www\\.ozodi\\.org/|www\\.ozodlik\\.org/|www\\.evropaelire\\.org/|www\\.slobodnaevropa\\.org/|www\\.makdenes\\.org/|www\\.iraqhurr\\.org/|www\\.radiofarda\\.com/|www\\.azatutyun\\.am/|www\\.azadliq\\.org/|www\\.svaboda\\.org/|www\\.svoboda\\.org/|www\\.tavisupleba\\.org/|www\\.azathabar\\.com/|www\\.svobodanews\\.ru/|www\\.europalibera\\.org/|www\\.radiosvoboda\\.org/)",
 	"minVersion": "2.1.9",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsbv",

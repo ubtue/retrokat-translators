@@ -5,7 +5,7 @@
 	"target": "^https?://www\\.annee-philologique\\.com/(aph)?/?index\\.php",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsib",

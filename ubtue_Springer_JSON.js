@@ -5,7 +5,7 @@
 	"target": "json",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 1,
 	"lastUpdated": "2021-04-13 15:45:03"

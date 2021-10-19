@@ -6,7 +6,7 @@
 	"target": "^https?://(www\\.)alexanderstreet",
 	"minVersion": "1.0.0b4.r5",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"lastUpdated": "2009-01-08 08:19:07"
 }

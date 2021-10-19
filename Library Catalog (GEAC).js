@@ -5,7 +5,7 @@
 	"target": "/(GeacQUERY|GeacFETCH[\\:\\?].*[&:]next=html/(record\\.html|geacnffull\\.html))",
 	"minVersion": "1.0.0b3.r1",
 	"maxVersion": "",
-	"priority": 260,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "g",

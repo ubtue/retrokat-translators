@@ -5,7 +5,7 @@
 	"target": "^https?://www\\.cambridge\\.org/core/(search\\?|journals/)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 99,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

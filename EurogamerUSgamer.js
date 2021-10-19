@@ -5,7 +5,7 @@
 	"target": "^https?://(www\\.)?(eurogamer|usgamer)\\.(net|cz|de|es|it|nl|pl|pt)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 100,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

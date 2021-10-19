@@ -5,7 +5,7 @@
 	"target": "^https?://www\\.medra\\.org/servlet/view\\?",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 105,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 12,
 	"browserSupport": "g",

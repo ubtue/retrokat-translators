@@ -5,7 +5,7 @@
 	"target": "/issue/view/|index.php/journal/(?!article/view/)|index.php/eguzkilore/",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 99,
+	"priority": 150,
 	"inRepository": false,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",

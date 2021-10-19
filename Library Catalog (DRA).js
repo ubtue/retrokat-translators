@@ -5,7 +5,7 @@
 	"target": "/web2/tramp2\\.exe/(see\\_record/|authority\\_hits/|do_keyword_search|form/|goto/.*\\?.*screen=(MARC)?Record\\.html)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 260,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsbv",
