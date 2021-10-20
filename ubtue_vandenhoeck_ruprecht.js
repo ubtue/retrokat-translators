@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-14 14:58:22"
+	"lastUpdated": "2021-10-20 08:32:18"
 }
 
 /*
@@ -182,7 +182,7 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "May 21, 2021",
+				"date": "Mai 21, 2021",
 				"DOI": "10.13109/kedo.2021.67.2.148",
 				"ISSN": "0023-0707",
 				"abstractNote": "In diaconal studies a paradigm shift from “care” to “participation” has taken place. The omnipresent use of “participation” derives from the socio-political progress perspectives based on human rights approaches, e.g. in diaconal practical work. However, a specific theological approach is missing. The article illustrates “participation” as a central theological term and argues for defining it as a mutual process of giving and taking. Participation is fundamentally active and should not be misunderstood as a passive product. A specific diaconal way of talking about “participation” is founded in God’s gift of Christ.",

@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-12 14:10:59"
+	"lastUpdated": "2021-10-19 14:45:21"
 }
 
 /*
@@ -145,7 +145,11 @@ function scrape(doc, url) {
 					//ubtue:item.creators retrieved from ris, because bibtex is adding some unuseful "names"
 					//e.g. corporate bodies "Bill Gaventa and National Collaborative on Faith and Disability, with" https://doi.org/10.1080/23312521.2020.1743223
 					//or title like "Rev." https://www.tandfonline.com/doi/full/10.1080/23312521.2020.1738627
-					item.creators = risItem.creators;
+					for (let creator of risItem.creators) 
+					{
+						creator.firstName = creator.firstName.replace(/\s+/, ' ');
+						creator.lastName = creator.lastName.replace(/\s+/, ' ');
+					}
 					finalizeItem(item, doc, doi, baseUrl);
 				});
 				risTrans.translate();
@@ -208,29 +212,29 @@ function finalizeItem(item, doc, doi, baseUrl) {
 var testCases = [
 	{
 		"type": "web",
-		"url": "http://www.tandfonline.com/doi/abs/10.1080/17487870802543480",
+		"url": "https://www.tandfonline.com/doi/full/10.1080/17487870802543480",
 		"items": [
 			{
 				"itemType": "journalArticle",
 				"title": "Informality and productivity in the labor market in Peru",
 				"creators": [
 					{
-						"firstName": "Alberto",
 						"lastName": "Chong",
+						"firstName": "Alberto",
 						"creatorType": "author"
 					},
 					{
-						"firstName": "Jose",
 						"lastName": "Galdo",
+						"firstName": "Jose",
 						"creatorType": "author"
 					},
 					{
-						"firstName": "Jaime",
 						"lastName": "Saavedra",
+						"firstName": "Jaime",
 						"creatorType": "author"
 					}
 				],
-				"date": "December 1, 2008",
+				"date": "Dezember 1, 2008",
 				"DOI": "10.1080/17487870802543480",
 				"ISSN": "1748-7870",
 				"abstractNote": "This article analyzes the evolution of informal employment in Peru from 1986 to 2001. Contrary to what one would expect, the informality rates increased steadily during the 1990s despite the introduction of flexible contracting mechanisms, a healthy macroeconomic recovery, and tighter tax codes and regulation. We explore different factors that may explain this upward trend including the role of labor legislation and labor allocation between/within sectors of economic activity. Finally, we illustrate the negative correlation between productivity and informality by evaluating the impacts of the Youth Training PROJOVEN Program that offers vocational training to disadvantaged young individuals. We find significant training impacts on the probability of formal employment for both males and females.",
@@ -239,23 +243,25 @@ var testCases = [
 				"libraryCatalog": "Taylor and Francis+NEJM",
 				"pages": "229-245",
 				"publicationTitle": "Journal of Economic Policy Reform",
-				"url": "http://dx.doi.org/10.1080/17487870802543480",
+				"url": "https://doi.org/10.1080/17487870802543480",
 				"volume": "11",
-				"attachments": [
+				"attachments": [],
+				"tags": [
 					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
+						"tag": "Peru"
 					},
 					{
-						"title": "Snapshot"
+						"tag": "employment"
+					},
+					{
+						"tag": "informality"
+					},
+					{
+						"tag": "labor costs"
+					},
+					{
+						"tag": "training"
 					}
-				],
-				"tags": [
-					"Peru",
-					"employment",
-					"informality",
-					"labor costs",
-					"training"
 				],
 				"notes": [],
 				"seeAlso": []
@@ -269,29 +275,29 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "http://www.tandfonline.com/doi/full/10.1080/17487870802543480",
+		"url": "https://www.tandfonline.com/doi/full/10.1080/17487870802543480",
 		"items": [
 			{
 				"itemType": "journalArticle",
 				"title": "Informality and productivity in the labor market in Peru",
 				"creators": [
 					{
-						"firstName": "Alberto",
 						"lastName": "Chong",
+						"firstName": "Alberto",
 						"creatorType": "author"
 					},
 					{
-						"firstName": "Jose",
 						"lastName": "Galdo",
+						"firstName": "Jose",
 						"creatorType": "author"
 					},
 					{
-						"firstName": "Jaime",
 						"lastName": "Saavedra",
+						"firstName": "Jaime",
 						"creatorType": "author"
 					}
 				],
-				"date": "December 1, 2008",
+				"date": "Dezember 1, 2008",
 				"DOI": "10.1080/17487870802543480",
 				"ISSN": "1748-7870",
 				"abstractNote": "This article analyzes the evolution of informal employment in Peru from 1986 to 2001. Contrary to what one would expect, the informality rates increased steadily during the 1990s despite the introduction of flexible contracting mechanisms, a healthy macroeconomic recovery, and tighter tax codes and regulation. We explore different factors that may explain this upward trend including the role of labor legislation and labor allocation between/within sectors of economic activity. Finally, we illustrate the negative correlation between productivity and informality by evaluating the impacts of the Youth Training PROJOVEN Program that offers vocational training to disadvantaged young individuals. We find significant training impacts on the probability of formal employment for both males and females.",
@@ -300,23 +306,25 @@ var testCases = [
 				"libraryCatalog": "Taylor and Francis+NEJM",
 				"pages": "229-245",
 				"publicationTitle": "Journal of Economic Policy Reform",
-				"url": "http://dx.doi.org/10.1080/17487870802543480",
+				"url": "https://doi.org/10.1080/17487870802543480",
 				"volume": "11",
-				"attachments": [
+				"attachments": [],
+				"tags": [
 					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
+						"tag": "Peru"
 					},
 					{
-						"title": "Snapshot"
+						"tag": "employment"
+					},
+					{
+						"tag": "informality"
+					},
+					{
+						"tag": "labor costs"
+					},
+					{
+						"tag": "training"
 					}
-				],
-				"tags": [
-					"Peru",
-					"employment",
-					"informality",
-					"labor costs",
-					"training"
 				],
 				"notes": [],
 				"seeAlso": []
@@ -325,7 +333,7 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "http://www.tandfonline.com/doi/abs/10.1080/00036846.2011.568404",
+		"url": "https://www.tandfonline.com/doi/full/10.1080/00036846.2011.568404",
 		"items": [
 			{
 				"itemType": "journalArticle",
@@ -342,7 +350,7 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "January 1, 2013",
+				"date": "Januar 1, 2013",
 				"DOI": "10.1080/00036846.2011.568404",
 				"ISSN": "0003-6846",
 				"abstractNote": "Measuring consumers’ Willingness To Pay (WTP) without considering the level of uncertainty in valuation and the consequent risk premiums will result in estimates that are biased toward lower values. This research proposes a model and method for correctly assessing WTP in cases involving valuation uncertainty. The new method, called Risk Adjustment Mechanism (RAM), is presented theoretically and demonstrated empirically. It is shown that the RAM outperforms the traditional method for assessing WTP, especially in a context of a nonmarket good such as a totally new product.",
@@ -351,25 +359,31 @@ var testCases = [
 				"libraryCatalog": "Taylor and Francis+NEJM",
 				"pages": "37-46",
 				"publicationTitle": "Applied Economics",
-				"url": "http://dx.doi.org/10.1080/00036846.2011.568404",
+				"url": "https://doi.org/10.1080/00036846.2011.568404",
 				"volume": "45",
-				"attachments": [
+				"attachments": [],
+				"tags": [
 					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
+						"tag": "D12"
 					},
 					{
-						"title": "Snapshot"
+						"tag": "D81"
+					},
+					{
+						"tag": "M31"
+					},
+					{
+						"tag": "adjustment mechanism"
+					},
+					{
+						"tag": "contigent valuation method"
+					},
+					{
+						"tag": "purchase decisions"
+					},
+					{
+						"tag": "willingness to pay"
 					}
-				],
-				"tags": [
-					"D12",
-					"D81",
-					"M31",
-					"adjustment mechanism",
-					"contigent valuation method",
-					"purchase decisions",
-					"willingness to pay"
 				],
 				"notes": [],
 				"seeAlso": []
@@ -383,7 +397,7 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "http://www.nejm.org/doi/full/10.1056/NEJMp1207920",
+		"url": "https://www.nejm.org/doi/full/10.1056/NEJMp1207920",
 		"items": [
 			{
 				"itemType": "journalArticle",
@@ -413,24 +427,16 @@ var testCases = [
 				"date": "September 27, 2012",
 				"DOI": "10.1056/NEJMp1207920",
 				"ISSN": "0028-4793",
-				"abstractNote": "In 2011, Texas slashed funding for family planning services and imposed new restrictions on abortion care, affecting the health care of many low-income women. For demographically similar states, Texas's experience may be a harbinger of public health effects to come.",
+				"abstractNote": "Four fundamental principles drive public funding for family planning. First, unintended pregnancy is associated with negative health consequences, including reduced use of prenatal care, lower breast-feeding rates, and poor maternal and neonatal outcomes.1,2 Second, governments realize substantial cost savings by investing in family planning, which reduces the rate of unintended pregnancies and the costs of prenatal, delivery, postpartum, and infant care.3 Third, all Americans have the right to choose the timing and number of their children. And fourth, family planning enables women to attain their educational and career goals and families to provide for their children. These principles led . . .",
 				"extra": "PMID: 23013071",
 				"issue": "13",
 				"itemID": "doi:10.1056/NEJMp1207920",
 				"libraryCatalog": "Taylor and Francis+NEJM",
 				"pages": "1179-1181",
 				"publicationTitle": "New England Journal of Medicine",
-				"url": "http://dx.doi.org/10.1056/NEJMp1207920",
+				"url": "https://doi.org/10.1056/NEJMp1207920",
 				"volume": "367",
-				"attachments": [
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
-					},
-					{
-						"title": "Snapshot"
-					}
-				],
+				"attachments": [],
 				"tags": [],
 				"notes": [],
 				"seeAlso": []
@@ -439,7 +445,7 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "http://www.tandfonline.com/doi/abs/10.1080/0308106032000167373",
+		"url": "https://www.tandfonline.com/doi/abs/10.1080/0308106032000167373",
 		"items": [
 			{
 				"itemType": "journalArticle",
@@ -451,7 +457,7 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "December 1, 2003",
+				"date": "Dezember 1, 2003",
 				"DOI": "10.1080/0308106032000167373",
 				"ISSN": "0308-1060",
 				"abstractNote": "This article deals with a multicriteria evaluation of High-Speed Rail, Transrapid Maglev and Air Passenger Transport in Europe. Operational, socio-economic and environmental performance indicators of the specific high-speed transport systems are adopted as the evaluation criteria. By using the entropy method, weights are assigned to particular criteria in order to indicate their relative importance in decision-making. The TOPSIS method is applied to carry out the multicriteria evaluation and selection of the preferable alternative (high-speed system) under given circumstances.",
@@ -460,23 +466,25 @@ var testCases = [
 				"libraryCatalog": "Taylor and Francis+NEJM",
 				"pages": "491-512",
 				"publicationTitle": "Transportation Planning and Technology",
-				"url": "http://dx.doi.org/10.1080/0308106032000167373",
+				"url": "https://doi.org/10.1080/0308106032000167373",
 				"volume": "26",
-				"attachments": [
+				"attachments": [],
+				"tags": [
 					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
+						"tag": "Entropy method; "
 					},
 					{
-						"title": "Snapshot"
+						"tag": "Europe; "
+					},
+					{
+						"tag": "High-speed transport systems; "
+					},
+					{
+						"tag": "Interest groups "
+					},
+					{
+						"tag": "Multicriteria analysis; "
 					}
-				],
-				"tags": [
-					"Entropy method; ",
-					"Europe; ",
-					"High-speed transport systems; ",
-					"Interest groups ",
-					"Multicriteria analysis; "
 				],
 				"notes": [],
 				"seeAlso": []
@@ -490,7 +498,7 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "http://www.tandfonline.com/doi/abs/10.1080/00380768.1991.10415050#.U_vX3WPATVE",
+		"url": "https://www.tandfonline.com/doi/abs/10.1080/00380768.1991.10415050#.U_vX3WPATVE",
 		"items": [
 			{
 				"itemType": "journalArticle",
@@ -516,22 +524,22 @@ var testCases = [
 				"libraryCatalog": "Taylor and Francis+NEJM",
 				"pages": "381-386",
 				"publicationTitle": "Soil Science and Plant Nutrition",
-				"url": "http://dx.doi.org/10.1080/00380768.1991.10415050",
+				"url": "https://doi.org/10.1080/00380768.1991.10415050",
 				"volume": "37",
-				"attachments": [
+				"attachments": [],
+				"tags": [
 					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
+						"tag": "CO2 diffusion"
 					},
 					{
-						"title": "Snapshot"
+						"tag": "CO2 evolution"
+					},
+					{
+						"tag": "CO2 sorption"
+					},
+					{
+						"tag": "concentration dependence"
 					}
-				],
-				"tags": [
-					"CO2 diffusion",
-					"CO2 evolution",
-					"CO2 sorption",
-					"concentration dependence"
 				],
 				"notes": [],
 				"seeAlso": []
@@ -618,16 +626,11 @@ var testCases = [
 				"shortTitle": "(Un)believing in modern society",
 				"url": "https://doi.org/10.1080/14755610.2019.1572099",
 				"volume": "20",
-				"attachments": [
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
-					},
-					{
-						"title": "Snapshot"
-					}
-				],
+				"attachments": [],
 				"tags": [
+					{
+						"tag": "Book Review"
+					},
 					{
 						"tag": "Book Reviews"
 					}
@@ -651,7 +654,7 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "January 2, 2021",
+				"date": "Januar 2, 2021",
 				"DOI": "10.1080/15570274.2021.1874144",
 				"ISSN": "1557-0274",
 				"abstractNote": "Despite its diplomatic isolation, Taiwan shines in East Asia as a beacon for pluralism. This is a rare example of a progressive and liberal society where both deep religious diversity and a tolerant secular state co-exist. Taiwan’s liminality between world empires, and its unique position in the global economy partly explain its openness to a diversity of worldviews, but also exposes it to greater challenges to achieve covenantal pluralism. Taiwan’s hard-won democracy has entrenched positive trends, but three issues threaten to undermine it: the political pressure of a domineering China that limits its own religious diversity and that wants to annex Taiwan; the rise in influence of a rather intransigent and divisive religious minority that demonizes its opponents; and the increasing labor immigration addressing the challenges of an aging society.",
@@ -662,16 +665,7 @@ var testCases = [
 				"publicationTitle": "The Review of Faith & International Affairs",
 				"url": "https://doi.org/10.1080/15570274.2021.1874144",
 				"volume": "19",
-				"attachments": [
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
-					},
-					{
-						"title": "Snapshot",
-						"mimeType": "text/html"
-					}
-				],
+				"attachments": [],
 				"tags": [
 					{
 						"tag": "Buddhism"
@@ -700,7 +694,7 @@ var testCases = [
 				],
 				"notes": [
 					{
-						"note": "orcid:0-0003-3285-5188|André Laliberté"
+						"note": "orcid:0000-0003-3285-5188 | André Laliberté"
 					}
 				],
 				"seeAlso": []
@@ -721,7 +715,7 @@ var testCases = [
 						"creatorType": "author"
 					}
 				],
-				"date": "January 2, 2021",
+				"date": "Januar 2, 2021",
 				"DOI": "10.1080/0048721X.2020.1792051",
 				"ISSN": "0048-721X",
 				"abstractNote": "This article presents an exploration of the ways in which law, education, and religious propagation have been deployed as mutually reinforcing means for engineering social transformation in the Indonesian province of Aceh, and how these agendas were dramatically accelerated in the context of humanitarian and development interventions in post-conflict/post-disaster reconstruction. In doing so, it demonstrates and critically analyzes the ways in which contemporary Muslim visions of instrumentalist, future-oriented models of Islamic law have been formally implemented through the apparatus of the state as part of an over-arching project of engineering a new society, and of redefining conceptions of proper Islamic religious belief and practice. This case presents a striking instance of an agenda of religious revival envisioned not as an attempt to preserve or resuscitate established tradition, but rather as a tool in interventions for future-oriented projects for ‘improving’ the conditions of Muslims in both this world, and the next.",
@@ -733,16 +727,7 @@ var testCases = [
 				"shortTitle": "Engineering transformations in the ‘religion-development nexus’",
 				"url": "https://doi.org/10.1080/0048721X.2020.1792051",
 				"volume": "51",
-				"attachments": [
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
-					},
-					{
-						"title": "Snapshot",
-						"mimeType": "text/html"
-					}
-				],
+				"attachments": [],
 				"tags": [
 					{
 						"tag": "Aceh"
@@ -765,7 +750,7 @@ var testCases = [
 				],
 				"notes": [
 					{
-						"note": "orcid:0-0002-1222-6766|R. Michael Feener"
+						"note": "orcid:0000-0002-1222-6766 | R. Michael Feener"
 					}
 				],
 				"seeAlso": []

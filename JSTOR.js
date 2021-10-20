@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-01 12:42:59"
+	"lastUpdated": "2021-10-20 08:22:25"
 }
 
 /*
@@ -219,14 +219,18 @@ function processRIS(text, jid, doc, doi) {
 		if (item.ISSN) {
 			item.ISSN = ZU.cleanISSN(item.ISSN);
 		}
-
+		
+		item.DOI = jid;
+		if (!item.DOI) {
 		if (doi)
-			item.DOI = doi
+			item.DOI = doi;
 		else {
 			item.DOI = ZU.xpathText(doc, '//div[contains(@class,"doi")]');
 			if (item.DOI)
 				item.DOI = item.DOI.replace(/DOI\:\s+/, "");
 		}
+		}
+		item.DOI = item.DOI.split('#')[0]
 		item.tags = ZU.xpath(doc, '//div[contains(@class,"topics-list")]//a').map(function(x) { return x.textContent.trim(); })
 
 		if (subtitle){
@@ -298,6 +302,7 @@ function processRIS(text, jid, doc, doi) {
 		trans.doImport();
 	});
 }
+
 
 
 /** BEGIN TEST CASES **/
@@ -432,17 +437,12 @@ var testCases = [
 		"items": [
 			{
 				"itemType": "journalArticle",
-				"title": "Review of Soviet Criminal Justice under Stalin",
+				"title": "[Rezension von: Solomon, Peter H., Soviet Criminal Justice under Stalin]",
 				"creators": [
 					{
 						"lastName": "Burbank",
 						"firstName": "Jane",
 						"creatorType": "author"
-					},
-					{
-						"lastName": "Solomon",
-						"firstName": "Peter H.",
-						"creatorType": "reviewedAuthor"
 					}
 				],
 				"date": "1998",
@@ -452,15 +452,18 @@ var testCases = [
 				"libraryCatalog": "JSTOR",
 				"pages": "310-311",
 				"publicationTitle": "The Russian Review",
+				"shortTitle": "[Rezension von",
 				"url": "https://www.jstor.org/stable/131548",
 				"volume": "57",
-				"attachments": [
+				"attachments": [],
+				"tags": [
 					{
-						"title": "JSTOR Full Text PDF",
-						"mimeType": "application/pdf"
+						"tag": "#reviewed_pub#title::Soviet Criminal Justice under Stalin#name::Solomon, Peter H.#"
+					},
+					{
+						"tag": "Book Review"
 					}
 				],
-				"tags": [],
 				"notes": [],
 				"seeAlso": []
 			}

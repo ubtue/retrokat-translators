@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-08-26 08:56:47"
+	"lastUpdated": "2021-10-20 08:37:23"
 }
 
 /*
@@ -193,8 +193,10 @@ function scrape(doc, url) {
 		}
 		
 		if (ZU.xpath(doc, '//meta[@name="DC.Type.articleType"]/@content')) {
+			if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content') != null) {
 			if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content').match(/Recensioni/)) {
 				item.tags.push('Book Review');
+			}
 			}
 		}
 		var pdfAttachment = false;
@@ -246,6 +248,7 @@ function scrape(doc, url) {
 		trans.doWeb(doc, url);
 	});
 }
+
 
 
 /** BEGIN TEST CASES **/

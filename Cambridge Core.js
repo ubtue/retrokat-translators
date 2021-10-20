@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-12 15:31:00"
+	"lastUpdated": "2021-10-19 14:58:44"
 }
 
 /*
@@ -146,7 +146,7 @@ function scrape(doc, url) {
 var testCases = [
 	{
 		"type": "web",
-		"url": "https://www.cambridge.org/core/journals/journal-of-american-studies/article/abs/samo-as-an-escape-clause-jean-michel-basquiats-engagement-with-a-commodified-american-africanism/1E4368D610A957B84F6DA3A58B8BF164",
+		"url": "https://www.cambridge.org/core/journals/journal-of-american-studies/article/samo-as-an-escape-clause-jean-michel-basquiats-engagement-with-a-commodified-american-africanism/1E4368D610A957B84F6DA3A58B8BF164",
 		"items": [
 			{
 				"itemType": "journalArticle",
@@ -168,18 +168,9 @@ var testCases = [
 				"pages": "227-243",
 				"publicationTitle": "Journal of American Studies",
 				"shortTitle": "“SAMO© as an Escape Clause”",
-				"url": "https://www.cambridge.org/core/journals/journal-of-american-studies/article/abs/samo-as-an-escape-clause-jean-michel-basquiats-engagement-with-a-commodified-american-africanism/1E4368D610A957B84F6DA3A58B8BF164",
+				"url": "https://www.cambridge.org/core/journals/journal-of-american-studies/article/samo-as-an-escape-clause-jean-michel-basquiats-engagement-with-a-commodified-american-africanism/1E4368D610A957B84F6DA3A58B8BF164",
 				"volume": "45",
-				"attachments": [
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
-					},
-					{
-						"title": "Snapshot",
-						"mimeType": "text/html"
-					}
-				],
+				"attachments": [],
 				"tags": [],
 				"notes": [],
 				"seeAlso": []
@@ -188,7 +179,7 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/abs/high-resolution-simulations-of-cylindrical-density-currents/30D62864BDED84A6CC81F5823950767B",
+		"url": "https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/high-resolution-simulations-of-cylindrical-density-currents/30D62864BDED84A6CC81F5823950767B",
 		"items": [
 			{
 				"itemType": "journalArticle",
@@ -218,18 +209,9 @@ var testCases = [
 				"libraryCatalog": "Cambridge Core",
 				"pages": "437-469",
 				"publicationTitle": "Journal of Fluid Mechanics",
-				"url": "https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/abs/high-resolution-simulations-of-cylindrical-density-currents/30D62864BDED84A6CC81F5823950767B",
+				"url": "https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/high-resolution-simulations-of-cylindrical-density-currents/30D62864BDED84A6CC81F5823950767B",
 				"volume": "590",
-				"attachments": [
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
-					},
-					{
-						"title": "Snapshot",
-						"mimeType": "text/html"
-					}
-				],
+				"attachments": [],
 				"tags": [
 					{
 						"tag": "Gravity currents"
@@ -274,7 +256,7 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "https://www.cambridge.org/core/journals/journal-of-ecclesiastical-history/article/abs/history-of-christian-conversion-by-david-w-kling-pp-xvi-836-incl-14-maps-oxfordnew-york-oxford-university-press-2020-97-978-0-19-532092-3/5FD53AEBA7196F39CDD81DBE84DA4A5C",
+		"url": "https://www.cambridge.org/core/journals/journal-of-ecclesiastical-history/article/history-of-christian-conversion-by-david-w-kling-pp-xvi-836-incl-14-maps-oxfordnew-york-oxford-university-press-2020-97-978-0-19-532092-3/5FD53AEBA7196F39CDD81DBE84DA4A5C",
 		"items": [
 			{
 				"itemType": "journalArticle",
@@ -295,19 +277,17 @@ var testCases = [
 				"pages": "612-613",
 				"publicationTitle": "The Journal of Ecclesiastical History",
 				"shortTitle": "A history of Christian conversion. By David W. Kling. Pp. xvi + 836 incl. 14 maps. Oxford–New York",
-				"url": "https://www.cambridge.org/core/journals/journal-of-ecclesiastical-history/article/abs/history-of-christian-conversion-by-david-w-kling-pp-xvi-836-incl-14-maps-oxfordnew-york-oxford-university-press-2020-97-978-0-19-532092-3/5FD53AEBA7196F39CDD81DBE84DA4A5C",
+				"url": "https://www.cambridge.org/core/journals/journal-of-ecclesiastical-history/article/history-of-christian-conversion-by-david-w-kling-pp-xvi-836-incl-14-maps-oxfordnew-york-oxford-university-press-2020-97-978-0-19-532092-3/5FD53AEBA7196F39CDD81DBE84DA4A5C",
 				"volume": "72",
-				"attachments": [
+				"attachments": [],
+				"tags": [
 					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
+						"tag": "Book Review"
 					},
 					{
-						"title": "Snapshot",
-						"mimeType": "text/html"
+						"tag": "Book Review"
 					}
 				],
-				"tags": [],
 				"notes": [],
 				"seeAlso": []
 			}
@@ -339,16 +319,7 @@ var testCases = [
 				"shortTitle": "Charity as Social Justice",
 				"url": "https://www.cambridge.org/core/journals/journal-of-ecclesiastical-history/article/charity-as-social-justice-antonio-rosmini-and-the-great-irish-famine/7D177F707EA3722731C61AE58DB601F6",
 				"volume": "72",
-				"attachments": [
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
-					},
-					{
-						"title": "Snapshot",
-						"mimeType": "text/html"
-					}
-				],
+				"attachments": [],
 				"tags": [
 					{
 						"tag": "Archive of the Institute of Charity"

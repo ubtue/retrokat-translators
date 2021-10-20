@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-13 15:22:32"
+	"lastUpdated": "2021-10-20 08:29:17"
 }
 
 /*
@@ -86,6 +86,7 @@ function postProcess(doc, item) {
 		item.notes.push('LF:');
 	}
 	}
+	item.attachments = [];
 	let orcidTag = ZU.xpath(doc, '//div[@id="aboutAuthorContent"]');
 	
 	if (orcidTag.length != 0) {
