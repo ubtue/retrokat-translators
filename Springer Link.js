@@ -5,11 +5,11 @@
 	"target": "^https?://link\\.springer\\.com/(search(/page/\\d+)?\\?|(article|chapter|book|referenceworkentry|protocol|journal|referencework)/.+)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 150,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsbv",
-	"lastUpdated": "2020-11-24 11:01:57"
+	"lastUpdated": "2021-10-26 14:04:09"
 }
 
 function detectWeb(doc, url) {
@@ -82,7 +82,9 @@ function doWeb(doc, url) {
 
 function undesirableAbstractPresent(doc, item) {
 	let textStart = ZU.xpathText(doc, '//div[@class="c-article-section__content"]/p[not(a | b)]');
+	if (textStart != null) {
 	return textStart.indexOf(item.abstractNote) != -1;
+	}
 }
 
 function complementItem(doc, item) {
@@ -219,9 +221,40 @@ function complementItem(doc, item) {
 	}
 	// Trim and deduplicate
 	item.tags = [...new Set(item.tags.map(keyword => keyword.trim()))];
-
+	let dcType = ZU.xpathText(doc, '//meta[@name="dc.type"]/@content');
 	let docType = ZU.xpathText(doc, '//meta[@name="citation_article_type"]/@content');
-	if (docType.match(/(Book R|reviews?)|(Review P|paper)/)) item.tags.push("Book Reviews");
+	if (docType != null) {
+	if (docType.match(/(Books?(\s+)?Reviews?)|(Review(\s+)?Paper)|(Review(\s+)?Article)/i)) {
+		item.tags.push("Book Review");
+	}
+	}
+	else if (dcType != null) {
+	if (dcType.match(/(Books?(\s+)?Reviews?)|(Review(\s+)?Paper)|(Review(\s+)?Article)/i)) {
+		item.tags.push("Book Review");
+	}
+	}
+	let openAccess = ZU.xpathText(doc, '//span[@data-test="open-access"]');
+	if (openAccess != null) {
+		if (openAccess.match(/Open(\s+)?Access/i)) {
+			item.notes.push("LF:");
+		}
+	}
+	let orcidList = ZU.xpath(doc, '//ul[@data-test="authors-list"]/li[@class="c-article-author-list__item"]');
+	for (let authorTag of orcidList) {
+		//<a data-test="author-name" hier Name
+		let orcid = ZU.xpathText(authorTag, './/a[@class="js-orcid"]/@href');
+		if (orcid) {
+			orcid = orcid.replace('http://orcid.org/', '')
+			let author = ZU.xpathText(authorTag, './/a[@data-test="author-name"]')
+			item.notes.push({note: "orcid:" + orcid + ' | ' + author});
+		}
+	}
+	if (item.abstractNote == '') {
+		let abstract = ZU.xpathText(doc, '//section[@class="Abstract"]//p[@class="Para"]');
+		if (abstract != null) {
+			item.abstractNote = abstract;
+		}
+	}
 	return item;
 }
 
@@ -256,11 +289,7 @@ function scrape(doc, url) {
 		translator.setHandler("itemDone", function (obj, item) {
 			item = complementItem(doc, item);
 
-			item.attachments.push({
-				url: pdfURL,
-				title: "Springer Full Text PDF",
-				mimeType: "application/pdf"
-			});
+			item.attachments = [];
 
 			if (shouldPostprocessWithEmbeddedMetadata(item)) postprocessWithEmbeddedMetadataTranslator(doc, item);
 			else item.complete();
@@ -268,6 +297,7 @@ function scrape(doc, url) {
 		translator.translate();
 	});
 }
+
 
 /** BEGIN TEST CASES **/
 var testCases = [
@@ -311,12 +341,7 @@ var testCases = [
 				"proceedingsTitle": "Computer Vision – ECCV 2008",
 				"publisher": "Springer",
 				"series": "Lecture Notes in Computer Science",
-				"attachments": [
-					{
-						"title": "Springer Full Text PDF",
-						"mimeType": "application/pdf"
-					}
-				],
+				"attachments": [],
 				"tags": [],
 				"notes": [],
 				"seeAlso": []
@@ -352,12 +377,7 @@ var testCases = [
 				"place": "Boston, MA",
 				"publisher": "Springer US",
 				"url": "https://doi.org/10.1007/978-0-387-79061-9_5173",
-				"attachments": [
-					{
-						"title": "Springer Full Text PDF",
-						"mimeType": "application/pdf"
-					}
-				],
+				"attachments": [],
 				"tags": [],
 				"notes": [],
 				"seeAlso": []
@@ -396,60 +416,55 @@ var testCases = [
 				"series": "Methods in Molecular Biology",
 				"shortTitle": "What Do We Know?",
 				"url": "https://doi.org/10.1007/978-1-60761-839-3_22",
-				"attachments": [
-					{
-						"title": "Springer Full Text PDF",
-						"mimeType": "application/pdf"
-					}
-				],
+				"attachments": [],
 				"tags": [
 					{
-						"tag": " ANOVA "
+						"tag": "ANOVA"
 					},
 					{
-						"tag": " AUC "
+						"tag": "AUC"
 					},
 					{
-						"tag": " Central Limit Theorem "
+						"tag": "Central Limit Theorem"
 					},
 					{
-						"tag": " Confidence limits "
+						"tag": "Confidence limits"
 					},
 					{
-						"tag": " Correlation "
+						"tag": "Correlation"
 					},
 					{
-						"tag": " Enrichment "
+						"tag": "Enrichment"
 					},
 					{
-						"tag": " Error bars "
+						"tag": "Error bars"
 					},
 					{
-						"tag": " Propagation of error "
+						"tag": "Propagation of error"
 					},
 					{
-						"tag": " ROC curves "
+						"tag": "ROC curves"
 					},
 					{
-						"tag": " Standard deviation "
+						"tag": "Standard deviation"
 					},
 					{
-						"tag": " Student’s t-test "
+						"tag": "Statistics"
 					},
 					{
-						"tag": " Variance "
+						"tag": "Student’s t-test"
 					},
 					{
-						"tag": " Virtual screening "
+						"tag": "Variance"
 					},
 					{
-						"tag": " logit transform "
+						"tag": "Virtual screening"
 					},
 					{
-						"tag": " p-Values "
+						"tag": "logit transform"
 					},
 					{
-						"tag": "Statistics "
+						"tag": "p-Values"
 					}
 				],
 				"notes": [],
@@ -519,27 +534,22 @@ var testCases = [
 				"shortTitle": "Tide-induced head fluctuations in a coastal aquifer",
 				"url": "https://doi.org/10.1007/s10040-009-0439-x",
 				"volume": "17",
-				"attachments": [
-					{
-						"title": "Springer Full Text PDF",
-						"mimeType": "application/pdf"
-					}
-				],
+				"attachments": [],
 				"tags": [
 					{
-						"tag": " Analytical solutions "
+						"tag": "Analytical solutions"
 					},
 					{
-						"tag": " Elastic storage "
+						"tag": "Coastal aquifers"
 					},
 					{
-						"tag": " Submarine outlet-capping "
+						"tag": "Elastic storage"
 					},
 					{
-						"tag": " Tidal loading efficiency "
+						"tag": "Submarine outlet-capping"
 					},
 					{
-						"tag": "Coastal aquifers "
+						"tag": "Tidal loading efficiency"
 					}
 				],
 				"notes": [],
@@ -593,27 +603,22 @@ var testCases = [
 				"publisher": "Springer US",
 				"series": "Studies in Writing",
 				"url": "https://doi.org/10.1007/0-387-24250-3_4",
-				"attachments": [
-					{
-						"title": "Springer Full Text PDF",
-						"mimeType": "application/pdf"
-					}
-				],
+				"attachments": [],
 				"tags": [
 					{
-						"tag": " peer interaction "
+						"tag": "Social mediation"
 					},
 					{
-						"tag": " revision "
+						"tag": "peer interaction"
 					},
 					{
-						"tag": " whole-class interaction "
+						"tag": "revision"
 					},
 					{
-						"tag": " writing "
+						"tag": "whole-class interaction"
 					},
 					{
-						"tag": "Social mediation "
+						"tag": "writing"
 					}
 				],
 				"notes": [],
@@ -653,27 +658,26 @@ var testCases = [
 				"shortTitle": "Who pioneered Islamic banking in Malaysia?",
 				"url": "https://doi.org/10.1007/s11562-019-00443-w",
 				"volume": "14",
-				"attachments": [
-					{
-						"title": "Springer Full Text PDF",
-						"mimeType": "application/pdf"
-					}
-				],
+				"attachments": [],
 				"tags": [
 					{
-						"tag": " Bank Islam Malaysia Berhad"
-					},
-					{
-						"tag": " Islamic banking"
-					},
-					{
-						"tag": " Malaysia"
+						"tag": "Bank Islam Malaysia Berhad"
 					},
 					{
 						"tag": "Economic anthropology/sociology"
+					},
+					{
+						"tag": "Islamic banking"
+					},
+					{
+						"tag": "Malaysia"
 					}
 				],
-				"notes": [],
+				"notes": [
+					{
+						"note": "orcid:0000-0001-6700-731X | Hideki Kitamura"
+					}
+				],
 				"seeAlso": []
 			}
 		]
@@ -700,7 +704,7 @@ var testCases = [
 				"date": "2020-06-01",
 				"DOI": "10.1007/s00481-019-00556-z",
 				"ISSN": "1437-1618",
-				"abstractNote": "Der Begriff Leiden ist in der Medizin und in der Bioethik bisher kaum reflektiert und dahingehend in normativer Hinsicht wenig bestimmt. Dennoch bildet das Leiden an einer Unfruchtbarkeit den Ausgangspunkt für die medizintechnischen Interventionen der assistierten reproduktionsmedizinischen Behandlung. Dabei wird implizit angenommen, dass der unerfüllte Kinderwunsch ein Leiden ist. Ob der unerfüllte Kinderwunsch allerdings ein Leiden darstellt, ist bisher nicht eindeutig geklärt worden., Ziel dieses Beitrages ist es, die Annahme, dass es sich beim unerfüllten Kinderwunsch um ein Leiden handelt, zu überprüfen. Anhand der Darstellung einiger gängiger Leidenskonzeptionen werden Merkmale von Leiden herausgearbeitet, die als treffende Grundannahmen für eine Leidensbestimmung gelten können. Es wird sich zeigen, dass der unerfüllte Kinderwunsch, entsprechend der Leidenskonzeptionen, als ein Leiden angesehen werden sollte, und ihm somit ein normativer Stellenwert zukommt. In einem weiteren Schritt ist zu klären, ob das Leiden an einem unerfüllten Kinderwunsch als ein Rechtfertigungsgrund für reproduktionsmedizinische Interventionen gelten kann. Dafür wird zum einen der Stellenwert von Leiden, als eine anthropologische Grundbedingung, im Zusammenhang mit dem Leidenslinderungsauftrag der Medizin diskutiert. Zum anderen werden die Risiken der reproduktionsmedizinischen Therapien sowie deren Bedeutung als Gesundheitsressourcen erörtert. Dabei wird deutlich, dass Leiden an einem unerfüllten Kinderwunsch immer ein psychosomatischer Komplex ist. Nur unter Berücksichtigung der psychoexistenziellen Dimension des Leidens ergibt sich eine Legitimation für eine angemessene somatische Intervention.\n\nDefinition of the problem: In medicine and bioethics, the term “suffering” is not clearly defined from a normative point of view. Nevertheless, suffering due to infertility is the starting point for medical interventions in assisted reproductive medicine. This implies that the unfulfilled desire to have children is a form of suffering, but the validity of this statement has not yet been clarified., Based on descriptions of some common concepts, certain characteristics of suffering are identified. We discuss the significance of suffering as an anthropological condition in connection with the mission of medicine to alleviate human suffering. Furthermore, the risks of reproductive treatment and their significance for health are addressed., We conclude that the unfulfilled desire to have children is a form of suffering, and therefore has a normative value. The legitimacy of appropriate somatic intervention can only be established by taking the psycho-existential dimension of suffering into account. Arguments: In medicine and bioethics, the term “suffering” is not clearly defined from a normative point of view. Nevertheless, suffering due to infertility is the starting point for medical interventions in assisted reproductive medicine. This implies that the unfulfilled desire to have children is a form of suffering, but the validity of this statement has not yet been clarified., Based on descriptions of some common concepts, certain characteristics of suffering are identified. We discuss the significance of suffering as an anthropological condition in connection with the mission of medicine to alleviate human suffering. Furthermore, the risks of reproductive treatment and their significance for health are addressed., We conclude that the unfulfilled desire to have children is a form of suffering, and therefore has a normative value. The legitimacy of appropriate somatic intervention can only be established by taking the psycho-existential dimension of suffering into account. Conclusion: In medicine and bioethics, the term “suffering” is not clearly defined from a normative point of view. Nevertheless, suffering due to infertility is the starting point for medical interventions in assisted reproductive medicine. This implies that the unfulfilled desire to have children is a form of suffering, but the validity of this statement has not yet been clarified., Based on descriptions of some common concepts, certain characteristics of suffering are identified. We discuss the significance of suffering as an anthropological condition in connection with the mission of medicine to alleviate human suffering. Furthermore, the risks of reproductive treatment and their significance for health are addressed., We conclude that the unfulfilled desire to have children is a form of suffering, and therefore has a normative value. The legitimacy of appropriate somatic intervention can only be established by taking the psycho-existential dimension of suffering into account.",
+				"abstractNote": "Der Begriff Leiden ist in der Medizin und in der Bioethik bisher kaum reflektiert und dahingehend in normativer Hinsicht wenig bestimmt. Dennoch bildet das Leiden an einer Unfruchtbarkeit den Ausgangspunkt für die medizintechnischen Interventionen der assistierten reproduktionsmedizinischen Behandlung. Dabei wird implizit angenommen, dass der unerfüllte Kinderwunsch ein Leiden ist. Ob der unerfüllte Kinderwunsch allerdings ein Leiden darstellt, ist bisher nicht eindeutig geklärt worden., Ziel dieses Beitrages ist es, die Annahme, dass es sich beim unerfüllten Kinderwunsch um ein Leiden handelt, zu überprüfen. Anhand der Darstellung einiger gängiger Leidenskonzeptionen werden Merkmale von Leiden herausgearbeitet, die als treffende Grundannahmen für eine Leidensbestimmung gelten können. Es wird sich zeigen, dass der unerfüllte Kinderwunsch, entsprechend der Leidenskonzeptionen, als ein Leiden angesehen werden sollte, und ihm somit ein normativer Stellenwert zukommt. In einem weiteren Schritt ist zu klären, ob das Leiden an einem unerfüllten Kinderwunsch als ein Rechtfertigungsgrund für reproduktionsmedizinische Interventionen gelten kann. Dafür wird zum einen der Stellenwert von Leiden, als eine anthropologische Grundbedingung, im Zusammenhang mit dem Leidenslinderungsauftrag der Medizin diskutiert. Zum anderen werden die Risiken der reproduktionsmedizinischen Therapien sowie deren Bedeutung als Gesundheitsressourcen erörtert. Dabei wird deutlich, dass Leiden an einem unerfüllten Kinderwunsch immer ein psychosomatischer Komplex ist. Nur unter Berücksichtigung der psychoexistenziellen Dimension des Leidens ergibt sich eine Legitimation für eine angemessene somatische Intervention.",
 				"issue": "2",
 				"journalAbbreviation": "Ethik Med",
 				"language": "de",
@@ -710,45 +714,48 @@ var testCases = [
 				"shortTitle": "Ist unerfüllter Kinderwunsch ein Leiden?",
 				"url": "https://doi.org/10.1007/s00481-019-00556-z",
 				"volume": "32",
-				"attachments": [
-					{
-						"title": "Springer Full Text PDF",
-						"mimeType": "application/pdf"
-					}
-				],
+				"attachments": [],
 				"tags": [
 					{
-						"tag": " Infertility"
+						"tag": "Infertility"
 					},
 					{
-						"tag": " Kinderwunschbehandlung"
-					},
-					{
-						"tag": " Leidenslinderung"
-					},
-					{
-						"tag": " Relief of suffering"
-					},
-					{
-						"tag": " Reproductive medicine"
-					},
-					{
-						"tag": " Reproduktionsmedizin"
-					},
-					{
-						"tag": " Suffering"
-					},
-					{
-						"tag": " Unerfüllter Kinderwunsch"
-					},
-					{
-						"tag": " Unfulfilled desire to have children"
+						"tag": "Kinderwunschbehandlung"
 					},
 					{
 						"tag": "Leiden"
+					},
+					{
+						"tag": "Leidenslinderung"
+					},
+					{
+						"tag": "Relief of suffering"
+					},
+					{
+						"tag": "Reproductive medicine"
+					},
+					{
+						"tag": "Reproduktionsmedizin"
+					},
+					{
+						"tag": "Suffering"
+					},
+					{
+						"tag": "Unerfüllter Kinderwunsch"
+					},
+					{
+						"tag": "Unfulfilled desire to have children"
 					}
 				],
-				"notes": [],
+				"notes": [
+					{
+						"note": "abs:Definition of the problem: In medicine and bioethics, the term “suffering” is not clearly defined from a normative point of view. Nevertheless, suffering due to infertility is the starting point for medical interventions in assisted reproductive medicine. This implies that the unfulfilled desire to have children is a form of suffering, but the validity of this statement has not yet been clarified., Based on descriptions of some common concepts, certain characteristics of suffering are identified. We discuss the significance of suffering as an anthropological condition in connection with the mission of medicine to alleviate human suffering. Furthermore, the risks of reproductive treatment and their significance for health are addressed., We conclude that the unfulfilled desire to have children is a form of suffering, and therefore has a normative value. The legitimacy of appropriate somatic intervention can only be established by taking the psycho-existential dimension of suffering into account. Arguments: In medicine and bioethics, the term “suffering” is not clearly defined from a normative point of view. Nevertheless, suffering due to infertility is the starting point for medical interventions in assisted reproductive medicine. This implies that the unfulfilled desire to have children is a form of suffering, but the validity of this statement has not yet been clarified., Based on descriptions of some common concepts, certain characteristics of suffering are identified. We discuss the significance of suffering as an anthropological condition in connection with the mission of medicine to alleviate human suffering. Furthermore, the risks of reproductive treatment and their significance for health are addressed., We conclude that the unfulfilled desire to have children is a form of suffering, and therefore has a normative value. The legitimacy of appropriate somatic intervention can only be established by taking the psycho-existential dimension of suffering into account. Conclusion: In medicine and bioethics, the term “suffering” is not clearly defined from a normative point of view. Nevertheless, suffering due to infertility is the starting point for medical interventions in assisted reproductive medicine. This implies that the unfulfilled desire to have children is a form of suffering, but the validity of this statement has not yet been clarified., Based on descriptions of some common concepts, certain characteristics of suffering are identified. We discuss the significance of suffering as an anthropological condition in connection with the mission of medicine to alleviate human suffering. Furthermore, the risks of reproductive treatment and their significance for health are addressed., We conclude that the unfulfilled desire to have children is a form of suffering, and therefore has a normative value. The legitimacy of appropriate somatic intervention can only be established by taking the psycho-existential dimension of suffering into account."
+					},
+					"LF:",
+					{
+						"note": "orcid:0000-0002-7194-6034 |  Ibrahim Alkatout M.D., PhD, M.A., MaHM"
+					}
+				],
 				"seeAlso": []
 			}
 		]
