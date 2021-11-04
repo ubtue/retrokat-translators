@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsbv",
-	"lastUpdated": "2021-10-27 12:27:11"
+	"lastUpdated": "2021-10-27 12:39:40"
 }
 
 function detectWeb(doc, url) {
@@ -231,7 +231,6 @@ function complementItem(doc, item) {
 	}
 	if (dcType != null) {
 	if (dcType.match(/(Books?(\s+)?Reviews?)|(Review(\s+)?Paper)|(Review(\s+)?Article)/i)) {
-		item.tags.push("Book Review");
 		item.tags.push("Book Review");
 	}
 	}
