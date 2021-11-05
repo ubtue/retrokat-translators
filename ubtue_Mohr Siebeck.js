@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-11-05 08:54:46"
+	"lastUpdated": "2021-11-05 11:55:26"
 }
 
 /*
@@ -72,7 +72,7 @@ function postProcess(doc, item) {
 	if (!item.url) item.url = 'https://doi.org/' + item.DOI;
 	let section = ZU.xpathText(doc, '//div[@itemid="#periodical"]');
 	if (section != null) {
-	if (section.match(/Rubrik:\s+((Einzelbesprechung(en)?)|(Kurzbesprechung(en?))|(Book(s)?(\s+)?Review(s)?)|(Kurzanzeige(n)?)|(Literatur))/)) {
+	if (section.match(/Rubrik:\s+((Einzelbesprechung(en)?)|(Kurzbesprechung(en?))|(Book(s)?(\s+)?Review(s)?)|(Kurzanzeige(n)?)|(Literatur)|(New\s+Books)|(Buchnotizen))/)) {
 		item.tags.push('Book Review');
 	}
 	}
