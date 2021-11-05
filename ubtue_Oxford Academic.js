@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-19 13:48:36"
+	"lastUpdated": "2021-11-05 13:53:42"
 }
 
 /*
@@ -37,7 +37,7 @@
 function detectWeb(doc, url) {
 	if (url.match(/\/issue\/.+\/.+/)) {
 		return "multiple";
-	} else if (url.match(/\/article\/.+\/.+\//)) {
+	} else if (url.match(/\/(advance-)?article\/.+\/.+\//)) {
 		// placeholder, actual type determined by the embedded metadata translator
 		return "journalArticle";
 	}
@@ -63,6 +63,69 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 	translator.setDocument(doc);
 	translator.setHandler("itemDone", function (t, i) {
 		// update abstract from the webpage as the embedded data is often incomplete
+		let authorList = ZU.xpath(doc, '//div[@class="info-card-name"]');
+		let authorNamesListNormalized = [];
+		for (let a of authorList) {
+			a = ZU.trimInternal(a.textContent);
+			a = a.toLowerCase();
+			a = a.replace(/\./g, '').replace(/\s+/g, ' ');
+			authorNamesListNormalized.push(a);
+		}
+		let authorsNotFoundList = [];
+		let authorsNotFound = [];
+		let authorIndex = 0;
+		for (let c of i.creators) {
+			let uninvertedName = c.firstName + ' ' + c.lastName;
+			uninvertedName = uninvertedName.toLowerCase();
+			uninvertedName = uninvertedName.replace(/\./g, '').replace(/\s+/g, ' ');
+			if (!authorNamesListNormalized.includes(uninvertedName)) {
+				authorsNotFoundList.push(uninvertedName);
+				authorsNotFound.push(c);
+			}
+			authorIndex += 1;
+		}
+		let trueAuthorNamesFound = false;
+		if (authorsNotFoundList.length == 2) {
+			Z.debug(authorsNotFoundList);
+			if (authorNamesListNormalized.indexOf(authorsNotFoundList.join(' ')) != -1) {
+				trueAuthorNamesFound = true;
+			}
+			else {
+				authorsNotFoundList.reverse();
+				if (authorNamesListNormalized.indexOf(authorsNotFoundList.join(' ')) != -1) {
+					trueAuthorNamesFound = true;
+				}
+			}
+		}
+		
+		if (trueAuthorNamesFound) {
+			creatorIndex = 0;
+					newCreator = {};
+					creatorsToDelete = [];
+					for (let creator of i.creators) {
+						if (authorsNotFound.includes(creator)) {
+							
+							if (creator.lastName.match(/^.$/)) {
+								creator.lastName += '.';
+							}
+							if (creatorIndex == 1) {
+								newCreator.firstName = creator.firstName + ' ' + creator.lastName;
+								newCreator.creatorType = "author"
+							}
+							else if (creatorIndex == 0) {
+								newCreator.lastName = creator.firstName + ' ' + creator.lastName;
+							}
+							creatorIndex += 1;
+						}
+					}
+			i.creators.push(newCreator);
+		}
+		for (let authorNotFound of authorsNotFound) {
+			let creatorIndex = i.creators.indexOf(authorNotFound);
+			i.creators.splice(creatorIndex, 1);
+		}
+		
+		
 		var abstractText = ZU.xpathText(doc, '//section[@class="abstract"]');
 		if (abstractText) i.abstractNote = abstractText;
 		let section = ZU.xpathText(doc, '//div[(@class="article-metadata-tocSections")]//a');
