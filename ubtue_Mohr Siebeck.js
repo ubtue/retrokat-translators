@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-11-04 17:29:28"
+	"lastUpdated": "2021-11-05 08:54:46"
 }
 
 /*
@@ -69,8 +69,7 @@ function postProcess(doc, item) {
 
 	if (!item.language)
 		item.language = ZU.xpathText(doc, '//meta[@name="language"]/@content');
-	if (!item.url)
-		item.url = 'https://doi.org/' + item.DOI;
+	if (!item.url) item.url = 'https://doi.org/' + item.DOI;
 	let section = ZU.xpathText(doc, '//div[@itemid="#periodical"]');
 	if (section != null) {
 	if (section.match(/Rubrik:\s+((Einzelbesprechung(en)?)|(Kurzbesprechung(en?))|(Book(s)?(\s+)?Review(s)?)|(Kurzanzeige(n)?)|(Literatur))/)) {
@@ -113,6 +112,7 @@ function invokeCoinsTranslator(doc, url) {
 	translator.setTranslator("05d07af9-105a-4572-99f6-a8e231c0daef");
 	translator.setDocument(doc);
 	translator.setHandler("itemDone", function (t, i) {
+		if (!i.url) i.url = url;
 		postProcess(doc, i);
 		i.complete();
 	});
