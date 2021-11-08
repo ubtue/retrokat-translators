@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-11-05 16:25:25"
+	"lastUpdated": "2021-11-08 12:58:17"
 }
 
 /*
@@ -62,10 +62,10 @@ function postProcess(doc, item) {
 	if (subtitle) item.title = item.title + ': ' + subtitle;
 	if (!item.abstractNote)
 		item.abstractNote = ZU.xpathText(doc, '//div[@id="previewShort"]');
-	item.abstractNote = ZU.trimInternal(item.abstractNote);
-	Z.debug(item.abstractNote);
-	Z.debug(item.title);
-	if (item.abstractNote.replace(': ', '. ') == item.title.replace(': ', '. ')) item.abstractNote = "";
+	if (item.abstractNote != null) {
+		item.abstractNote = ZU.trimInternal(item.abstractNote);
+		if (item.abstractNote.replace(': ', '. ') == item.title.replace(': ', '. ')) item.abstractNote = "";
+	}
 	item.tags = ZU.xpath(doc, '//div[@id="productKeywords"]//a').map(i => i.textContent.trim());
 
 	if (item.creators && item.creators.length) item.creators = ZU.xpathText(doc, '//h2[contains(@class, "product-heading-author-block")]').split(",").map(i => ZU.cleanAuthor(i));
