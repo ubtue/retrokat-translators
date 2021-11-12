@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-20 08:30:25"
+	"lastUpdated": "2021-11-12 13:16:49"
 }
 
 /*
@@ -37,6 +37,7 @@
 // attr()/text() v2
 
 var lfDOIs = [];
+var replURLRegExp = /\/doi\/((?:abs|abstract|full|figure|ref|citedby|book)\/)?/;
 
 function attr(docOrElem, selector, attr, index){ var elem=index?docOrElem.querySelectorAll(selector).item(index):docOrElem.querySelector(selector); return elem?elem.getAttribute(attr):null;}function text(docOrElem,selector,index){ var elem=index?docOrElem.querySelectorAll(selector).item(index):docOrElem.querySelector(selector); return elem?elem.textContent:null; }
 
@@ -77,49 +78,108 @@ function doWeb(doc, url) {
 			for (var i in items) {
 				articles.push(i);
 			}
-			ZU.processDocuments(articles, invokeEMTranslator);
+			ZU.processDocuments(articles, scrape);
 		});
 	} else {
-		invokeEMTranslator(doc, url);
+		scrape(doc, url);
 	}
 }
 
-function invokeEMTranslator(doc, url) {
-	var translator = Zotero.loadTranslator('web');
-	translator.setTranslator('951c027d-74ac-47d4-a107-9c3069ab7b48');
-	translator.setDocument(doc);
-	translator.setHandler('itemDone', function (t, i) {
-		var rows = doc.querySelectorAll('.hlFld-Abstract');
-		for (let row of rows) {
-			var abstractsEntry = row.innerText;
-			if (abstractsEntry != undefined) {
-			let abstractsOneTwo = abstractsEntry.split('\n\n');
-		if (i.abstractNote) i.abstractNote = abstractsOneTwo[1];
-		if (abstractsOneTwo[2]) {
-			i.notes.push({
-				note: "abs:" + abstractsOneTwo[2],
-			});
-		}
-		}
-		}
-		let docType = ZU.xpathText(doc, '//meta[@name="dc.Type"]/@content');
-				if (docType === "book-review")
-					item.tags.push("Book Reviews");
-		if (i.reportType === "book-review") i.tags.push('Book Review') && delete i.abstractNote;
-		i.attachments = [];
-		if (lfDOIs.includes(i.DOI)) {
-			i.notes.push('LF:');
-		}
-		else if (ZU.xpathText(doc, '//img[@class="accessIconLocation"]/@src') != null) {
-			if (ZU.xpathText(doc, '//img[@class="accessIconLocation"]/@src').match(/open(\s+)?access/i)) {
-				i.notes.push('LF:');
-				}
-		}
-		i.complete();
-	});
-	translator.translate();
-}
+function scrape(doc, url) {
+	url = url.replace(/[?#].*/, "");
+	var doi = url.match(/10\.[^?#]+/)[0];
+	var citationurl = url.replace(replURLRegExp, "/action/showCitFormats?doi=");
+	var tagentry = ZU.xpathText(doc, '//p[@class="fulltext"]//a[contains(@href, "keyword")| contains(@href, "Keyword=")] | //kwd-group');
+	Z.debug("Citation URL: " + citationurl);
+	ZU.processDocuments(citationurl, function(citationDoc){
+		var filename = citationDoc.evaluate('//form//input[@name="downloadFileName"]', citationDoc, null, XPathResult.ANY_TYPE, null).iterateNext().value;
+		Z.debug("Filename: " + filename);
+		var get = '/action/downloadCitation';
+		var post = 'doi=' + doi + '&downloadFileName=' + filename + '&format=ris&direct=true&include=cit';
+		ZU.doPost(get, post, function (text) {
+			//Z.debug(text);
+			var translator = Zotero.loadTranslator("import");
+			// Calling the RIS translator
+			translator.setTranslator("32d59d2d-b65a-4da4-b0a3-bdd3cfb979e7");
+			translator.setString(text);
+			translator.setHandler("itemDone", function (obj, item) {
+				// The RIS translator mixes up the title's language
+				// Ensure that the title is always in the correct language by grabbing it from the meta tag
+				var metaTitle = doc.querySelector("meta[name='dc.Title']");
+				if (metaTitle && metaTitle.getAttribute("content"))
+					item.title = metaTitle.getAttribute("content")
 
+
+				item.url = url;
+				item.notes = [];
+				if (tagentry){
+				let tags = tagentry.split(/\s*,\s*/)
+					for (let i in tags){
+						item.tags.push(tags[i].replace('Keywords:', '').replace(/.$/, '').replace(/^\w/gi,function(m){return m.toUpperCase();}));
+					}
+				}
+
+				// save the first abstract to the expected field and the others in the notes field for later processing
+				var abstracts = ZU.xpath(doc, '//div[contains(@class, "abstractSection")]/p/span[not(./i)]');
+				if (!abstracts || abstracts.length == 0)
+					abstracts = ZU.xpath(doc, '//div[contains(@class, "abstractSection")]/p');
+
+				if (abstracts) {
+					abstracts = abstracts.map(function(x) { return x.textContent.replace(/\s+/g, " ").trim(); })
+					item.abstractNote = abstracts[0];
+					for (var i = 1; i < abstracts.length; ++i) {
+						if (abstracts[i].length > 250) {
+						item.notes.push({
+							note: "abs:" + abstracts[i],
+						});
+					}
+					}
+				}
+
+				let docType = ZU.xpathText(doc, '//meta[@name="dc.Type"]/@content');
+				if (docType === "book-review") {
+					item.tags.push("Book Reviews");
+					delete i.abstractNote
+				}	
+
+				if (!item.language) {
+					var metaLang = doc.querySelector("meta[name='dc.Language']");
+					if (metaLang && metaLang.getAttribute("content"))
+						item.language = metaLang.getAttribute("content")
+				}
+				if (item.date.match(/\d{4}/)[0] != undefined) item.date = item.date.match(/\d{4}/)[0];
+				item.attachments = [];
+				item.libraryCatalog = url.replace(/^https?:\/\/(?:www\.)?/, '')
+					.replace(/[\/:].*/, '') + " (Atypon)";
+				if (lfDOIs.includes(item.DOI)) {
+					item.notes.push('LF:');
+				}
+				else if (ZU.xpathText(doc, '//img[@class="accessIconLocation"]/@src') != null) {
+					if (ZU.xpathText(doc, '//img[@class="accessIconLocation"]/@src').match(/open(\s+)?access/i)) {
+						item.notes.push('LF:');
+						}
+				}
+				var rows = doc.querySelectorAll('.hlFld-Abstract');
+				for (let row of rows) {
+					var abstractsEntry = row.innerText;
+					if (abstractsEntry != undefined) {
+						if (abstractsEntry.length > 250) {
+							let abstractsOneTwo = abstractsEntry.split('\n\n');
+					if (item.abstractNote) item.abstractNote = abstractsOneTwo[1];
+						if (abstractsOneTwo[2]) {
+							item.notes.push({
+								note: "abs:" + abstractsOneTwo[2],
+							});
+						}
+						}
+					}
+				}
+				item.complete();
+			});
+			translator.translate();
+		});
+	});
+}
 
 /** BEGIN TEST CASES **/
 var testCases = [
