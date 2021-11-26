@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsv",
-	"lastUpdated": "2021-11-26 12:41:27"
+	"lastUpdated": "2021-11-26 13:17:34"
 }
 
 /*
@@ -36,11 +36,9 @@
 
 function detectWeb(doc, url) {
 	if (url.indexOf("/img/") != -1 || url.indexOf("index.php?id=274") != -1 ) {//e.g. http://www.digizeitschriften.de/index.php?id=274&PPN=PPN342672002_0020&DMDID=dmdlog84&L=2
-		var title = ZU.xpathText(doc, '//div[contains(@class, "goobit3-image__title")]');
-		if (title != "Zeitschriftenheft" && title != "Inhaltsverzeichnis" && title != "Impressum" && title != "Titelseite") {
-			return "journalArticle";
-		}
-	} else if ( (url.indexOf("/toc/") != -1 || url.indexOf("index.php?id=272")) && getSearchResults(doc).length>0) {
+		return "journalArticle";
+	} 
+	else if ( (url.indexOf("/toc/") != -1 || url.indexOf("index.php?id=272")) && getSearchResults(doc).length>0) {
 		return "multiple";
 	}
 }
@@ -93,7 +91,14 @@ function scrape(doc, url) {
 			item.publisher = extractField("Verlag", text );
 			item.place = extractField("Erscheinungsort", text );
 			item.ISSN = extractField("ISSN", text );
+			if (url.indexOf("/img/") != -1 || url.indexOf("index.php?id=274") != -1 ) {//e.g. http://www.digizeitschriften.de/index.php?id=274&PPN=PPN342672002_0020&DMDID=dmdlog84&L=2
+				var title = ZU.xpathText(doc, '//div[contains(@class, "goobit3-image__title")]');
+				if (title != "Zeitschriftenheft" && title != "Inhaltsverzeichnis" && title != "Impressum" && title != "Titelseite") {
+					item.itemType = "journalArticle";
+				}
+			}
 			//finalize
+			item.title = ZU.xpathText(doc, '//div[contains(@class, "goobit3-image__title")]');
 			item.libraryCatalog = "DigiZeitschriften";
 			item.url = url;
 			item.tags = [];
