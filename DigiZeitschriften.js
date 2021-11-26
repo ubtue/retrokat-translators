@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsv",
-	"lastUpdated": "2021-10-14 14:16:53"
+	"lastUpdated": "2021-11-26 12:41:27"
 }
 
 /*
@@ -100,11 +100,13 @@ function scrape(doc, url) {
 			delete item.abstractNote;
 			item.attachments = [];
 			item.notes.push('LF:');
+			if (ZU.xpathText(doc, '//span[@class="goobit3-image__struct"]') != null) {
 			if (ZU.xpathText(doc, '//span[@class="goobit3-image__struct"]').match(/Rezension/)) {
 				if (item.title == "") {
 				item.title = 'Rezension';
-				}
+					}
 				item.tags.push('Book Review');
+				}
 			}
 			if (item.title.match(/DigiZeitschriften:\s+/) == null) {
 					item.complete();
@@ -131,6 +133,7 @@ function extractField(fieldName, text) {
 		return false;
 	}
 }
+
 
 
 /** BEGIN TEST CASES **/
