@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-11-26 13:50:09"
+	"lastUpdated": "2021-11-29 10:58:39"
 }
 
 /*
@@ -62,8 +62,9 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 	translator.setTranslator("951c027d-74ac-47d4-a107-9c3069ab7b48");
 	translator.setDocument(doc);
 	translator.setHandler("itemDone", function (t, i) {
+		Z.debug(i.creators);
 		// update abstract from the webpage as the embedded data is often incomplete
-		//if (i.creators.length > 1) {
+		if (i.creators.length > 1) {
 		let authorList = ZU.xpath(doc, '//div[@class="info-card-name"]');
 		let authorNamesListNormalized = [];
 		for (let a of authorList) {
@@ -74,16 +75,17 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 			else a = a.textContent.replace(/\*/g, '');
 			a = ZU.trimInternal(a);
 			a = a.toLowerCase();
-			a = a.replace(/\./g, '').replace(/\s+/g, ' ');
+			a = a.replace(/\./g, ' ').replace(/\s+/g, ' ');
 			authorNamesListNormalized.push(a);
 		}
+		Z.debug(authorNamesListNormalized);
 		let authorsNotFoundList = [];
 		let authorsNotFound = [];
 		let authorIndex = 0;
 		for (let c of i.creators) {
 			let uninvertedName = c.firstName + ' ' + c.lastName;
 			uninvertedName = uninvertedName.toLowerCase();
-			uninvertedName = uninvertedName.replace(/\./g, '').replace(/\s+/g, ' ');
+			uninvertedName = uninvertedName.replace(/\./g, ' ').replace(/\s+/g, ' ');
 			if (!authorNamesListNormalized.includes(uninvertedName)) {
 				authorsNotFoundList.push(uninvertedName);
 				authorsNotFound.push(c);
@@ -93,7 +95,6 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 		Z.debug(authorsNotFoundList);
 		let trueAuthorNamesFound = false;
 		if (authorsNotFoundList.length == 2) {
-			Z.debug(authorsNotFoundList);
 			if (authorNamesListNormalized.indexOf(authorsNotFoundList.join(' ')) != -1) {
 				trueAuthorNamesFound = true;
 			}
@@ -131,7 +132,7 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 			let creatorIndex = i.creators.indexOf(authorNotFound);
 			i.creators.splice(creatorIndex, 1);
 		}
-		//}
+		}
 		
 		var abstractText = ZU.xpathText(doc, '//section[@class="abstract"]');
 		if (abstractText) i.abstractNote = abstractText;
