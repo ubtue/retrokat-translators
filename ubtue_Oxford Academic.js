@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-11-29 12:38:32"
+	"lastUpdated": "2021-11-29 13:38:30"
 }
 
 /*
@@ -75,6 +75,7 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 			else a = a.textContent.replace(/\*/g, '');
 			a = ZU.trimInternal(a);
 			a = a.toLowerCase();
+			a = a.split(',')[0];
 			a = a.replace(/\./g, ' ').replace(/\s+/g, ' ');
 			authorNamesListNormalized.push(a);
 		}
