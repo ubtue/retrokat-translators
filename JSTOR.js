@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-20 08:22:25"
+	"lastUpdated": "2021-12-07 15:29:44"
 }
 
 /*
@@ -170,7 +170,6 @@ function processRIS(text, jid, doc, doi) {
 	// load translator for RIS
 	var translator = Zotero.loadTranslator("import");
 	translator.setTranslator("32d59d2d-b65a-4da4-b0a3-bdd3cfb979e7");
-	//Z.debug(text);
 
 	//Reviews have a RI tag now (official RIS for Reviewed Item)
 	var review = text.match(/^RI\s+-\s+(.+)/m);
@@ -237,7 +236,8 @@ function processRIS(text, jid, doc, doi) {
 			item.title = item.title + ": " + subtitle[1]
 		}
 		// reviews don't have titles in RIS - we get them from the item page
-		if (!item.title && review) {
+		
+		if (review) {
 			item.tags.push('Book Review');
 			var reviewedTitle = review[1];
 			// A2 for reviews is actually the reviewed author
@@ -258,7 +258,7 @@ function processRIS(text, jid, doc, doi) {
 				}
 			}
 			item.creators.splice(1);
-			item.title = '';
+			reviewTitle = '';
 			// remove any reviewed authors from the title
 			for (i = 0; i < reviewedAuthors.length; i++) {
 				let reviewedTitleNew = reviewedTitle.split(reviewedAuthors[i])[0];
@@ -273,17 +273,16 @@ function processRIS(text, jid, doc, doi) {
 				item.tags.push('#reviewed_pub#title::' + reviewedTitleNew + '#name::' + reviewedAuthorString + '#');
 				reviewedAuthorString = reviewedAuthorString.split('::')[0];
 				if (i == 0) {
-					item.title += reviewedAuthorString + ', ' + reviewedTitleNew;
+				reviewTitle += reviewedAuthorString + ', ' + reviewedTitleNew;
 				}
 				else if (i == 1) {
-					item.title += '...'
+					reviewTitle += '...'
 				}
 			}
-			Z.debug(item.title);
-			if (item.title.length == 0) {
-				item.title = reviewedTitle;
+			reviewTitle = "[Rezension von: " + reviewTitle + ']'
+			if (item.title == undefined) {
+				item.title = reviewTitle;
 			}
-			item.title = "[Rezension von: " + item.title + ']'
 		}
 
 		item.url = item.url.replace('http:', 'https:'); // RIS still lists http addresses while JSTOR's stable URLs use https
@@ -302,6 +301,7 @@ function processRIS(text, jid, doc, doi) {
 		trans.doImport();
 	});
 }
+
 
 
 
