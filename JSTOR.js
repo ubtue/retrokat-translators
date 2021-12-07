@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-12-07 15:29:44"
+	"lastUpdated": "2021-12-07 16:02:46"
 }
 
 /*
@@ -261,8 +261,13 @@ function processRIS(text, jid, doc, doi) {
 			reviewTitle = '';
 			// remove any reviewed authors from the title
 			for (i = 0; i < reviewedAuthors.length; i++) {
-				let reviewedTitleNew = reviewedTitle.split(reviewedAuthors[i])[0];
-				reviewedTitleNew = reviewedTitleNew.replace(/(^[;,.\s]+)|([;,.\s]+$)/, '')
+				let reviewedTitleList = reviewedTitle.split(reviewedAuthors[i], 2);
+				if (reviewedTitleList.length > 1) {
+					reviewedTitle = reviewedTitleList[1];
+				}
+				let reviewedTitleNew = reviewedTitleList[0];
+				reviewedTitleNew = reviewedTitleNew.replace(/(^[;,.\s]+)|([;,.\s]+$)/g, '');
+				Z.debug(reviewedTitleNew);
 				reviewedAuthorsByTitle = reviewedAuthors[i].split(', ');
 				reviewedAuthorString = '';
 				for (n = 0; n < reviewedAuthorsByTitle.length; n++) {
