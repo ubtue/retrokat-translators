@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-12-07 16:02:46"
+	"lastUpdated": "2021-12-14 09:51:21"
 }
 
 /*
@@ -283,6 +283,9 @@ function processRIS(text, jid, doc, doi) {
 				else if (i == 1) {
 					reviewTitle += '...'
 				}
+			}
+			if (reviewedAuthors.length == 0) {
+				reviewTitle = reviewedTitle;
 			}
 			reviewTitle = "[Rezension von: " + reviewTitle + ']'
 			if (item.title == undefined) {
