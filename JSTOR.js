@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-12-14 09:51:21"
+	"lastUpdated": "2021-12-14 10:32:44"
 }
 
 /*
@@ -292,7 +292,7 @@ function processRIS(text, jid, doc, doi) {
 				item.title = reviewTitle;
 			}
 		}
-
+		item.DOI = "10.2307/42570735";
 		item.url = item.url.replace('http:', 'https:'); // RIS still lists http addresses while JSTOR's stable URLs use https
 		if (item.url && !item.url.startsWith("http")) item.url = "https://" + item.url;
 		if (ZU.xpathText(doc, '//script[@data-analytics-provider="ga"]') != undefined) {
