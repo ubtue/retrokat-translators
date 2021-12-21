@@ -121,8 +121,9 @@ function scrape(doc, url) {
 		let orcid_tags = ZU.xpath(doc, '//a[@class="app-link contributor-type__contributor__orcid app-link__icon app-link--"]');
 		for (let o in orcid_tags) {
 			let orcid = orcid_tags[o].href;
-			if (orcid != null) 
-				//orcid = orcid.replace("https://orcid.org/", "");
+			if (orcid != null) {
+				let author = ZU.xpathText(orcid_tags[o], './/@data-test-orcid');
+				orcid = orcid.replace(/https?\/\/www.orcid.org\//, "");
 				item.notes.push({note: "orcid:" + orcid + ' | ' + author});
 			}
 			
