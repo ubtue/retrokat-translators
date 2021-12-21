@@ -122,7 +122,6 @@ function scrape(doc, url) {
 		for (let o in orcid_tags) {
 			let orcid = orcid_tags[o].href;
 			if (orcid != null) {
-				Z.debug(orcid_tags[o]);
 				let author = ZU.xpathText(orcid_tags[o], './/@data-test-orcid');
 				item.notes.push({note: "orcid:" + orcid + ' | ' + author});
 			}
