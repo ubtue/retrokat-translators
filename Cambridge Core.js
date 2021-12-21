@@ -123,7 +123,7 @@ function scrape(doc, url) {
 			let orcid = orcid_tags[o].href;
 			if (orcid != null) {
 				let author = ZU.xpathText(orcid_tags[o], './/@data-test-orcid');
-				orcid = orcid.replace(/https?\/\/(www.)?orcid.org\//, "");
+				orcid = orcid.replace("https://orcid.org/", "");
 				item.notes.push({note: "orcid:" + orcid + ' | ' + author});
 			}
 			
