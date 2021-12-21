@@ -122,7 +122,7 @@ function scrape(doc, url) {
 		for (let o in orcid_tags) {
 			let orcid = orcid_tags[o].href;
 			if (orcid != null) 
-				orcid = orcid.replace(/https://orcid.org/", "");
+				orcid = orcid.replace(/https?:\/\/orcid.org\//, "");
 				item.notes.push({note: "orcid:" + orcid + ' | ' + author});
 			}
 			
