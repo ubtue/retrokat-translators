@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-19 14:58:44"
+	"lastUpdated": "2021-12-30 10:43:41"
 }
 
 /*
@@ -108,7 +108,7 @@ function scrape(doc, url) {
 		addOpenAccessTag(doc, item);
 		let tags_found = ZU.xpath(doc, '//dd[@class="col content"]');
 			for (let tag in tags_found) {
-				if (tags_found[tag].textContent.match(/(^Book Review)|(^Reviews?)|(^Review Article)|(^Short(er)? Not(ic)?es?)|(Book(s)?\s+Note(s)?)/i) !== null) {
+				if (tags_found[tag].textContent.match(/(^Books?(\s+|-)Reviews?)|(^Reviews?)|(^Review Article)|(^Short(er)? Not(ic)?es?)|(Book(s)?\s+Note(s)?)/i) !== null) {
 				item.tags.push('Book Review');
 			}
 			}
@@ -138,6 +138,7 @@ function scrape(doc, url) {
 		trans.doWeb(doc, url);
 	});
 }
+
 
 
 
