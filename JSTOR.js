@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-12-14 10:34:43"
+	"lastUpdated": "2022-01-05 09:28:07"
 }
 
 /*
@@ -71,16 +71,10 @@ function getSearchResults(doc, checkOnly) {
 		let link = ZU.xpath(node, './/a[@data-qa="content title"]');
 		let title = link[0].textContent.trim();
 		let href = link[0].href;
-		// need to copy the DOI from the main list as the DOI metadata in the target page will not
-		// be a part of the DOM after it's fetched with a GET request (it's lazy-loaded with Javascript)
-		let doi = ZU.xpathText(node, './/div[@class="doi"]');
-		if (doi)
-			doi = doi.replace(/DOI:/, "").trim();
-
 		if (!href || !title) continue;
 		if (checkOnly) return true;
 		found = true;
-		items[href] = [title, doi];
+		items[href] = title;
 	}
 	return found ? items : false;
 }
@@ -99,7 +93,6 @@ function getJID(url) {
 			if (jid.substr(-4) == ".pdf") {
 				jid = jid.substr(0, jid.length - 4);
 			}
-			Zotero.debug("Converting JID " + jid + " to JSTOR DOI");
 			jid = '10.2307/' + jid;
 		}
 		return jid;
@@ -147,12 +140,11 @@ function scrapeSinglePage(doc, url) {
 function scrapeMultiplePages(urlsAndDois) {
 	for (let i in urlsAndDois) {
 		let urlToFetch = urlsAndDois[i][0];
-		let doi = urlsAndDois[i][1];
 
 		ZU.processDocuments([urlToFetch], function(doc, url) {
 			let jid = getJID(url);
 			ZU.doGet(risURL + jid, function(text, obj, url) {
-				processRIS(text, jid, doc, doi);
+				processRIS(text, jid, doc);
 			});
 		});
 	}
@@ -166,17 +158,17 @@ function convertCharRefs(string) {
 		});
 }
 
-function processRIS(text, jid, doc, doi) {
+function processRIS(text, jid, doc) {
 	// load translator for RIS
 	var translator = Zotero.loadTranslator("import");
 	translator.setTranslator("32d59d2d-b65a-4da4-b0a3-bdd3cfb979e7");
-
 	//Reviews have a RI tag now (official RIS for Reviewed Item)
 	var review = text.match(/^RI\s+-\s+(.+)/m);
 	// sometimes we have subtitles stored in T1. These are part of the title, we want to add them later
 	var subtitle = text.match(/^T1\s+-\s+(.+)/m);
 	translator.setString(text);
 	translator.setHandler("itemDone", function (obj, item) {
+		Z.debug(item);
 		// author names are not (always) supplied as lastName, firstName in RIS
 		// we fix it here (note sure if still need with new RIS)
 
@@ -219,17 +211,12 @@ function processRIS(text, jid, doc, doi) {
 			item.ISSN = ZU.cleanISSN(item.ISSN);
 		}
 		
-		item.DOI = jid;
 		if (!item.DOI) {
-		if (doi)
-			item.DOI = doi;
-		else {
 			item.DOI = ZU.xpathText(doc, '//div[contains(@class,"doi")]');
 			if (item.DOI)
 				item.DOI = item.DOI.replace(/DOI\:\s+/, "");
 		}
-		}
-		item.DOI = item.DOI.split('#')[0]
+		if (item.DOI != null) item.DOI = item.DOI.split('#')[0];
 		item.tags = ZU.xpath(doc, '//div[contains(@class,"topics-list")]//a').map(function(x) { return x.textContent.trim(); })
 
 		if (subtitle){
@@ -292,7 +279,6 @@ function processRIS(text, jid, doc, doi) {
 				item.title = reviewTitle;
 			}
 		}
-		item.DOI = "";
 		item.url = item.url.replace('http:', 'https:'); // RIS still lists http addresses while JSTOR's stable URLs use https
 		if (item.url && !item.url.startsWith("http")) item.url = "https://" + item.url;
 		if (ZU.xpathText(doc, '//script[@data-analytics-provider="ga"]') != undefined) {
