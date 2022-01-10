@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-01-05 09:28:07"
+	"lastUpdated": "2022-01-10 14:35:01"
 }
 
 /*
@@ -168,7 +168,6 @@ function processRIS(text, jid, doc) {
 	var subtitle = text.match(/^T1\s+-\s+(.+)/m);
 	translator.setString(text);
 	translator.setHandler("itemDone", function (obj, item) {
-		Z.debug(item);
 		// author names are not (always) supplied as lastName, firstName in RIS
 		// we fix it here (note sure if still need with new RIS)
 
@@ -223,8 +222,8 @@ function processRIS(text, jid, doc) {
 			item.title = item.title + ": " + subtitle[1]
 		}
 		// reviews don't have titles in RIS - we get them from the item page
-		
 		if (review) {
+			let newCreators = [];
 			item.tags.push('Book Review');
 			var reviewedTitle = review[1];
 			// A2 for reviews is actually the reviewed author
@@ -243,18 +242,21 @@ function processRIS(text, jid, doc) {
 					item.creators[i].creatorType = "reviewedAuthor";
 					reviewedAuthorNum += 1;
 				}
+				else if (item.creators[i].creatorType == "author") {
+					newCreators.push(item.creators[i]);
+				}
 			}
-			item.creators.splice(1);
+			item.creators = newCreators;
 			reviewTitle = '';
 			// remove any reviewed authors from the title
 			for (i = 0; i < reviewedAuthors.length; i++) {
+				reviewedAuthors[i] = reviewedAuthors[i].replace('undefined ', "");
 				let reviewedTitleList = reviewedTitle.split(reviewedAuthors[i], 2);
 				if (reviewedTitleList.length > 1) {
 					reviewedTitle = reviewedTitleList[1];
 				}
 				let reviewedTitleNew = reviewedTitleList[0];
 				reviewedTitleNew = reviewedTitleNew.replace(/(^[;,.\s]+)|([;,.\s]+$)/g, '');
-				Z.debug(reviewedTitleNew);
 				reviewedAuthorsByTitle = reviewedAuthors[i].split(', ');
 				reviewedAuthorString = '';
 				for (n = 0; n < reviewedAuthorsByTitle.length; n++) {
