@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsv",
-	"lastUpdated": "2021-11-26 13:17:34"
+	"lastUpdated": "2022-02-15 15:48:31"
 }
 
 /*
@@ -78,6 +78,9 @@ function scrape(doc, url) {
 	translator.setTranslator('951c027d-74ac-47d4-a107-9c3069ab7b48');
 
 	translator.setHandler('itemDone', function (obj, item) {
+		if (ZU.xpathText(doc, '//meta[@name="citation_author"]') == null) {
+			item.creators = [];
+		}
 		var metadataUrl = ZU.xpathText(doc, '//ul[contains(@class, "subnav")]/li[2]/a/@href');
 		//fix relative urls which don't start with a backslash
 		if (metadataUrl.indexOf('http') != 0 && metadataUrl[0] != "/") {
@@ -93,14 +96,23 @@ function scrape(doc, url) {
 			item.ISSN = extractField("ISSN", text );
 			if (url.indexOf("/img/") != -1 || url.indexOf("index.php?id=274") != -1 ) {//e.g. http://www.digizeitschriften.de/index.php?id=274&PPN=PPN342672002_0020&DMDID=dmdlog84&L=2
 				var title = ZU.xpathText(doc, '//div[contains(@class, "goobit3-image__title")]');
-				if (title != "Zeitschriftenheft" && title != "Inhaltsverzeichnis" && title != "Impressum" && title != "Titelseite") {
-					item.itemType = "journalArticle";
-				}
+				item.itemType = "journalArticle";
 			}
 			//finalize
 			item.title = ZU.xpathText(doc, '//div[contains(@class, "goobit3-image__title")]');
 			item.libraryCatalog = "DigiZeitschriften";
 			item.url = url;
+			if (item.volume == undefined) {
+				if (item.url.match("_.+?%7Clog") != null) {
+					let volume = item.url.match("_(.+)?%7Clog")[1];
+					item.volume = volume.replace(/^0*/, "");
+				}
+			}
+			if (item.date == undefined) {
+				if (ZU.xpathText(doc, '//a[contains(., "Zeitschriftenband")]') != null) {
+				item.date = ZU.xpathText(doc, '//a[contains(., "Zeitschriftenband")]').match(/\d{4}/)[0];
+			}
+			}
 			item.tags = [];
 			delete item.abstractNote;
 			item.attachments = [];
@@ -114,7 +126,9 @@ function scrape(doc, url) {
 				}
 			}
 			if (item.title.match(/DigiZeitschriften:\s+/) == null) {
+				if (title != "Zeitschriftenheft") {
 					item.complete();
+				}
 			}
 		});
 		
@@ -138,6 +152,7 @@ function extractField(fieldName, text) {
 		return false;
 	}
 }
+
 
 
 
