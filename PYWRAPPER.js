@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-01-26 15:53:56"
+	"lastUpdated": "2022-02-17 08:35:32"
 }
 
 /*
@@ -64,6 +64,9 @@ function scrape(doc, url) {
 	translator.setTranslator("9cb70025-a888-4a29-a210-93ec52da40d4");
 	translator.setString(bibtexText);
 	translator.setHandler("itemDone", function (obj, item) {
+		for (let note of item.notes) {
+			note['note'] = note['note'].replace(/<\/?.+?>/g, '');
+		}
 		item.complete();
 	});
 	translator.translate();
