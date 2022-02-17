@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2020-12-02 14:09:15"
+	"lastUpdated": "2022-02-17 10:02:38"
 }
 
 /*
@@ -136,7 +136,37 @@ function scrape(doc, url) {
 				}
 			}
 		}
-
+		if (item.volume == undefined) {
+			item.volume = item.issue;
+			item.issue = "";
+		}
+		item.tags = [];
+		if (ZU.xpathText(doc, '//div[@class="resenas"]') != null) item.tags.push('Book Review');
+		let reviewTags = ZU.xpath(doc, '//div[@class="resenas"]//li[@class="primerHijo"]');
+		for (let reviewTag of reviewTags) {
+			Z.debug(reviewTag.innerHTML);
+			let reviewed_title = ZU.xpathText(reviewTag, './/p[@class="titulo"]');
+			let namesString = '';
+			let names = ZU.xpathText(reviewTag, './/p[@class="autores"]');
+			if (names != null) {
+			for (let name of names.split(/,\s*/)) {
+				let author = ZU.cleanAuthor(name, 'author');
+				let reviewed_author_given = author.firstName;
+				let reviewed_author_surname = author.lastName;
+				namesString += '::' + reviewed_author_surname + ', ' +  reviewed_author_given;
+				}
+			}
+			let publishing_information = ZU.xpathText(reviewTag, './/p[@class="localizacion"]').match(/(.+?)\s+:\s+(.+?),\s+(\d{4})/);
+			if (publishing_information != null) {
+				Z.debug(publishing_information);
+				Z.debug(publishing_information[3]);
+			var reviewed_year = publishing_information[3];
+			var reviewed_publisher = publishing_information[2];
+			var reviewed_place = publishing_information[1];
+			}
+			item.tags.push('#reviewed_pub#title::' + reviewed_title + '#name' + namesString + '#year::' + reviewed_year + '#publisher::' + reviewed_publisher + '#place::' + reviewed_place + '#');
+			
+		}
 		// get alternate titles and abstracts
 		var alternateTitle = ZU.xpathText(doc, '//strong[@class="concepto" and text()="Títulos paralelos:"]/../ul/li');
 		if (alternateTitle)
@@ -177,6 +207,7 @@ function scrape(doc, url) {
 		trans.doWeb(doc, url);
 	});
 }
+
 /** BEGIN TEST CASES **/
 var testCases = [
 	{
