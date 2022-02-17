@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-02-16 09:42:34"
+	"lastUpdated": "2022-02-16 13:21:10"
 }
 
 /*
@@ -75,10 +75,13 @@ function getSearchResults(doc, url, checkOnly) {
 		}
 	}
 	let articleNum = 0;
-	for (let articleTag of ZU.xpath(doc, '//p[@class="pub-header w3-padding w3-dark-grey w3-hover-light-gray w3-block w3-left-align"]')) {
-		items[url + "===" + articleNum] = articleTag.textContent;
+	for (let articleTag of ZU.xpath(doc, '//div[p[@class="pub-header w3-padding w3-dark-grey w3-hover-light-gray w3-block w3-left-align"]]')) {
+		if (ZU.xpathText(articleTag, './/div[@class="w3-hide"]/@id') != null) {
+			items[url + "&publication=" + ZU.xpathText(articleTag, './/div[@class="w3-hide"]/@id')] = articleTag.textContent;
+		}
+		else items[url + "===" + articleNum] = articleTag.textContent;
 		found = true;
-		articleInfo[url + "===" + articleNum] = articleTag.innerHTML;
+		articleInfo[url + "&publication=" + ZU.xpathText(articleTag, './/div[@class="w3-hide"]/@id')] = articleTag.innerHTML;
 		articleNum += 1;
 	}
 	return found ? items : false;
@@ -100,32 +103,39 @@ function doWeb(doc, url) {
 function scrape(doc, url) {
 	article = articleInfo[url];
 	let item = new Zotero.Item("journalArticle");
-	Z.debug(article);
-		let articleTitle = article.match(/<u>(.+?)<\/u>/);
-		if (articleTitle != null) {
-			item.title = articleTitle[1].replace(/<\/?.+?>/g, '');
+	let articleTitle = article.match(/<u>(.+?)<\/u>/);
+	if (articleTitle != null) {
+		item.title = articleTitle[1].replace(/<\/?.+?>/g, '');
+	}
+	let articleCreators = article.match(/<span class="text-uppercase font-weight-light">(.+?)<\/span>/);
+	if (articleCreators != null) {
+		for (let articleCreator of articleCreators[1].split(", ")) {
+			let newCreator = articleCreator.match(/^(.+)\s+\((.+?)\)/);
+			if (newCreator != null) {
+				let firstName = newCreator[2];
+				let lastName = newCreator[1];
+				item.creators.push({"firstName": firstName, "lastName": lastName, "creatorType": "author"});
 		}
-		let articleCreators = article.match(/<span class="text-uppercase font-weight-light">(.+?)<\/span>/);
-		if (articleCreators != null) {
-			for (let articleCreator of articleCreators[1].split(", ")) {
-				let newCreator = articleCreator.match(/^(.+)\s+\((.+?)\)/);
-				if (newCreator != null) {
-					let firstName = newCreator[2];
-					let lastName = newCreator[1];
-					item.creators.push({"firstName": firstName, "lastName": lastName, "creatorType": "author"});
-			}
-			}
 		}
-		let pagination = article.match(/p.\s?(\d+(?:-\d+)?)/);
-			if (pagination != null) {
-				item["pages"] = pagination[1];
+	}
+	let pagination = article.match(/p.\s?(\d+(?:-\d+)?)/);
+		if (pagination != null) {
+			item["pages"] = pagination[1];
+	}
+	item.url = url.replace(/===\d+$/, "");
+	item.issue = issue;
+	item.volume = volume;
+	item.date = year;
+	item.ISSN = issn;
+	if (article.match(/<p class="cr-resume">(.+?)<\/p>/g) != null) {
+		abstractNum = 0;
+		for (let abstract of article.match(/<p class="cr-resume">(.+?)<\/p>/g)) {
+			if (abstractNum == 0) item.abstractNote = abstract.match(/<p class="cr-resume">(.+?)<\/p>/)[1];
+			else item.notes.push({'note': 'abs:' + abstract.match(/<p class="cr-resume">(.+?)<\/p>/)[1]});
+			abstractNum += 1;
 		}
-		item.url = url.replace(/===\d+$/, "");
-		item.issue = issue;
-		item.volume = volume;
-		item.date = year;
-		item.ISSN = issn;
-		item.complete();
+	}
+	item.complete();
 }
 
 
