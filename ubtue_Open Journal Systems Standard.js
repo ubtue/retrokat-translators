@@ -6,10 +6,10 @@
 	"minVersion": "3.0",
 	"maxVersion": "",
 	"priority": 150,
-	"inRepository": false,
+	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-04-20 14:20:53"
+	"lastUpdated": "2022-02-28 16:21:20"
 }
 
 /*
@@ -33,6 +33,7 @@ function detectWeb(doc, url) {
 	if (!(ZU.xpathText(doc, '//a[@id="developedBy"]/@href') == 'http://pkp.sfu.ca/ojs/' ||
 		  pkpLibraries.length >= 1))
 		return false;
+	if (url.match(/\/issue\//) && getSearchResults(doc)) return "multiple";
 	else if (url.match(/article/)) return "journalArticle";
 	else return false;
 }
@@ -40,7 +41,7 @@ function detectWeb(doc, url) {
 function getSearchResults(doc) {
 	var items = {};
 	var found = false;
-	var rows = ZU.xpath(doc, '//*[contains(concat( " ", @class, " " ), concat( " ", "media-heading", " " ))]//a | //*[contains(concat( " ", @class, " " ), concat( " ", "title", " " ))]//a | //a[contains(@href, "/article/view/") and not(contains(@href, "/pdf"))]');
+	var rows = ZU.xpath(doc, '//*[contains(concat( " ", @class, " " ), concat( " ", "media-heading", " " ))]//a | //*[contains(concat( " ", @class, " " ), concat( " ", "title", " " ))]//a | //a[contains(@href, "/article/view/") and not(contains(@href, "/pdf")) and not(contains(., "PDF"))  and not(contains(., "HTML"))]');
 	for (let row of rows) {
 		let href = row.href;
 		let title = ZU.trimInternal(row.textContent);
@@ -63,19 +64,127 @@ function splitDotSeparatedKeywords(item) {
 }
 
 
-function getOrcids(doc) {
+function getOrcids(doc, ISSN) {
 	let authorSections = ZU.xpath(doc, '//ul[@class="authors-string"]/li');
+	let notes = [];
+	
+	// e.g. https://www.koersjournal.org.za/index.php/koers/article/view/2472
 	for (let authorSection of authorSections) {
-		//Z.debug(authorSection);
-		let authorLink = ZU.xpath(authorSection, '//a[@class="author-string-href"]/span');
-		let orcidLink = ZU.xpath(authorSection, '//a[starts-with(@href, "https://orcid.org")]/@href');
-		if (authorLink && authorLink[0] && orcidLink && orcidLink[0]) {
-			let author = authorLink[0].innerText;
-			let orcid = orcidLink[0].value.match(/\d+-\d+-\d+-\d+x?/i);
-			return {note: "orcid:" + orcid + '|' + author};
+		let authorLink = authorSection.querySelector('a.author-string-href span');
+		let orcidLink = authorSection.querySelector('[href*="https://orcid.org"]');
+		if (authorLink && orcidLink) {
+			let author = authorLink.innerText;
+			let orcid = orcidLink.textContent.match(/\d+-\d+-\d+-\d+x?/i);
+			if (!orcid)
+				continue;
+			notes.push({note: "orcid:" + orcid + ' | ' + author});
 		}
 	}
-	return null;
+	if (notes.length) return notes;
+	
+	
+	// e.g. https://www.sanisidoro.net/publicaciones/index.php/isidorianum/article/view/147
+	authorSections = ZU.xpath(doc, '//ul[contains(@class, "authors")]/li');
+	for (let authorSection of authorSections) {
+		let authorSpans = authorSection.querySelector('span[class="name"]');
+		let orcidSpans = authorSection.querySelector('span[class="orcid"]');
+		if (authorSpans && orcidSpans) {
+		   let author = authorSpans.innerText.trim();
+		   let orcidAnchor =  orcidSpans.querySelector('a');
+		   if (!orcidAnchor)
+			   continue;
+		   let orcidUrl = orcidAnchor.href;
+		   if (!orcidUrl)
+			   continue;
+		   let orcid = orcidUrl.match(/\d+-\d+-\d+-\d+x?/i);
+		   if (!orcid)
+			   continue;
+		   notes.push( {note: "orcid:" + orcid + ' | ' + author});
+		}
+	}
+	if (notes.length) return notes;
+  	
+  	 // e.g. https://jeac.de/ojs/index.php/jeac/article/view/844
+  	 // e.g. https://jebs.eu/ojs/index.php/jebs/article/view/336
+  	 // e.g. https://bildungsforschung.org/ojs/index.php/beabs/article/view/783
+  	 if (['2627-6062', "1804-6444", "2748-6419"].includes(ISSN)) {
+  	 	let orcidAuthorEntryCaseA = doc.querySelectorAll('.authors');
+  	 	if (orcidAuthorEntryCaseA) {
+  		for (let a of orcidAuthorEntryCaseA) {
+  			let name_to_orcid = {};
+  			let tgs = ZU.xpath(a, './/*[self::strong or self::a]');
+  			let tg_nr = 0;
+  			for (let t of tgs) {
+  				if (t.textContent.match(/orcid/) != null) {
+  					name_to_orcid[tgs[tg_nr -1].textContent] = t.textContent.trim();
+  					let author = ZU.unescapeHTML(ZU.trimInternal(tgs[tg_nr -1].textContent)).trim();
+  					let orcid = ZU.unescapeHTML(ZU.trimInternal(t.textContent)).trim();
+  					notes.push({note: orcid.replace(/https?:\/\/orcid.org\//g, 'orcid:') + ' | ' + author});
+  				}
+  				tg_nr += 1;
+  			}
+  		}
+  	 }
+  	 }
+  		 
+	if (notes.length) return notes;
+	
+	//e.g. https://ote-journal.otwsa-otssa.org.za/index.php/journal/article/view/433
+  	let orcidAuthorEntryCaseB = doc.querySelectorAll('.authors-string');//Z.debug(orcidAuthorEntryCaseC)
+  	if (orcidAuthorEntryCaseB) {
+  	 	for (let c of orcidAuthorEntryCaseB) {
+  			if (c && c.innerHTML.match(/\d+-\d+-\d+-\d+x?/gi)) {
+  				let orcid = ZU.xpathText(c, './/a[@class="orcidImage"]/@href', '');
+  				let author = ZU.xpathText(c, './/span', '');
+  				if (orcid != null && author != null) {
+  					author = ZU.unescapeHTML(ZU.trimInternal(author)).trim();
+  					orcid = ZU.unescapeHTML(ZU.trimInternal(orcid)).trim();
+  					notes.push({note: orcid.replace(/https?:\/\/orcid.org\//g, 'orcid:') + ' | ' + author});
+  				}
+  			}
+  		}
+  	}
+  	
+  	if (notes.length) return notes;
+  	
+	//e.g. https://missionalia.journals.ac.za/pub/article/view/422
+	let orcidAuthorEntryCaseC = doc.querySelectorAll('.authorBio');//Z.debug(orcidAuthorEntryCaseC)
+  	if (orcidAuthorEntryCaseC) {
+  	 	for (let c of orcidAuthorEntryCaseC) {
+  			if (c && c.innerHTML.match(/\d+-\d+-\d+-\d+x?/gi)) {
+  				let orcid = ZU.xpathText(c, './/a[@class="orcid"]/@href', '');
+  				let author = ZU.xpathText(c, './/em', '');
+  				if (orcid != null && author != null) {
+  					author = ZU.unescapeHTML(ZU.trimInternal(author)).trim();
+  					orcid = ZU.unescapeHTML(ZU.trimInternal(orcid)).trim();
+  					notes.push({note: orcid.replace(/https?:\/\/orcid.org\//g, 'orcid:') + ' | ' + author});
+  				}
+  			}
+  		}
+  	}
+	
+	// kein Beispiel gefunden
+  	/*if (orcidAuthorEntryCaseC) {
+  		for (let c of orcidAuthorEntryCaseC) {
+  			if (c && c.innerText.match(/\d+-\d+-\d+-\d+x?/gi)) {
+  				let author = c.innerText;//Z.debug(author  + '   CCC')
+  				notes.push({note: ZU.unescapeHTML(ZU.trimInternal(author)).replace(/https?:\/\/orcid\.org\//g, ' | orcid:')});
+  			}
+  		}
+  	}*/
+  	
+  	// kein Beispiel gefunden
+	/*let orcidAuthorEntryCaseD = ZU.xpath(doc, '//div[@id="authors"]');
+	if (orcidAuthorEntryCaseD.length != 0) {
+		for (let o of ZU.xpath(orcidAuthorEntryCaseD[0], './/div[@class="card-body"]')) {
+			if (ZU.xpathText(o, './/a[contains(@href, "orcid")]') != null) {
+				let orcid = ZU.trimInternal(ZU.xpathText(o, './/a[contains(@href, "orcid")]'));
+				let author = ZU.trimInternal(o.innerHTML.split('&nbsp;')[0]);
+				notes.push({note: author + ' | orcid:' + orcid.replace(/https?:\/\/orcid\.org\//g, '')});
+			}
+		}
+	}*/
+	return notes;
 }
 
 
@@ -101,7 +210,7 @@ function invokeEMTranslator(doc) {
 		}
 		if (i.ISSN == '2413-3108') {
 			// Fix erroneous firstpage in embedded metadata with issue prefix
-		    i.pages  = i.pages.replace(/(?:\d+\/)?(\d+-\d+)/, "$1");
+			i.pages  = i.pages.replace(/(?:\d+\/)?(\d+-\d+)/, "$1");
 		}
 		if (i.issue === "0") delete i.issue;
 		if (i.abstractNote && i.abstractNote.match(/No abstract available/)) delete i.abstractNote;
@@ -122,6 +231,19 @@ function invokeEMTranslator(doc) {
 				}
 			} else i.date = '';
 		}
+		i.title = i.title.replace(/(<\/?[^>]+>)|(&nbsp;)/g, '');
+		for (let abstract of ZU.xpath(doc, '//meta[@name="DC.Description"]/@content')) {
+			abstract = abstract.textContent.replace(/(<\/?[^>]+>)|(&nbsp;)/g, '');
+			if (i.abstractNote != abstract && abstract != "") {
+				i.notes.push({note: "abs:" + abstract});
+			}
+		}
+		if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content') != null) {
+			if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content').match("^Comptes rendus") != null) {
+				i.tags.push("Book Review");
+			}
+		}
+	
 		i.complete();
 	});
 	translator.translate();
@@ -143,6 +265,7 @@ function doWeb(doc, url) {
 		invokeEMTranslator(doc, url);
 	}
 }
+
 
 /** BEGIN TEST CASES **/
 var testCases = [
