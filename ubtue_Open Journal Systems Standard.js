@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-02-28 16:21:20"
+	"lastUpdated": "2022-03-01 11:45:55"
 }
 
 /*
@@ -216,7 +216,7 @@ function invokeEMTranslator(doc) {
 		if (i.abstractNote && i.abstractNote.match(/No abstract available/)) delete i.abstractNote;
 		let orcids = getOrcids(doc);
 		if (orcids)
-			i.notes.push(orcids);
+			i.notes.push(...orcids);
 		i.tags = splitDotSeparatedKeywords(i);
 		i.title = joinTitleAndSubtitle(doc, i);
 		// some journal assigns the volume to the date
@@ -243,7 +243,7 @@ function invokeEMTranslator(doc) {
 				i.tags.push("Book Review");
 			}
 		}
-	
+		i.attachments = [];
 		i.complete();
 	});
 	translator.translate();
