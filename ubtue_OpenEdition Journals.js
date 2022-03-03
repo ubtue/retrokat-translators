@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-03 14:37:32"
+	"lastUpdated": "2022-03-03 14:44:54"
 }
 
 /*
@@ -84,6 +84,12 @@ function scrape(doc, url) {
 							item.tags.push("#reviewed_pub#isbn∷" + isbn[1] + "#");
 						}
 					}
+				}
+			}
+			if (ZU.xpathText(doc, '//div[@id="doi"]') != null) {
+				if (ZU.xpathText(doc, '//div[@id="doi"]').match(/doi\.org\/(.+)/) != null) {
+					item.DOI = ZU.xpathText(doc, '//div[@id="doi"]').match(/doi\.org\/(.+)/)[1];
+					
 				}
 			}
 			// editor and translator declarations not part of DC spec
