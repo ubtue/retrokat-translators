@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsv",
-	"lastUpdated": "2022-03-07 07:55:24"
+	"lastUpdated": "2022-03-07 08:17:12"
 }
 
 /*
@@ -105,7 +105,6 @@ function scrape(doc, url) {
 			if (item.volume == undefined) {
 				if (item.url.match("_.+?%7Clog") != null) {
 					let volume = item.url.match("_([^_]+)%7Clog");
-					Z.debug(volume);
 					item.volume = volume[1].replace(/^0*/, "");
 				}
 			}
@@ -125,6 +124,18 @@ function scrape(doc, url) {
 					}
 				item.tags.push('Book Review');
 				}
+			}
+			
+			if (item.pages == undefined) {
+				if (ZU.xpathText(doc, '//span[contains(@class,"goobit3-image__struct")][3]') != null) {
+					let span = ZU.xpathText(doc, '//span[contains(@class,"goobit3-image__struct")][3]');
+					if (span.match(/\d+\s*-\s*\d+/) != null) {
+						item.pages = span.match(/\d+\s*-\s*\d+/)[0].replace(/\s+/g, "");
+					}
+				}
+					
+				
+				
 			}
 			if (item.title.match(/DigiZeitschriften:\s+/) == null) {
 				if (title != "Zeitschriftenheft") {
