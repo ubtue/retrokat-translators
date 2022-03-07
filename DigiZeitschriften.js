@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsv",
-	"lastUpdated": "2022-02-15 15:48:31"
+	"lastUpdated": "2022-03-07 07:55:24"
 }
 
 /*
@@ -104,8 +104,9 @@ function scrape(doc, url) {
 			item.url = url;
 			if (item.volume == undefined) {
 				if (item.url.match("_.+?%7Clog") != null) {
-					let volume = item.url.match("_(.+)?%7Clog")[1];
-					item.volume = volume.replace(/^0*/, "");
+					let volume = item.url.match("_([^_]+)%7Clog");
+					Z.debug(volume);
+					item.volume = volume[1].replace(/^0*/, "");
 				}
 			}
 			if (item.date == undefined) {
@@ -152,6 +153,7 @@ function extractField(fieldName, text) {
 		return false;
 	}
 }
+
 
 
 
