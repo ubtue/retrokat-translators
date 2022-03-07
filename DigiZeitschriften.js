@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsv",
-	"lastUpdated": "2022-03-07 08:17:12"
+	"lastUpdated": "2022-03-07 08:28:46"
 }
 
 /*
@@ -133,10 +133,17 @@ function scrape(doc, url) {
 						item.pages = span.match(/\d+\s*-\s*\d+/)[0].replace(/\s+/g, "");
 					}
 				}
-					
-				
-				
 			}
+			
+			if (item.pages == undefined) {
+				if (ZU.xpathText(doc, '//span[contains(@class,"goobit3-image__struct")][5]') != null) {
+					let span = ZU.xpathText(doc, '//span[contains(@class,"goobit3-image__struct")][5]');
+					if (span.match(/\d+\s*-\s*\d+/) != null) {
+						item.pages = span.match(/\d+\s*-\s*\d+/)[0].replace(/\s+/g, "");
+					}
+				}
+			}
+			
 			if (item.title.match(/DigiZeitschriften:\s+/) == null) {
 				if (title != "Zeitschriftenheft") {
 					item.complete();

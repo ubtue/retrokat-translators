@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-02-16 08:23:07"
+	"lastUpdated": "2022-03-07 09:05:19"
 }
 
 /*
@@ -88,6 +88,9 @@ function invokeEMTranslator(doc, url) {
 	translator.setTranslator("951c027d-74ac-47d4-a107-9c3069ab7b48");
 	translator.setDocument(doc);
 	translator.setHandler("itemDone", function (t, i) {
+		if (detectWeb(doc, url) == "journalArticle") {
+			i.itemType = "journalArticle";
+		}
 		if (i.title.match(/ISBN/)) i.tags.push('Book Review') && delete i.abstractNote;
 		if (i.abstractNote) {
 			i.abstractNote += ZU.xpathText(doc, '//*[(@id = "transAbstract")]//p');
@@ -137,12 +140,12 @@ function invokeEMTranslator(doc, url) {
 			}
 		}
 		if (i.abstractNote != null || i.abstractNote != undefined) {
-			if (i.abstractNote.match(/(^Aus\s+dem\s+Inhalt:\s+)|(^Inhalt:null)/) != null) {
+			if (i.abstractNote.match(/(^Aus\s+dem\s+Inhalt:\s+)|(^Inhalt:null)|(^Inhaltsverzeichnis:)/) != null) {
 				i.abstractNote = "";
 			}
 		}
-		let hexCodes = ["&#x2013;", "&#x2018;", "&#x2019;"];
-		let hexCodeToChar = {"&#x2013;":"–", "&#x2018;": "‘", "&#x2019;": "’"};
+		let hexCodes = ["&#x2013;", "&#x2018;", "&#x2019;", "&#x26;"];
+		let hexCodeToChar = {"&#x2013;":"–", "&#x2018;": "‘", "&#x2019;": "’", "&#x26;": "&"};
 		for (let hexCode of hexCodes) {
 			i.title = i.title.replace(hexCode, hexCodeToChar[hexCode]);
 		}
