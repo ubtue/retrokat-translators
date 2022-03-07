@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-02-16 13:21:10"
+	"lastUpdated": "2022-03-07 11:29:45"
 }
 
 /*
@@ -127,16 +127,38 @@ function scrape(doc, url) {
 	item.volume = volume;
 	item.date = year;
 	item.ISSN = issn;
+	article = article.replace(/\n/g, " ");
 	if (article.match(/<p class="cr-resume">(.+?)<\/p>/g) != null) {
 		abstractNum = 0;
 		for (let abstract of article.match(/<p class="cr-resume">(.+?)<\/p>/g)) {
+			Z.debug(abstract);
 			if (abstractNum == 0) item.abstractNote = abstract.match(/<p class="cr-resume">(.+?)<\/p>/)[1];
 			else item.notes.push({'note': 'abs:' + abstract.match(/<p class="cr-resume">(.+?)<\/p>/)[1]});
 			abstractNum += 1;
 		}
 	}
+	let replacement_list = ["&amp;"];
+	let replacement_dict = {"&amp;": "&"};
+	for (let replacement_string of replacement_list) {
+		item.title = item.title.replace(replacement_string, replacement_dict[replacement_string]);
+		}
+	if (article.match(/<p style="font-weight: bold">(.+?)<\/p>/g) != null) {
+		let citation = article.match(/<p style="font-weight: bold">(.+?)<\/p>/)[0];
+		let review = citation.match(/Comptes?\s+rendus?\s+de\s+(.+?)\s+:\s+«(.+?)»((, in Revue des Questions Scientifiques)|(\s+;\s+))/);
+		if (review != null) {
+			let reviewed_title = review[2];
+			let reviewed_author = ZU.cleanAuthor(review[1].split(', ')[0].replace(/\(.+?\)/g, ""), 'author');
+			reviewed_author = reviewed_author.lastName + ', ' + reviewed_author.firstName;
+			let review_tag = "#reviewed_pub#title::" + reviewed_title + "#name::" + reviewed_author + "#";
+			for (let replacement_string of replacement_list) {
+				review_tag = review_tag.replace(replacement_string, replacement_dict[replacement_string]);
+				}
+			item.tags.push(review_tag);
+		}
+	}
 	item.complete();
 }
+
 
 
 /** BEGIN TEST CASES **/
