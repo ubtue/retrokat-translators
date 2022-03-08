@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-08 11:40:24"
+	"lastUpdated": "2022-03-08 14:04:58"
 }
 
 /*
@@ -79,7 +79,7 @@ function scrape(doc, url) {
 					item.tags.push("Book Review");
 					if (ZU.xpathText(doc, '//p[@class="noticebibliooeuvre"]') != null) {
 						let reviewed_title = ZU.xpathText(doc, '//p[@class="noticebibliooeuvre"]');
-						let isbn = reviewed_title.match(/ISBN(?:‑1[03])?\s*:?\s*([\d‑]+)/);
+						let isbn = reviewed_title.match(/ISBN(?:\s*[\-‑]\s*1[03])?\s*:?\s*([\d\-‑]+)/);
 						if (isbn != null) {
 							item.tags.push("#reviewed_pub#isbn::" + isbn[1] + "#");
 						}
