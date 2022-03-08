@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-07 09:05:19"
+	"lastUpdated": "2022-03-07 13:56:15"
 }
 
 /*
@@ -140,7 +140,7 @@ function invokeEMTranslator(doc, url) {
 			}
 		}
 		if (i.abstractNote != null || i.abstractNote != undefined) {
-			if (i.abstractNote.match(/(^Aus\s+dem\s+Inhalt:\s+)|(^Inhalt:null)|(^Inhaltsverzeichnis:)/) != null) {
+			if (i.abstractNote.match(/(^Aus\s+dem\s+Inhalt:\s+)|(^Inhalt:(null)?)|(^Inhaltsverzeichnis:)/) != null) {
 				i.abstractNote = "";
 			}
 		}
@@ -151,9 +151,14 @@ function invokeEMTranslator(doc, url) {
 		}
 		let newCreators = [];
 		for (let creator of i.creators) {
-			if (creator.lastName != "BIETAK (Hg.)") newCreators.push(creator);
+			
+		}
+		for (let cleanCreator of ZU.xpath(doc, '//b[@class="author"]')) {
+			cleanCreator = ZU.cleanAuthor(cleanCreator.textContent.replace(/,\s*$/, ""));
+			if (cleanCreator.lastName != "BIETAK (Hg.)") newCreators.push(cleanCreator);
 		}
 		i.creators = newCreators;
+		i.title = i.title.replace(/<\/?.+?>/g, "");
 		i.attachments = [];
 		i.complete();
 	});
