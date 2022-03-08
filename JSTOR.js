@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-01-10 14:35:01"
+	"lastUpdated": "2022-03-08 10:44:33"
 }
 
 /*
@@ -283,13 +283,17 @@ function processRIS(text, jid, doc) {
 		}
 		item.url = item.url.replace('http:', 'https:'); // RIS still lists http addresses while JSTOR's stable URLs use https
 		if (item.url && !item.url.startsWith("http")) item.url = "https://" + item.url;
-		if (ZU.xpathText(doc, '//script[@data-analytics-provider="ga"]') != undefined) {
+		if (ZU.xpathText(doc, '//script[@data-analytics-provider="ga"]') != null) {
 			
 			if (ZU.xpathText(doc, '//script[@data-analytics-provider="ga"]').match('"userAuthorization" : "Free')) {
 				item.notes.push({note: 'LF:'});
 			}
 		}
-		
+		if (item.DOI == undefined) {
+			if (ZU.xpathText(doc, '//div[@class="citation__mount-point"]/@data-doi') != null) {
+				item.DOI = ZU.xpathText(doc, '//div[@class="citation__mount-point"]/@data-doi');
+			}
+			}
 		item.complete();
 	});
 
@@ -297,6 +301,7 @@ function processRIS(text, jid, doc) {
 		trans.doImport();
 	});
 }
+
 
 
 
