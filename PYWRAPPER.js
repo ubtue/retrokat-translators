@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-11 17:15:46"
+	"lastUpdated": "2022-03-11 17:30:10"
 }
 
 /*
@@ -68,6 +68,9 @@ function scrape(doc, url) {
 			note['note'] = note['note'].replace(/<\/?.+?>/g, '');
 		}
 		let newTags = [];
+		if (item.tags.includes("Book") && (item.tags.includes("Review") || item.tags.includes("Reviews"))) {
+			item.tags = ["Book Review"];
+		}
 		for (let tag of item.tags) {
 			tag = tag.replace(/\?\?\?\?/g, ",");
 			newTags.push(tag);
