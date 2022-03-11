@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-01 11:45:55"
+	"lastUpdated": "2022-03-11 10:47:14"
 }
 
 /*
@@ -234,7 +234,7 @@ function invokeEMTranslator(doc) {
 		i.title = i.title.replace(/(<\/?[^>]+>)|(&nbsp;)/g, '');
 		for (let abstract of ZU.xpath(doc, '//meta[@name="DC.Description"]/@content')) {
 			abstract = abstract.textContent.replace(/(<\/?[^>]+>)|(&nbsp;)/g, '');
-			if (i.abstractNote != abstract && abstract != "") {
+			if (i.abstractNote != abstract && abstract != "" && abstract != ".") {
 				i.notes.push({note: "abs:" + abstract});
 			}
 		}
@@ -244,6 +244,9 @@ function invokeEMTranslator(doc) {
 			}
 		}
 		i.attachments = [];
+		if (i.abstractNote.match(/Archivo Teológico Granadino es una revista científica/) != null) {
+			i.abstractNote = "";
+		}
 		i.complete();
 	});
 	translator.translate();
