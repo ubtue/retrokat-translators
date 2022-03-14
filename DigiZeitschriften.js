@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsv",
-	"lastUpdated": "2022-03-07 08:28:46"
+	"lastUpdated": "2022-03-14 15:46:42"
 }
 
 /*
@@ -34,6 +34,8 @@
 	***** END LICENSE BLOCK *****
 */
 
+var realTitles = {};
+
 function detectWeb(doc, url) {
 	if (url.indexOf("/img/") != -1 || url.indexOf("index.php?id=274") != -1 ) {//e.g. http://www.digizeitschriften.de/index.php?id=274&PPN=PPN342672002_0020&DMDID=dmdlog84&L=2
 		return "journalArticle";
@@ -45,6 +47,16 @@ function detectWeb(doc, url) {
 
 
 function getSearchResults(doc) {
+	/*<div class="goobit3-toc-item goobit3-toc-item--indent-60 goobit3-toc-item--tx-goobit3-toc_toc">
+<a href="dms/img/?PID=PPN507831411_1935_0016%7Clog15" class="goobit3-toc-item__site-title">Norström, Vitalis: Religion und Gedanke</a>Kurt Leese<span class="goobit3-toc-item__page-number"><a href="dms/img/?PID=PPN507831411_1935_0016%7Clog15">95</a><a href="http://www.digizeitschriften.de/download/PPN507831411_1935_0016/PPN507831411_1935_0016___log15.pdf" class="goobit3-toc-item__link goobit3-toc-item__link--pdf" title="PDF"><span class="sr-only">PDF</span></a></span>
+</div>*/
+	for (let tag of ZU.xpath(doc, '//div[contains(@class, "goobit3-toc-item goobit3-toc-item--indent")]')) {
+		let link = ZU.xpathText(tag, './a[@class="goobit3-toc-item__site-title"]/@href');
+		let realPub = tag.innerHTML.match(/>([^<]+)<\/a>([^<]+)/);
+		if (realPub != null) {
+			realTitles[link] = realPub[2] + '###' + realPub[1]
+		}
+	} 
 	return ZU.xpath(doc, '//div/a[contains(@class, "goobit3-toc-item__site-title")]');
 }
 
@@ -125,12 +137,11 @@ function scrape(doc, url) {
 				item.tags.push('Book Review');
 				}
 			}
-			
 			if (item.pages == undefined) {
 				if (ZU.xpathText(doc, '//span[contains(@class,"goobit3-image__struct")][3]') != null) {
 					let span = ZU.xpathText(doc, '//span[contains(@class,"goobit3-image__struct")][3]');
-					if (span.match(/\d+\s*-\s*\d+/) != null) {
-						item.pages = span.match(/\d+\s*-\s*\d+/)[0].replace(/\s+/g, "");
+					if (span.match(/[^(]\d+\s*(?:-\s*\d+)?[^)]/) != null) {
+						item.pages = span.match(/[^(]\d+\s*(?:-\s*\d+)?[^)]/)[0].replace(/\s+/g, "");
 					}
 				}
 			}
@@ -138,12 +149,44 @@ function scrape(doc, url) {
 			if (item.pages == undefined) {
 				if (ZU.xpathText(doc, '//span[contains(@class,"goobit3-image__struct")][5]') != null) {
 					let span = ZU.xpathText(doc, '//span[contains(@class,"goobit3-image__struct")][5]');
-					if (span.match(/\d+\s*-\s*\d+/) != null) {
-						item.pages = span.match(/\d+\s*-\s*\d+/)[0].replace(/\s+/g, "");
+					if (span.match(/[^(]\d+\s*(?:-\s*\d+)?[^)]/) != null) {
+						item.pages = span.match(/[^(]\d+\s*(?:-\s*\d+)?[^)]/)[0].replace(/\s+/g, "");
 					}
 				}
 			}
 			
+			if (item.pages == undefined) {
+				if (ZU.xpathText(doc, '//span[contains(@class,"goobit3-image__struct")][4]') != null) {
+					let span = ZU.xpathText(doc, '//span[contains(@class,"goobit3-image__struct")][4]');
+					if (span.match(/[^(]\d+\s*(?:-\s*\d+)?[^)]/) != null) {
+						item.pages = span.match(/[^(]\d+\s*(?:-\s*\d+)?[^)]/)[0].replace(/\s+/g, "");
+					}
+				}
+			}
+			
+			if (item.pages == undefined) {
+				if (ZU.xpathText(doc, '//span[contains(@class,"goobit3-image__struct")]') != null) {
+					let span = ZU.xpathText(doc, '//span[contains(@class,"goobit3-image__struct")]');
+					Z.debug(span);
+					if (span.match(/\/\s+(I+(?:\s*-\s*[IV]+)?)$/) != null) {
+						item.pages = span.match(/\/\s+(I+(?:\s*-\s*[IV]+)?)$/)[1].replace(/\s+/g, "");
+					}
+				}
+			}
+			
+			let searchURL = item.url.replace("http://www.digizeitschriften.de/", "");
+			realPub = realTitles[searchURL];
+			if (realPub != undefined) {
+				let realTitle = realPub.split('###')[1];
+				let realAuthor = realPub.split('###')[0];
+				if (item.title.substring(0,12) != realTitle.substring(0,12)) {
+					item.title = realTitle.replace(/...$/, "");
+					item.creators = [ZU.cleanAuthor(realAuthor, 'author')];
+				}
+				if (item.creators.length == 0) {
+					item.creators = [ZU.cleanAuthor(realAuthor, 'author')];
+				}
+			}
 			if (item.title.match(/DigiZeitschriften:\s+/) == null) {
 				if (title != "Zeitschriftenheft") {
 					item.complete();
@@ -171,6 +214,7 @@ function extractField(fieldName, text) {
 		return false;
 	}
 }
+
 
 
 
