@@ -5,11 +5,11 @@
 	"target": "article|issue/view/",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 150,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-11 12:38:05"
+	"lastUpdated": "2022-03-15 10:36:33"
 }
 
 /*
@@ -29,10 +29,6 @@
 */
 
 function detectWeb(doc, url) {
-	let pkpLibraries = ZU.xpath(doc, '//script[contains(@src, "/lib/pkp/js/")]')
-	if (!(ZU.xpathText(doc, '//a[@id="developedBy"]/@href') == 'http://pkp.sfu.ca/ojs/' ||
-		  pkpLibraries.length >= 1))
-		return false;
 	if (url.match(/\/issue\//) && getSearchResults(doc)) return "multiple";
 	else if (url.match(/article/)) return "journalArticle";
 	else return false;
@@ -241,6 +237,37 @@ function invokeEMTranslator(doc) {
 		if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content') != null) {
 			if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content').match("^Comptes rendus") != null) {
 				i.tags.push("Book Review");
+				if (i.url.match(/revues\.droz/) != null) {
+					review_tags = ZU.xpath(doc, '//h1[@class="page-header"]');
+					if (review_tags.length > 0) {
+						let review_section = review_tags[0].innerHTML;
+						let reviewed_publishing = ZU.xpathText(review_tags[0], './p[@class="small"]');
+						let review_keyword = "";
+						let reviewed_title = review_section.match(/<i>(.+)<\/i>/);
+						if (reviewed_title != null) {
+							Z.debug(review_section);
+							review_keyword += "#reviewed_pub#title::" + reviewed_title[1];
+							let reviewed_author = review_section.match(/(.+?)<i>/);
+							if (reviewed_author != null) {
+								reviewed_author = reviewed_author[1].trim().replace(/,/, "").split(" et ")[0];
+								splitted_author = ZU.cleanAuthor(reviewed_author, 'author');
+								reviewed_author_inverted = splitted_author.lastName + ", " + splitted_author.firstName;
+								review_keyword += "#name::" + reviewed_author_inverted;
+							}
+							
+							let reviewed_year = reviewed_publishing.match(/\d{4}/);
+							if (reviewed_year != null) review_keyword += "#year::" + reviewed_year[0];
+							let reviewed_publisher = reviewed_publishing.match(/\s+:\s+(.+?),/);
+							if (reviewed_publisher != null) review_keyword += "#publisher::" + reviewed_publisher[1];
+							let reviewed_place = reviewed_publishing.match(/(.+?)\s+:\s+/);
+							if (reviewed_place != null) review_keyword += "#place::" + reviewed_place[1];
+							review_keyword += "#";
+							review_keyword = ZU.trimInternal(review_keyword.replace(/(?:&nbsp;)/g, " ").replace(/(?:<\/?.+?>)/g, ""));
+							i.tags.push(review_keyword);
+						}
+						
+					}
+				}
 			}
 		}
 		i.attachments = [];
@@ -270,6 +297,7 @@ function doWeb(doc, url) {
 		invokeEMTranslator(doc, url);
 	}
 }
+
 
 
 /** BEGIN TEST CASES **/
