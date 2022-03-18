@@ -5,11 +5,11 @@
 	"target": "https://www\\.journals\\.uchicago\\.edu/((doi)|(toc))",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 150,
+	"priority": 99,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-09-28 08:57:15"
+	"lastUpdated": "2022-03-18 11:37:40"
 }
 
 /*
@@ -94,6 +94,7 @@ function scrape(doc, url) {
 		translator.translate();
 	});
 }
+
 
 
 
