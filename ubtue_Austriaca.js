@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-23 14:39:18"
+	"lastUpdated": "2022-03-23 15:05:43"
 }
 
 /*
@@ -144,10 +144,12 @@ function invokeEMTranslator(doc, url) {
 				i.abstractNote = "";
 			}
 		}
-		let hexCodes = ["&#x2013;", "&#x2018;", "&#x2019;", "&#x26;"];
-		let hexCodeToChar = {"&#x2013;":"–", "&#x2018;": "‘", "&#x2019;": "’", "&#x26;": "&"};
+		let hexCodes = [/&#x2013;/g, /&#x2018;/g, /&#x2019;/g, /&#x26;/g, /&#x201E;/g, /&#x201C;/g, /&#x201D;/g];
+		let hexCodeToChar = {"&#x2013;":"–", "&#x2018;": "‘", "&#x2019;": "’", "&#x26;": "&", "&#x201E;": '"', "&#x201C;": '"', "&#x201D;": '"'};
 		for (let hexCode of hexCodes) {
-			i.title = i.title.replace(hexCode, hexCodeToChar[hexCode]);
+			Z.debug(hexCode + 'g');
+			i.title = i.title.replace(hexCode, hexCodeToChar[hexCode.toString().replace(/\/g?/g, '')]);
+			Z.debug(i.title);
 		}
 		let newCreators = [];
 		for (let cleanCreator of ZU.xpath(doc, '//b[@class="author"]')) {
