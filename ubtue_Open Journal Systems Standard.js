@@ -5,11 +5,11 @@
 	"target": "article|issue/view/",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 95,
+	"priority": 99,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-15 10:45:34"
+	"lastUpdated": "2022-03-23 12:30:20"
 }
 
 /*
@@ -235,7 +235,7 @@ function invokeEMTranslator(doc) {
 			}
 		}
 		if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content') != null) {
-			if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content').match("^Comptes rendus") != null) {
+			if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content').match(/^(Comptes rendus)|(Vient de paraître)/) != null) {
 				i.tags.push("Book Review");
 				if (i.url.match(/revues\.droz/) != null) {
 					review_tags = ZU.xpath(doc, '//h1[@class="page-header"]');
@@ -300,6 +300,7 @@ function doWeb(doc, url) {
 		invokeEMTranslator(doc, url);
 	}
 }
+
 
 
 
