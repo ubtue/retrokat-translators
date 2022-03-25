@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-23 15:05:43"
+	"lastUpdated": "2022-03-25 10:29:21"
 }
 
 /*
@@ -147,9 +147,7 @@ function invokeEMTranslator(doc, url) {
 		let hexCodes = [/&#x2013;/g, /&#x2018;/g, /&#x2019;/g, /&#x26;/g, /&#x201E;/g, /&#x201C;/g, /&#x201D;/g];
 		let hexCodeToChar = {"&#x2013;":"–", "&#x2018;": "‘", "&#x2019;": "’", "&#x26;": "&", "&#x201E;": '"', "&#x201C;": '"', "&#x201D;": '"'};
 		for (let hexCode of hexCodes) {
-			Z.debug(hexCode + 'g');
 			i.title = i.title.replace(hexCode, hexCodeToChar[hexCode.toString().replace(/\/g?/g, '')]);
-			Z.debug(i.title);
 		}
 		let newCreators = [];
 		for (let cleanCreator of ZU.xpath(doc, '//b[@class="author"]')) {
@@ -163,6 +161,7 @@ function invokeEMTranslator(doc, url) {
 				if (cleanCreator.lastName != "BIETAK (Hg.)") newCreators.push(cleanCreator, 'author');
 			}
 		}
+		i.language = '';
 		i.title = i.title.replace(/<\/?.+?>/g, "");
 		i.attachments = [];
 		i.complete();
