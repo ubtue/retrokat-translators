@@ -5,11 +5,11 @@
 	"target": "article|issue/view/",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 99,
+	"priority": 98,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-23 15:33:20"
+	"lastUpdated": "2022-03-25 09:47:05"
 }
 
 /*
