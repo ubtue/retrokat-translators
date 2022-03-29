@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-25 10:29:21"
+	"lastUpdated": "2022-03-29 09:43:30"
 }
 
 /*
@@ -151,16 +151,38 @@ function invokeEMTranslator(doc, url) {
 		}
 		let newCreators = [];
 		for (let cleanCreator of ZU.xpath(doc, '//b[@class="author"]')) {
-			cleanCreator = ZU.cleanAuthor(cleanCreator.textContent.replace(/,\s*$/, ""));
-			if (cleanCreator.lastName != "BIETAK (Hg.)") newCreators.push(cleanCreator, 'author');
+			cleanCreator = ZU.cleanAuthor(cleanCreator.textContent.replace(/,\s*$/, ""), 'author');
+			if (cleanCreator.lastName != "BIETAK (Hg.)") newCreators.push(cleanCreator);
 		}
 		i.creators = newCreators;
 		if (newCreators.length == 0) {
-			for (let creator of ZU.xpath(doc, '//meta[@name="DC.Creator"]/@content')) {
-				cleanCreator = ZU.cleanAuthor(creator.textContent.replace(/,\s*$/, ""))
-				if (cleanCreator.lastName != "BIETAK (Hg.)") newCreators.push(cleanCreator, 'author');
+			for (let cre of ZU.xpath(doc, '//meta[@name="DC.Creator"]/@content')) {
+				for (let creator of cre.textContent.split(/[,\-]] /)) {
+					cleanCreator = ZU.cleanAuthor(creator.replace(/,\s*$/, ""), 'author');
+					if (cleanCreator.lastName != "BIETAK (Hg.)") newCreators.push(cleanCreator);
+				}
 			}
 		}
+		let newAuthors = ZU.xpath(doc, '//meta[@name="citation_author"]/@content');
+		if (newAuthors != null) {
+			if (i.creators.length == 1 && newAuthors.length > 1) {
+				newCreators = [];
+				for (let creator of newAuthors) {
+					cleanCreator = ZU.cleanAuthor(creator.textContent.replace(/,\s*$/, ""), 'author');
+					if (cleanCreator.lastName != "BIETAK (Hg.)") newCreators.push(cleanCreator);
+				}
+			}
+			else if (i.creators.length == 1 && newAuthors.length in [1, 2]) {
+				Z.debug(newAuthors);
+				newCreators = [];
+				for (let creator of newAuthors[0].split(', ')) {
+					cleanCreator = ZU.cleanAuthor(creator.textContent.replace(/,\s*$/, ""), 'author');
+					if (cleanCreator.lastName != "BIETAK (Hg.)") newCreators.push(cleanCreator);
+				}
+			}
+			i.creators = newCreators;
+		}
+		
 		i.language = '';
 		i.title = i.title.replace(/<\/?.+?>/g, "");
 		i.attachments = [];
