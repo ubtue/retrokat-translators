@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-21 08:27:53"
+	"lastUpdated": "2022-03-30 15:12:12"
 }
 
 /*
@@ -134,7 +134,13 @@ function processRIS(text, j) {
 				delete item.creators[i].fieldMode;
 			}
 		}
-
+		let newCreators = [];
+		for (let creator of item.creators) {
+			if (creator.creatorType == "author") {
+				newCreators.push(creator);
+			}
+		}
+		
 		// fix special characters in abstract, convert html linebreaks and italics, remove stray p tags; don't think they use anything else
 		if (item.abstractNote) {
 			item.abstractNote = convertCharRefs(item.abstractNote);
@@ -164,11 +170,11 @@ function processRIS(text, j) {
 					let reviewed_title = items[item.url].split(/\n\s+by\s+/)[0];
 					let reviewed_authors = items[item.url].split(/\n\s+by\s+/)[1];
 					let reviewed_author = "";
-					for (let author of reviewed_authors.split(', ')) {
+					for (let author of reviewed_authors.split(/(?:, )|(?: \/ )/)) {
 						let cleanAuthor = ZU.cleanAuthor(author, 'author');
 						reviewed_author += cleanAuthor.lastName + ', ' + cleanAuthor.firstName + '::';
 					}
-					reviewed_author = reviewed_author.replace(/::$/, "");
+					reviewed_author = reviewed_author.replace(/(?:::$)|(?: \(.+?\))/g, "");
 					item.tags.push('#reviewed_pub#title::' + reviewed_title + '#name::' + reviewed_author + '#');
 					item.tags.push('Book Review');
 				}
@@ -176,6 +182,7 @@ function processRIS(text, j) {
 			item.title = items[item.url].replace(/\n\s*/g, " ");
 		}
 		if (reviewURLs.includes(item.url)) item.tags.push('Book Review');
+		item.creators = newCreators;
 		item.complete();
 	});
 
@@ -183,6 +190,7 @@ function processRIS(text, j) {
 		trans.doImport();
 	});
 }
+
 
 
 
