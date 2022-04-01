@@ -54,9 +54,9 @@ function scrape(doc, url) {
 	if (ZU.xpathText(doc, '//div[@id="inhalt"]//tr').match(/Rezensent(?:in)?:\s/) != null) is_bookreview = true;
 	for (let row of ZU.xpath(doc, '//div[@id="inhalt"]//tr')) {
 		if (ZU.xpathText(row, './td[1]').match(/^Titel/)) i.title = ZU.xpathText(row, './td[2]');
-		if (ZU.xpathText(row, './td[1]').match(/^Rezensent/)) i.creators.push(ZU.cleanAuthor(ZU.xpathText(row, './td[2]'), 'author'));
+		if (ZU.xpathText(row, './td[1]').match(/^Rezensent/)) i.creators.push(ZU.cleanAuthor(ZU.xpathText(row, './td[2]'), 'author', true));
 		if (!is_bookreview) {
-			if (ZU.xpathText(row, './td[1]').match(/^Autor\/Hrsg\./)) i.creators.push(ZU.cleanAuthor(ZU.xpathText(row, './td[2]'), 'author'));
+			if (ZU.xpathText(row, './td[1]').match(/^Autor\/Hrsg\./)) i.creators.push(ZU.cleanAuthor(ZU.xpathText(row, './td[2]'), 'author', true));
 		}
 		if (ZU.xpathText(row, './td[1]').match(/^Spalte/)) i.pages = ZU.xpathText(row, './td[2]');
 		if (ZU.xpathText(row, './td[1]').match(/^Ausgabe/)) i.date = ZU.xpathText(row, './td[2]').match(/\d{4}/)[0];
