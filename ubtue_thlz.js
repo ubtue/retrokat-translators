@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-31 11:35:42"
+	"lastUpdated": "2022-04-04 10:44:40"
 }
 
 /*
@@ -54,9 +54,19 @@ function scrape(doc, url) {
 	if (ZU.xpathText(doc, '//div[@id="inhalt"]//tr').match(/Rezensent(?:in)?:\s/) != null) is_bookreview = true;
 	for (let row of ZU.xpath(doc, '//div[@id="inhalt"]//tr')) {
 		if (ZU.xpathText(row, './td[1]').match(/^Titel/)) i.title = ZU.xpathText(row, './td[2]');
-		if (ZU.xpathText(row, './td[1]').match(/^Rezensent/)) i.creators.push(ZU.cleanAuthor(ZU.xpathText(row, './td[2]'), 'author', true));
+		
+		
+		if (ZU.xpathText(row, './td[1]').match(/^Rezensent/)) {
+			let creator = ZU.cleanAuthor(ZU.xpathText(row, './td[2]'), 'author', true);
+			if (creator.firstName != undefined) i.creators.push(creator);
+			else i.creators.push(ZU.cleanAuthor(ZU.xpathText(row, './td[2]'), 'author'));
+		}
 		if (!is_bookreview) {
-			if (ZU.xpathText(row, './td[1]').match(/^Autor\/Hrsg\./)) i.creators.push(ZU.cleanAuthor(ZU.xpathText(row, './td[2]'), 'author', true));
+			if (ZU.xpathText(row, './td[1]').match(/^Autor\/Hrsg\./)) {
+				let creator = ZU.cleanAuthor(ZU.xpathText(row, './td[2]'), 'author', true);
+				if (creator.firstName != undefined) i.creators.push(creator);
+				else i.creators.push(ZU.cleanAuthor(ZU.xpathText(row, './td[2]'), 'author'));
+			}
 		}
 		if (ZU.xpathText(row, './td[1]').match(/^Spalte/)) i.pages = ZU.xpathText(row, './td[2]');
 		if (ZU.xpathText(row, './td[1]').match(/^Ausgabe/)) i.date = ZU.xpathText(row, './td[2]').match(/\d{4}/)[0];
@@ -78,10 +88,11 @@ function scrape(doc, url) {
 			reviewed_title = reviewed_title.replace(/\d{4}/g, '').trim();
 			if (ZU.xpathText(row, './td[1]').match(/^Autor\/Hrsg\./)) reviewed_author = ZU.xpathText(row, './td[2]');
 			if (ZU.xpathText(row, './td[1]').match(/^Verlag/)) reviewed_information = ZU.xpathText(row, './td[2]');
-			if (reviewed_information.match(/ISBN\s+\d+/) != null) isbn = reviewed_information.match(/ISBN\s+(\d+)/)[1];
+			if (reviewed_information.match(/ISBN\s+(\d-?)+/) != null) isbn = reviewed_information.match(/ISBN\s+((?:\d-?)+)/)[1];
 			if (reviewed_information.match(/[^\d]\d{4}[^\d]/) != null) reviewed_year = reviewed_information.match(/[^\d](\d{4})[^\d]/)[1];
 		}
-		i.tags.push("#reviewed_pub#title::" + reviewed_title + "#name::" + reviewed_author + "#year::" + reviewed_year + "#isbn::" + isbn + "#");
+		if (isbn.length < 9) i.tags.push("#reviewed_pub#title::" + reviewed_title + "#name::" + reviewed_author + "#year::" + reviewed_year + "#isbn::" + isbn + "#");
+		else i.tags.push("#reviewed_pub#isbn::" + isbn + "#");
 		i.tags.push("Book Review");
 	}
 	
