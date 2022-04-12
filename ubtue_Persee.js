@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-30 08:14:32"
+	"lastUpdated": "2022-04-12 07:15:40"
 }
 
 /*
@@ -97,6 +97,42 @@ function invokeEMTranslator(doc) {
 		if (ZU.xpathText(doc, '//meta[@name="DC.type"]/@content') != null) {
 			if (ZU.xpathText(doc, '//meta[@name="DC.type"]/@content').match(/^(Comptes rendus)|(Vient de paraître)|(Reseñas)|(compterendu)|(rev$)/) != null) {
 				i.tags.push("Book Review");
+				let review_tag = ZU.xpath(doc, '//h2')[0];
+				
+				if (review_tag != undefined) {
+					if (ZU.xpathText(review_tag, './em[1]') != null) {
+						let reviewed_title = ZU.xpathText(review_tag, './em[1]');
+						review_keyword = "#reviewed_pub#title::" + reviewed_title;
+						let reviewed_author = review_tag.textContent.split(reviewed_title)[0].replace(/\.\s*—/g, '');
+						let reviewed_author_string = "";
+						for (let reviewed_aut of reviewed_author.split(/(?:,\s*)|(?:\s+et\s+)/g)) {
+							splitted_author = ZU.cleanAuthor(reviewed_aut, 'author');
+							reviewed_author_inverted = splitted_author.lastName + ", " + splitted_author.firstName;
+							reviewed_author_string += reviewed_author_inverted + "::";
+						}
+						review_keyword += "#name::" + reviewed_author_string.replace(/(?:::,\s*::)|(?:::$)|(?:^,\s*::$)/g, '');
+						let additional_information = review_tag.textContent.split(reviewed_title)[1];
+						if (additional_information != undefined) {
+								if (additional_information.match(/[^\d]\d{4}[^\d]/) != null) {
+									let reviewed_year = additional_information.match(/[^\d](\d{4})[^\d]/)[1];
+									review_keyword += "#year::" + reviewed_year;
+								}
+								else if (ZU.xpathText(doc, '//div[@itemprop="articleBody"]') != null) {
+									if (ZU.xpathText(doc, '//div[@itemprop="articleBody"]').match(/[^\d]\d{4}[^\d]/) != null) {
+									let reviewed_year = ZU.xpathText(doc, '//div[@itemprop="articleBody"]').match(/[^\d](\d{4})[^\d]/)[1];
+									review_keyword += "#year::" + reviewed_year;
+								}
+								}
+							}
+							review_keyword += "#";
+							review_keyword = ZU.trimInternal(review_keyword.replace(/(?:&nbsp;)/g, " ").replace(/(?:<\/?.+?>)/g, ""));
+							i.tags.push(review_keyword);
+					}
+				}
+				//getestet: https://www.persee.fr/doc/syria_0039-7946_1922_num_3_2_8833_t1_0165_0000_7
+				//https://www.persee.fr/doc/syria_0039-7946_1922_num_3_2_8911_t1_0169_0000_8
+
+				/*
 				if (i.title.split('. — ').length == 2) {
 					let reviewed_author = i.title.split('. — ')[0];
 					let reviewed_titles = i.title.split('. — ')[1];
@@ -120,7 +156,7 @@ function invokeEMTranslator(doc) {
 							i.tags.push(review_keyword);
 						}
 					}
-				}
+				}*/
 			}
 		}
 		i.attachments = [];
@@ -158,88 +194,227 @@ function doWeb(doc, url) {
 
 
 
+
 /** BEGIN TEST CASES **/
 var testCases = [
 	{
 		"type": "web",
-		"url": "https://ojs.reformedjournals.co.za/stj/issue/view/70",
-		"items": "multiple"
-	},
-	{
-		"type": "web",
-		"url": "https://ojs.reformedjournals.co.za/stj/article/view/1969",
+		"url": "https://www.persee.fr/doc/syria_0039-7946_1922_num_3_2_8833_t1_0165_0000_7",
 		"items": [
 			{
 				"itemType": "journalArticle",
-				"title": "“The message to the people of South Africa” in contemporary context: The question of Palestine and the challenge to the church",
+				"title": "K. A. C. Creswell, The origin of the cruciform plan of Cairene Madrasas. — Le Caire, Imprimerie de l’Institut français, 1922",
 				"creators": [
 					{
-						"firstName": "Mark",
-						"lastName": "Braverman",
+						"firstName": "Gaston",
+						"lastName": "Migeon",
 						"creatorType": "author"
 					}
 				],
-				"date": "2019",
-				"DOI": "10.17570/stj.2019.v5n3.a01",
-				"ISSN": "2413-9467",
-				"abstractNote": "In September 2018 John de Gruchy presented a paper at the Volmoed Colloquium entitled “Revisiting the Message to the people of South Africa,” in which he asks, “what is the significance of the document for our time?” In this expanded version of the author’s response to de Gruchy, two further questions are pursued: First: how can the churches today meet the challenge of today’s global system of economically and politically-driven inequality driven by a constellation of individuals, corporations, and governments? Second: in his review of church history, de Gruchy focused on the issue of church theology described in the 1985 Kairos South Africa document, in which churches use words that purport to support justice but actually serve to shore up the status quo of discrimination, inequality and racism. How does church theology manifest in the contemporary global context, and what is the remedy? The author proposes that ecumenism can serve as a mobilizing and organizing model for church action, and that active engagement in the issue of Palestine is an entry point for church renewal and for a necessary and fruitful exploration of critical issues in theology and ecclesiology.",
-				"issue": "3",
-				"journalAbbreviation": "STJ",
-				"language": "en",
-				"libraryCatalog": "ojs.reformedjournals.co.za",
-				"pages": "13-40",
-				"publicationTitle": "STJ | Stellenbosch Theological Journal",
-				"rights": "Copyright (c) 2020 Pieter de Waal Neethling Trust, Stellenbosch",
-				"shortTitle": "“The message to the people of South Africa” in contemporary context",
-				"url": "https://ojs.reformedjournals.co.za/stj/article/view/1969",
-				"volume": "5",
-				"attachments": [
+				"date": "1922",
+				"issue": "2",
+				"language": "fre",
+				"libraryCatalog": "www.persee.fr",
+				"pages": "165-166",
+				"publicationTitle": "Syria. Archéologie, Art et histoire",
+				"rights": "free",
+				"url": "https://www.persee.fr/doc/syria_0039-7946_1922_num_3_2_8833_t1_0165_0000_7",
+				"volume": "3",
+				"attachments": [],
+				"tags": [
 					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
+						"tag": "#reviewed_pub#title::The origin of the cruciform plan of Cairene Madrasas#name::Creswell, K. A. C.#year::1922#"
 					},
 					{
-						"title": "Snapshot",
-						"mimeType": "text/html"
+						"tag": "Book Review"
 					}
 				],
-				"tags": [],
-				"notes": [],
+				"notes": [
+					"LF:"
+				],
 				"seeAlso": []
 			}
 		]
 	},
 	{
 		"type": "web",
-		"url": "http://www.zwingliana.ch/index.php/zwa/article/view/2516",
+		"url": "https://www.persee.fr/doc/syria_0039-7946_1922_num_3_2_8911_t1_0169_0000_8",
 		"items": [
 			{
 				"itemType": "journalArticle",
-				"title": "Geleitwort",
+				"title": "P. Thomsen, Die lateinischen und griechischen Inschriften der Stadt Jerusalem und ihrer naechsten Umgebung, Extr. de Zeitschrift des deutschen Palaestina-Vereins, 1920 et 1921",
+				"creators": [],
+				"date": "1922",
+				"issue": "2",
+				"language": "fre",
+				"libraryCatalog": "www.persee.fr",
+				"pages": "169-170",
+				"publicationTitle": "Syria. Archéologie, Art et histoire",
+				"rights": "free",
+				"url": "https://www.persee.fr/doc/syria_0039-7946_1922_num_3_2_8911_t1_0169_0000_8",
+				"volume": "3",
+				"attachments": [],
+				"tags": [
+					{
+						"tag": "#reviewed_pub#title::Die lateinischen und griechischen Inschriften der Stadt Jerusalem und ihrer naechsten Umgebung#name::Thomsen, P.#year::1920#"
+					},
+					{
+						"tag": "Book Review"
+					}
+				],
+				"notes": [
+					"LF:"
+				],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://www.persee.fr/doc/syria_0039-7946_1922_num_3_2_8833_t1_0167_0000_3",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "Encyclopédie de l'Islam . — Dictionnaire géographique, ethnographique et biographique des peuples musulmans, publié par M. Th. Houtsma, R. Basset, T. W. Arnold et H. Bauer, 26e livraison. Leyde, Brill ; Paris, Aug. Picard, 1921",
+				"creators": [],
+				"date": "1922",
+				"issue": "2",
+				"language": "fre",
+				"libraryCatalog": "www.persee.fr",
+				"pages": "167-168",
+				"publicationTitle": "Syria. Archéologie, Art et histoire",
+				"rights": "free",
+				"url": "https://www.persee.fr/doc/syria_0039-7946_1922_num_3_2_8833_t1_0167_0000_3",
+				"volume": "3",
+				"attachments": [],
+				"tags": [
+					{
+						"tag": "#reviewed_pub#title::Encyclopédie de l'Islam . — Dictionnaire géographique, ethnographique et biographique des peuples musulmans#name::#year::1921#"
+					},
+					{
+						"tag": "Book Review"
+					}
+				],
+				"notes": [
+					"LF:"
+				],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://www.persee.fr/doc/syria_0039-7946_1960_num_37_1_5453_t1_0178_0000_2",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "F. V. Winnett. — Safaitic Inscriptions from Jordan (Near and Middle East Series, 2).",
 				"creators": [
 					{
-						"firstName": "Christian",
-						"lastName": "Oesterheld",
+						"firstName": "Joseph Thadée",
+						"lastName": "Milik",
 						"creatorType": "author"
 					}
 				],
-				"date": "2018",
-				"ISSN": "0254-4407",
-				"language": "en",
-				"libraryCatalog": "www.zwingliana.ch",
-				"pages": "VII-IX",
-				"publicationTitle": "Zwingliana",
-				"rights": "Authors who are published in this journal agree to the following conditions:  a) The authors retain the copyright and allow the journal to print the first publication in print as well as to make it electronically available at the end of three years.  b) The author may allot distribution of their first version of the article with additional contracts for non-exclusive publications by naming the first publication in this Journal in said publication (i.e. publishing the article in a book or other publications).",
-				"url": "http://www.zwingliana.ch/index.php/zwa/article/view/2516",
-				"volume": "45",
-				"attachments": [
+				"date": "1960",
+				"issue": "1",
+				"language": "fre",
+				"libraryCatalog": "www.persee.fr",
+				"pages": "178-181",
+				"publicationTitle": "Syria. Archéologie, Art et histoire",
+				"rights": "free",
+				"url": "https://www.persee.fr/doc/syria_0039-7946_1960_num_37_1_5453_t1_0178_0000_2",
+				"volume": "37",
+				"attachments": [],
+				"tags": [
 					{
-						"title": "Snapshot",
-						"mimeType": "text/html"
+						"tag": "#reviewed_pub#title:: Safaitic Inscriptions from Jordan#name::Winnett, F. V.#year::1957#"
+					},
+					{
+						"tag": "Book Review"
 					}
 				],
-				"tags": [],
-				"notes": [],
+				"notes": [
+					"LF:"
+				],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://www.persee.fr/doc/syria_0039-7946_1922_num_3_2_8833_t1_0165_0000_3",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "Carl Watzinger, Karl Wulzinger, Damaskus, die antike Stadt (Wiss. Veröff.d. deutsch-türkischen Denkmalschutz kommandos, hrsgg. von Th. Wiegand, Heft 4). — Berlin et Leipzig, W. de Gruyter, 1921",
+				"creators": [
+					{
+						"firstName": "René",
+						"lastName": "Dussaud",
+						"creatorType": "author"
+					}
+				],
+				"date": "1922",
+				"issue": "2",
+				"language": "fre",
+				"libraryCatalog": "www.persee.fr",
+				"pages": "165-165",
+				"publicationTitle": "Syria. Archéologie, Art et histoire",
+				"rights": "free",
+				"url": "https://www.persee.fr/doc/syria_0039-7946_1922_num_3_2_8833_t1_0165_0000_3",
+				"volume": "3",
+				"attachments": [],
+				"tags": [
+					{
+						"tag": "#reviewed_pub#title::Damaskus, die antike Stadt#name::Watzinger, Carl::Wulzinger, Karl#year::1921#"
+					},
+					{
+						"tag": "Book Review"
+					}
+				],
+				"notes": [
+					"LF:"
+				],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://www.persee.fr/doc/syria_0039-7946_1949_num_26_3_8413_t1_0378_0000_2",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "Archaeological Investigations at 'Affūla",
+				"creators": [
+					{
+						"firstName": "Jean",
+						"lastName": "Perrot",
+						"creatorType": "author"
+					}
+				],
+				"date": "1949",
+				"issue": "3",
+				"language": "fre",
+				"libraryCatalog": "www.persee.fr",
+				"pages": "378-380",
+				"publicationTitle": "Syria. Archéologie, Art et histoire",
+				"rights": "free",
+				"url": "https://www.persee.fr/doc/syria_0039-7946_1949_num_26_3_8413_t1_0378_0000_2",
+				"volume": "26",
+				"attachments": [],
+				"tags": [
+					{
+						"tag": "#reviewed_pub#title::Archaeological Investigations at 'Affūla#name::#year::1948#"
+					},
+					{
+						"tag": "Book Review"
+					}
+				],
+				"notes": [
+					"LF:"
+				],
 				"seeAlso": []
 			}
 		]
