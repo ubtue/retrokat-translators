@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-04-12 07:15:40"
+	"lastUpdated": "2022-04-12 13:12:48"
 }
 
 /*
@@ -103,9 +103,9 @@ function invokeEMTranslator(doc) {
 					if (ZU.xpathText(review_tag, './em[1]') != null) {
 						let reviewed_title = ZU.xpathText(review_tag, './em[1]');
 						review_keyword = "#reviewed_pub#title::" + reviewed_title;
-						let reviewed_author = review_tag.textContent.split(reviewed_title)[0].replace(/\.\s*—/g, '');
+						let reviewed_author = review_tag.textContent.split(reviewed_title)[0].replace(/(?:\.\s*—)|(?:[\s\(]éds?.?[\s\)])|(?:[\s\(]dir.?[\s\)])/g, '');
 						let reviewed_author_string = "";
-						for (let reviewed_aut of reviewed_author.split(/(?:,\s*)|(?:\s+et\s+)/g)) {
+						for (let reviewed_aut of reviewed_author.split(/(?:,\s*)|(?:\s+et\s+)|(?:\s+in\s+collaboration\s+with\s+)|(?:(?:.?,)? with (?:a )?(?:(?:contribution)|(?:forword)|(?:preface)) by )/g)) {
 							splitted_author = ZU.cleanAuthor(reviewed_aut, 'author');
 							reviewed_author_inverted = splitted_author.lastName + ", " + splitted_author.firstName;
 							reviewed_author_string += reviewed_author_inverted + "::";
@@ -129,34 +129,6 @@ function invokeEMTranslator(doc) {
 							i.tags.push(review_keyword);
 					}
 				}
-				//getestet: https://www.persee.fr/doc/syria_0039-7946_1922_num_3_2_8833_t1_0165_0000_7
-				//https://www.persee.fr/doc/syria_0039-7946_1922_num_3_2_8911_t1_0169_0000_8
-
-				/*
-				if (i.title.split('. — ').length == 2) {
-					let reviewed_author = i.title.split('. — ')[0];
-					let reviewed_titles = i.title.split('. — ')[1];
-					if (reviewed_titles != null) {
-						for (let reviewed_title of reviewed_titles.split(' ; ')) {
-							review_keyword = "#reviewed_pub#title::" + reviewed_title.split(', ')[0];
-							if (reviewed_author != null) {
-								reviewed_author = reviewed_author.trim().replace(/,/, "").split(" et ")[0];
-								splitted_author = ZU.cleanAuthor(reviewed_author, 'author');
-								reviewed_author_inverted = splitted_author.lastName + ", " + splitted_author.firstName;
-								review_keyword += "#name::" + reviewed_author_inverted;
-							}
-							if (reviewed_title.split(', ').length > 1) {
-								if (reviewed_title.match(/[^\d]\d{4}[^\d]/) != null) {
-									let reviewed_year = reviewed_title.match(/[^\d](\d{4})[^\d]/)[1];
-									review_keyword += "#year::" + reviewed_year;
-								}
-							}
-							review_keyword += "#";
-							review_keyword = ZU.trimInternal(review_keyword.replace(/(?:&nbsp;)/g, " ").replace(/(?:<\/?.+?>)/g, ""));
-							i.tags.push(review_keyword);
-						}
-					}
-				}*/
 			}
 		}
 		i.attachments = [];
