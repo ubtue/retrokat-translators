@@ -5,11 +5,11 @@
 	"target": "^https?://brill.com/view/journals/",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 150,
+	"priority": 94,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-04-21 14:01:36"
+	"lastUpdated": "2022-04-12 14:49:25"
 }
 
 /*
@@ -155,3 +155,7 @@ function doWeb(doc, url) {
 	} else
 		invokeEmbeddedMetadataTranslator(doc, url);
 }
+/** BEGIN TEST CASES **/
+var testCases = [
+]
+/** END TEST CASES **/
