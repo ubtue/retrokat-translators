@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-13 09:47:49"
+	"lastUpdated": "2022-04-13 10:13:27"
 }
 
 /*
@@ -38,7 +38,7 @@
 var reviewURLs = [];
 
 function detectWeb(doc, url) {
-	if (url.includes('/article/')) return "journalArticle";
+	if (url.includes('/article|document/')) return "journalArticle";
 	else if (url.match(/(issue)|(journal)/) && getSearchResults(doc)) return "multiple";
 	else return false;
 }
@@ -125,3 +125,7 @@ function invokeEMTranslator(doc, url) {
 	});
 	translator.translate();
 }
+/** BEGIN TEST CASES **/
+var testCases = [
+]
+/** END TEST CASES **/
