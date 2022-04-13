@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-04-13 10:15:45"
+	"lastUpdated": "2022-04-13 10:20:49"
 }
 
 /*
@@ -38,7 +38,7 @@
 var reviewURLs = [];
 
 function detectWeb(doc, url) {
-	if (url.includes('/article|document/')) return "journalArticle";
+	if (url.match('/(?:article)|(?:document)/') != null) return "journalArticle";
 	else if (url.match(/(issue)|(journal)/) && getSearchResults(doc)) return "multiple";
 	else return false;
 }
