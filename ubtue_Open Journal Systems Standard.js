@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-25 09:47:05"
+	"lastUpdated": "2022-04-14 07:10:45"
 }
 
 /*
@@ -234,8 +234,13 @@ function invokeEMTranslator(doc) {
 				i.notes.push({note: "abs:" + abstract});
 			}
 		}
+		if (i.abstractNote != undefined) {
+			if (i.abstractNote.match(/ISBN\s+((?:\d+[\- ]*)+)/) != null) {
+				i.tags.push("#reviewed_pub#isbn::" + i.abstractNote.match(/ISBN\s+((?:\d+[\- ]*)+)/)[1] + "#")
+			}
+		}
 		if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content') != null) {
-			if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content').match(/^(Comptes rendus)|(Vient de paraître)|(Reseñas)/) != null) {
+			if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content').match(/^(Comptes rendus)|(Vient de paraître)|(Reseñas)|(Recenzje)/) != null) {
 				i.tags.push("Book Review");
 				if (i.url.match(/revues\.droz/) != null) {
 					review_tags = ZU.xpath(doc, '//h1[@class="page-header"]');
@@ -270,6 +275,12 @@ function invokeEMTranslator(doc) {
 				}
 			}
 		}
+		if (ZU.xpath(doc, '//meta[@name="citation_keywords"]/@content').length > 1) {
+		for (let keyword of ZU.xpath(doc, '//meta[@name="citation_keywords"]/@content')) {
+			keyWord = keyword.textContent;
+			i.tags.push(keyWord);
+		}
+		}
 		i.attachments = [];
 		if (i.abstractNote != undefined) {
 		if (i.abstractNote.match(/Archivo Teológico Granadino es una revista científica/) != null) {
@@ -300,6 +311,7 @@ function doWeb(doc, url) {
 		invokeEMTranslator(doc, url);
 	}
 }
+
 
 
 
