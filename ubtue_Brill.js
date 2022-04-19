@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-04-13 08:11:03"
+	"lastUpdated": "2022-04-19 10:24:17"
 }
 
 /*
@@ -35,7 +35,7 @@
 
 
 function detectWeb(doc, url) {
-	if (url.match(/article-.+\.xml$/)) {
+	if (url.match(/article-.+\.xml/)) {
 		return "journalArticle";
 	} else if (url.match(/issue-\d+(-\d+)?\.xml$/)) {
 		return "multiple";
@@ -79,7 +79,13 @@ function postProcess(doc, item) {
 	if (item.tags)
 		item.tags = item.tags.map(i => i.textContent.trim());
 	let reviewEntry = text(doc, '.articlecategory');
-	if (reviewEntry && reviewEntry.match(/book\sreview/i)) item.tags.push('Book Review');
+	if (reviewEntry && reviewEntry.match(/book\sreview/i)) {
+		item.tags.push('Book Review');
+		let excerpt = ZU.xpathText(doc, '//excerpt');
+		if (excerpt.match(/ISBN:?\s+((?:\d[-\s]*)+)/) != null) {
+			item.tags.push("#reviewed_pub#isbn::" + excerpt.match(/ISBN:?\s+((?:\d[-\s]*)+)/)[1].trim() + "#");
+		}
+	}
 	// numbering issues with slash due to cataloguing rule
 	if (item.issue) item.issue = item.issue.replace('-', '/');
 	let date = item.date;
