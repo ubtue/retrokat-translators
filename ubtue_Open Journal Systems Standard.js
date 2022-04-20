@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-04-20 09:01:42"
+	"lastUpdated": "2022-04-20 10:06:26"
 }
 
 /*
@@ -176,7 +176,7 @@ function getOrcids(doc, ISSN) {
 			if (ZU.xpathText(o, './/a[contains(@href, "orcid")]') != null) {
 				let orcid = ZU.trimInternal(ZU.xpathText(o, './/a[contains(@href, "orcid")]'));
 				let author = ZU.trimInternal(o.innerHTML.split('&nbsp;')[0]);
-				notes.push({note: author.replace(/<\/?.+?>/g, '') + ' | orcid:' + orcid.replace(/https?:\/\/orcid\.org\//g, '')});
+				notes.push({note: orcid.replace(/https?:\/\/orcid\.org\//g, 'orcid:') + ' | ' + author.replace(/<\/?.+?>/g, '')});
 			}
 		}
 	}
