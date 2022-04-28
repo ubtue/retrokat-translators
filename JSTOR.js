@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-08 10:44:33"
+	"lastUpdated": "2022-04-28 10:23:21"
 }
 
 /*
@@ -48,7 +48,10 @@ function detectWeb(doc, url) {
 		&& getSearchResults(doc, true)) {
 		return "multiple";
 	}
-
+	else if (/stable|pss/.test(url)) {
+		Z.debug("Snargle");
+		Z.debug(getSearchResults(doc, true))
+	}
 	// If this is a view page, find the link to the citation
 	var favLink = getFavLink(doc);
 	if ((favLink && getJID(favLink.href)) || getJID(url)) {
@@ -63,14 +66,14 @@ function detectWeb(doc, url) {
 }
 
 function getSearchResults(doc, checkOnly) {
-	var resultsBlock = ZU.xpath(doc, '//div[contains(@class, "media-body")]')
+	var resultsBlock = ZU.xpath(doc, '//div[@class="toc-item"]')
 	if (!resultsBlock) return false;
 	var items = {}, found = false;
 	for (let i=0; i<resultsBlock.length; i++) {
 		let node = resultsBlock[i];
-		let link = ZU.xpath(node, './/a[@data-qa="content title"]');
+		let link = ZU.xpath(node, './/*[@data-qa="content title"]');
+		let href = ZU.xpathText(link[0], './@href');
 		let title = link[0].textContent.trim();
-		let href = link[0].href;
 		if (!href || !title) continue;
 		if (checkOnly) return true;
 		found = true;
@@ -301,6 +304,7 @@ function processRIS(text, jid, doc) {
 		trans.doImport();
 	});
 }
+
 
 
 
