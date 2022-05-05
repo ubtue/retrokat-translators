@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-04-20 10:06:26"
+	"lastUpdated": "2022-05-05 11:15:44"
 }
 
 /*
@@ -230,7 +230,7 @@ function invokeEMTranslator(doc) {
 		i.title = i.title.replace(/(<\/?[^>]+>)|(&nbsp;)/g, '');
 		for (let abstract of ZU.xpath(doc, '//meta[@name="DC.Description"]/@content')) {
 			abstract = abstract.textContent.replace(/(<\/?[^>]+>)|(&nbsp;)/g, '');
-			if (i.abstractNote != abstract && abstract != "" && abstract != ".") {
+			if (i.abstractNote != abstract && abstract.trim() != "" && abstract != ".") {
 				i.notes.push({note: "abs:" + abstract});
 			}
 		}
@@ -240,7 +240,7 @@ function invokeEMTranslator(doc) {
 			}
 		}
 		if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content') != null) {
-			if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content').match(/^(Comptes rendus)|(Vient de paraître)|(Reseñas)|(Recenzje)/) != null) {
+			if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content').match(/^(Comptes rendus)|(Vient de paraître)|(Reseñas)|(Recenzje)|((Buch)?besprechungen)/i) != null) {
 				i.tags.push("Book Review");
 				if (i.url.match(/revues\.droz/) != null) {
 					review_tags = ZU.xpath(doc, '//h1[@class="page-header"]');
