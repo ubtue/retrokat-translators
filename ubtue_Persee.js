@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-04-12 13:12:48"
+	"lastUpdated": "2022-05-05 07:02:41"
 }
 
 /*
@@ -131,6 +131,7 @@ function invokeEMTranslator(doc) {
 				}
 			}
 		}
+		if (i.url.match(/\/ephe/) != null) i.ISSN = "2269-8671";
 		i.attachments = [];
 		if (i.abstractNote != undefined) {
 		if (i.abstractNote.match(/Archivo Teológico Granadino es una revista científica/) != null) {
