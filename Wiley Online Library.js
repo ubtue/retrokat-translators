@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-19 14:54:09"
+	"lastUpdated": "2022-05-09 13:40:10"
 }
 
 /*
@@ -374,6 +374,16 @@ function scrapeBibTeX(doc, url) {
 				item.tags.push('Book Review');
 				}
 			}
+			let isbn_tag = ZU.xpathText(doc, '//a[contains(@href,"/isbn/")]');
+			if (isbn_tag != null) {
+				item.tags.push("#reviewed_pub#isbn::#" + isbn_tag + "#");
+				item.tags.push("Book Review");
+			}
+			if (!item.tags.includes("Book Review")) {
+				if (item.title.match(/\s+–(?:\s+edited)?\s+by /i) != null) {
+					item.tags.push("Book Review");
+				}
+			}
 			// Make sure we pass only the DOI not the whole URL
 			doiURLRegex = /^https:\/\/doi.org\/(.*)/;
 			if (item.DOI && item.DOI.match(doiURLRegex))
@@ -560,6 +570,7 @@ function doWeb(doc, url) {
 		}
 	}
 }
+
 
 
 /** BEGIN TEST CASES **/
