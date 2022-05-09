@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-05-05 11:15:44"
+	"lastUpdated": "2022-05-09 15:35:48"
 }
 
 /*
@@ -239,8 +239,13 @@ function invokeEMTranslator(doc) {
 				i.tags.push("#reviewed_pub#isbn::" + i.abstractNote.match(/ISBN\s+((?:\d+[\- ]*)+)/)[1] + "#")
 			}
 		}
+		if (i.title != undefined) {
+			if (i.title.match(/ISBN\s+((?:\d+[\- ]*)+)/) != null) {
+				i.tags.push("#reviewed_pub#isbn::" + i.title.match(/ISBN\s+((?:\d+[\- ]*)+)/)[1] + "#")
+			}
+		}
 		if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content') != null) {
-			if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content').match(/^(Comptes rendus)|(Vient de paraître)|(Reseñas)|(Recenzje)|((Buch)?besprechungen)/i) != null) {
+			if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content').match(/^(Comptes rendus)|(Vient de paraître)|(Reseñas)|(Recenzje)|((Buch)?besprechungen)|(Recensões)/i) != null) {
 				i.tags.push("Book Review");
 				if (i.url.match(/revues\.droz/) != null) {
 					review_tags = ZU.xpath(doc, '//h1[@class="page-header"]');
@@ -287,6 +292,7 @@ function invokeEMTranslator(doc) {
 			i.abstractNote = "";
 		}
 		}
+		if (ZU.xpathText(doc, '//meta[@name="DC.Rights" and contains(@content, "creativecommons")]/@content') != null) i.notes.push("LF:")
 		if (i.language == "español") {
 			i.language = "spa";
 		}
