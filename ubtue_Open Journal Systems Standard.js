@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-05-09 15:35:48"
+	"lastUpdated": "2022-05-09 16:27:14"
 }
 
 /*
@@ -235,13 +235,13 @@ function invokeEMTranslator(doc) {
 			}
 		}
 		if (i.abstractNote != undefined) {
-			if (i.abstractNote.match(/ISBN\s+((?:\d+[\- ]*)+)/) != null) {
-				i.tags.push("#reviewed_pub#isbn::" + i.abstractNote.match(/ISBN\s+((?:\d+[\- ]*)+)/)[1] + "#")
+			if (i.abstractNote.match(/ISBN:?\s+((?:\d+[\- ]*)+)/) != null) {
+				i.tags.push("#reviewed_pub#isbn::" + i.abstractNote.match(/ISBN:?\s+((?:\d+[\- ]*)+)/)[1].trim() + "#")
 			}
 		}
 		if (i.title != undefined) {
-			if (i.title.match(/ISBN\s+((?:\d+[\- ]*)+)/) != null) {
-				i.tags.push("#reviewed_pub#isbn::" + i.title.match(/ISBN\s+((?:\d+[\- ]*)+)/)[1] + "#")
+			if (i.title.match(/ISBN:?\s+((?:\d+[\- ]*)+)/) != null) {
+				i.tags.push("#reviewed_pub#isbn::" + i.title.match(/ISBN:?\s+((?:\d+[\- ]*)+)/)[1].trim() + "#")
 			}
 		}
 		if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content') != null) {
