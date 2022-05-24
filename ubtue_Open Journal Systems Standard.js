@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-05-24 08:38:51"
+	"lastUpdated": "2022-05-24 08:56:34"
 }
 
 /*
@@ -299,7 +299,7 @@ function invokeEMTranslator(doc) {
 		if (i.ISSN = "0121-4977" && ["es", "spa"].includes(i.language)) {
 		if (i.creators.length != ZU.xpath(doc, '//meta[@name="citation_author"]/@content').length) {
 			let is_corporation = false;
-			if (ZU.xpathText(doc, '//meta[@name="citation_author"]/@content').match(/comunidad\s+de/i)) {
+			if (ZU.xpathText(doc, '//meta[@name="citation_author"]/@content').match(/((comunidad|comisión)\s+de)|(Secretariado para)/i)) {
 				i.creators = [];
 				i.creators.push({lastName: ZU.xpathText(doc, '//meta[@name="citation_author"]/@content'), firstName: "", creatorType: "author", fieldMode: 1 });
 			}
