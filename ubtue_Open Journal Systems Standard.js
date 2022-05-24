@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-05-24 08:06:06"
+	"lastUpdated": "2022-05-24 08:38:51"
 }
 
 /*
@@ -297,12 +297,21 @@ function invokeEMTranslator(doc) {
 			i.language = "spa";
 		}
 		if (i.ISSN = "0121-4977" && ["es", "spa"].includes(i.language)) {
-		if (i.creators.length != ZU.xpath(doc, '//meta[@name="citation_author"]/@content')) {
+		if (i.creators.length != ZU.xpath(doc, '//meta[@name="citation_author"]/@content').length) {
 			let is_corporation = false;
 			if (ZU.xpathText(doc, '//meta[@name="citation_author"]/@content').match(/comunidad\s+de/i)) {
 				i.creators = [];
 				i.creators.push({lastName: ZU.xpathText(doc, '//meta[@name="citation_author"]/@content'), firstName: "", creatorType: "author", fieldMode: 1 });
 			}
+		}
+		else {
+			for (let c of i.creators) {
+			if (c.firstName.match(/de\s+[^\s+]+\s+y\b/i) != null) {
+				let totalName = c.firstName + " " + c.lastName;
+				c.lastName = totalName.substring(totalName.match(/de\s+[^\s]+\s+y\b/i).index, totalName.length);
+				c.firstName = totalName.substring(0, totalName.match(/de\s+[^\s]+\s+y\b/i).index);
+			}
+		}
 		}
 		}
 		i.complete();
