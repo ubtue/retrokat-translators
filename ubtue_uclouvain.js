@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-05-31 12:09:44"
+	"lastUpdated": "2022-05-31 12:17:25"
 }
 
 /*
@@ -72,7 +72,6 @@ function doWeb(doc, url) {
  }
 
 function scrape(doc, url) {
-	Z.debug(text(doc, 'script[type="application/ld+json"]').replace(/\n/g, " "))
 	let json = JSON.parse(text(doc, 'script[type="application/ld+json"]').replace(/\n/g, " "));//Z.debug(json)
  	var translator = Zotero.loadTranslator('web');
  	// Embedded Metadata
@@ -87,7 +86,6 @@ function scrape(doc, url) {
 		}
 	}
 	let parts = [];
-	if (json.url) item.notes.push({note: "doi:" + json.url});
 	let newJSON = json.isPartOf;
 	for (let i of [1,2,3,4]) {
 		if (newJSON) {
@@ -105,7 +103,7 @@ function scrape(doc, url) {
 			newJSON = newJSON.isPartOf;
 		}
 	}
-	
+	if (json.url) item.tags.push("##handle##" + json.url);
 	//ppn abfrage 
 	item.complete();
  	});
