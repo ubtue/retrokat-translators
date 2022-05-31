@@ -85,6 +85,11 @@ function scrape(doc, url) {
 					item.tags.push(tagentry[v]);
 				}
 			}
+			if (item.creators.length == 0) {
+				for (let creatorTag of ZU.xpath(doc, '//meta[@name="dc.Creator"]/@content')) {
+					item.creators.push(ZU.cleanAuthor(creatorTag.textContent, 'author'));
+				}
+			}
 			let abstract = ZU.xpathText(doc, '//*[contains(concat( " ", @class, " " ), concat( " ", "abstractInFull", " " ))]//p');
 			if (item.abstractNote) item.abstractNote = abstract;
 			let bookReviewTag = ZU.xpathText(doc, '//meta[@name="dc.Type"]/@content');
