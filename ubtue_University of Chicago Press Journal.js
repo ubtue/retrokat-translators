@@ -94,6 +94,9 @@ function scrape(doc, url) {
 			if (item.abstractNote) item.abstractNote = abstract;
 			let bookReviewTag = ZU.xpathText(doc, '//meta[@name="dc.Type"]/@content');
 			if (bookReviewTag && bookReviewTag.match(/book-review/i)) item.tags.push('Book Review');
+			if (ZU.xpathText(doc, '//span[@class="citation__access__type"]') != null) {
+				if (ZU.xpathText(doc, '//span[@class="citation__access__type"]') == 'Free') item.notes.push('LF:');
+			}
 			item.complete();
 		});
 		translator.translate();
