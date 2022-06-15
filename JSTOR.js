@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-04-28 10:23:21"
+	"lastUpdated": "2022-06-15 08:15:15"
 }
 
 /*
@@ -224,10 +224,10 @@ function processRIS(text, jid, doc) {
 		if (subtitle){
 			item.title = item.title + ": " + subtitle[1]
 		}
+		if (item.pages != undefined) {
+			if (item.pages.match(/[ivxlcm]+.\d+/i)) item.pages = "";
+		}
 		
-		if (item.pages.match(/[ivxlcm]+.\d+/i)) {
-			item.pages = "";
-			}
 		
 		// reviews don't have titles in RIS - we get them from the item page
 		if (review) {
@@ -309,6 +309,7 @@ function processRIS(text, jid, doc) {
 		trans.doImport();
 	});
 }
+
 
 
 
