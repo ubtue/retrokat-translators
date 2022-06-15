@@ -224,6 +224,11 @@ function processRIS(text, jid, doc) {
 		if (subtitle){
 			item.title = item.title + ": " + subtitle[1]
 		}
+		
+		if (item.pages.match(/[ivxlcm]+.\d+/i)) {
+			item.pages = "";
+			}
+		
 		// reviews don't have titles in RIS - we get them from the item page
 		if (review) {
 			let newCreators = [];
