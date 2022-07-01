@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-11-04 12:23:37"
+	"lastUpdated": "2022-07-01 16:22:41"
 }
 
 /*
@@ -140,6 +140,9 @@ function scrape(doc, url) {
 					item.creators[i].lastName = item.creators[i].lastName.replace('(Translator)', '');
 				}
 			}
+			if (item.pages.match(/[ABCD]\d+/) != null) {
+				item.pages = "";
+			}
 			//scrape ORCID from website e.g. https://journals.sagepub.com/doi/full/10.1177/0084672419883339
 			let authorSectionEntries = doc.querySelectorAll('.author-section-div');
 			for (let authorSectionEntry of authorSectionEntries) {
@@ -252,6 +255,7 @@ function scrape(doc, url) {
 		translator.translate();
 	});
 }
+
 
 
 /** BEGIN TEST CASES **/
