@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-05-24 09:11:08"
+	"lastUpdated": "2022-07-01 16:35:06"
 }
 
 /*
@@ -245,7 +245,7 @@ function invokeEMTranslator(doc) {
 			}
 		}
 		if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content') != null) {
-			if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content').match(/^(Comptes rendus)|(Vient de paraître)|(Reseñas)|(Recenzje)|((Buch)?besprechungen)|(Recensões)/i) != null) {
+			if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content').match(/^(Comptes rendus)|(Vient de paraître)|(Reseñas)|(Recenzje)|((Buch)?besprechungen)|(Recensões)|(Recensiones)/i) != null) {
 				i.tags.push("Book Review");
 				if (i.url.match(/revues\.droz/) != null) {
 					review_tags = ZU.xpath(doc, '//h1[@class="page-header"]');
@@ -332,6 +332,7 @@ function doWeb(doc, url) {
 		invokeEMTranslator(doc, url);
 	}
 }
+
 
 
 
