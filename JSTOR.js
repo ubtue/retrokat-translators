@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-06-15 08:15:15"
+	"lastUpdated": "2022-07-08 08:55:09"
 }
 
 /*
@@ -225,7 +225,7 @@ function processRIS(text, jid, doc) {
 			item.title = item.title + ": " + subtitle[1]
 		}
 		if (item.pages != undefined) {
-			if (item.pages.match(/[ivxlcm]+.\d+/i)) item.pages = "";
+			if (item.pages.match(/(?:[ivxlcm]+.\d+)|(?:\d+.[ivxlcm]+)/i)) item.pages = "";
 		}
 		
 		
