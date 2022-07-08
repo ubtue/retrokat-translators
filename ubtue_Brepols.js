@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-11-12 13:16:49"
+	"lastUpdated": "2022-07-08 09:33:29"
 }
 
 /*
@@ -170,6 +170,13 @@ function scrape(doc, url) {
 							item.notes.push({
 								note: "abs:" + abstractsOneTwo[2],
 							});
+						
+						}
+						if (abstractsOneTwo[3]) {
+							item.notes.push({
+								note: "abs:" + abstractsOneTwo[3],
+							});
+						
 						}
 						}
 					}
@@ -180,6 +187,7 @@ function scrape(doc, url) {
 		});
 	});
 }
+
 
 /** BEGIN TEST CASES **/
 var testCases = [
