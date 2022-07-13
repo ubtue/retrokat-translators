@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-08 09:33:29"
+	"lastUpdated": "2022-07-13 08:47:47"
 }
 
 /*
@@ -64,7 +64,7 @@ function getSearchResults(doc, checkOnly) {
 		found = true;
 		items[href] = title;
 	}
-	Z.debug(lfDOIs);
+	//Z.debug(lfDOIs);
 	return found ? items : false;
 }
 
@@ -90,7 +90,7 @@ function scrape(doc, url) {
 	var doi = url.match(/10\.[^?#]+/)[0];
 	var citationurl = url.replace(replURLRegExp, "/action/showCitFormats?doi=");
 	var tagentry = ZU.xpathText(doc, '//p[@class="fulltext"]//a[contains(@href, "keyword")| contains(@href, "Keyword=")] | //kwd-group');
-	Z.debug("Citation URL: " + citationurl);
+	//Z.debug("Citation URL: " + citationurl);
 	ZU.processDocuments(citationurl, function(citationDoc){
 		var filename = citationDoc.evaluate('//form//input[@name="downloadFileName"]', citationDoc, null, XPathResult.ANY_TYPE, null).iterateNext().value;
 		Z.debug("Filename: " + filename);
@@ -135,7 +135,27 @@ function scrape(doc, url) {
 					}
 					}
 				}
+				if (item.pages) {
+					if (item.pages.match(/C\d+\s*-\s*C?\d+/) != null) {
+						let pagination = item.pages.match(/C(\d+)\s*-\s*C?(\d+)/); 
+						item.pages = pagination[1] + '-' + pagination[2];
+						
+					}
+					else if (item.pages.match(/\d+\s*-\s*C\d+/) != null) {
+						let pagination = item.pages.match(/(\d+)/); 
+						item.pages = pagination[1] + '-';
+						
+					}
+					else if (item.pages.match(/[i]+\s*-\s*\d+/) != null) {
+						let pagination = item.pages.match(/([iv]+)\s*(-\s*\d+)/); 
+						let firstPage = 0;
+						for (let char of pagination[1]) {
+							firstPage += 1;
+						}
+						item.pages = firstPage.toString() + pagination[2];
+					}
 
+				}
 				let docType = ZU.xpathText(doc, '//meta[@name="dc.Type"]/@content');
 				if (docType === "book-review") {
 					item.tags.push("Book Reviews");
