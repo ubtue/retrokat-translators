@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-11 14:43:21"
+	"lastUpdated": "2022-07-13 06:34:59"
 }
 
 /*
@@ -70,7 +70,7 @@ function invokeRISTranslator(doc) {
 			if (["Free", "Open Access"].includes(ZU.xpathText(doc, '//i[contains(@class, "icon-availability")]/@title'))) {
 				item.notes.push('LF:');
 			}
-			if ((ZU.xpathText(doc, '//span[contains(@class, "article-client_type")]').match(/^Book\s+Review/i))) {
+			if ((ZU.xpathText(doc, '//span[contains(@class, "article-client_type")]').match(/^Book\s+Review|^Review\s+Article/i))) {
 				item.tags.push("Book Review");
 			}
 			let publications = ZU.xpath(doc, '//div[@class="product"]');
