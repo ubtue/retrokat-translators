@@ -1,15 +1,15 @@
 {
-	"translatorID": "d6c6210a-297c-4b2c-8c43-48cb503cc49e",
-	"label": "Springer Link",
+	"translatorID": "e3ce46e6-dbcf-4253-9f25-d35ae3b39788",
+	"label": "ubtue_Springer Link",
 	"creator": "Aurimas Vinckevicius",
 	"target": "^https?://link\\.springer\\.com/(search(/page/\\d+)?\\?|(article|chapter|book|referenceworkentry|protocol|journal|referencework)/.+)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 150,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-14 13:12:14"
+	"lastUpdated": "2022-07-14 13:11:51"
 }
 
 function detectWeb(doc, url) {
