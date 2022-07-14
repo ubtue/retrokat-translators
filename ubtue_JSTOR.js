@@ -1,15 +1,15 @@
 {
-	"translatorID": "d921155f-0186-1684-615c-ca57682ced9b",
-	"label": "JSTOR",
-	"creator": "Simon Kornblith, Sean Takats, Michael Berkowitz, Eli Osherovich, czar",
+	"translatorID": "38ef9e5f-100e-45b8-b9dd-7a00a7e60884",
+	"label": "ubtue_JSTOR",
+	"creator": "Helena Nebel",
 	"target": "^https?://([^/]+\\.)?jstor\\.org/(discover/|action/(showArticle|doBasicSearch|doAdvancedSearch|doLocatorSearch|doAdvancedResults|doBasicResults)|(stable/)|(pss/)|(openurl\\?)|(sici\\?))",
 	"minVersion": "3.0.12",
 	"maxVersion": "",
-	"priority": 150,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-14 12:24:32"
+	"lastUpdated": "2022-07-14 12:31:51"
 }
 
 /*
