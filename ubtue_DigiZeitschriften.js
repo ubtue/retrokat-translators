@@ -1,15 +1,15 @@
 {
-	"translatorID": "e46830a2-1b19-4b6b-9f1a-e5e9760a0f80",
-	"label": "DigiZeitschriften",
+	"translatorID": "c94d058e-5ea9-40ec-aee6-0488a48cbcc6",
+	"label": "ubtue_DigiZeitschriften",
 	"creator": "Philipp Zumstein",
 	"target": "^https?://www\\.digizeitschriften\\.de/((en/)?dms/|index\\.php\\?id=27[24])",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 150,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-14 12:20:45"
+	"lastUpdated": "2022-07-14 12:20:16"
 }
 
 /*
