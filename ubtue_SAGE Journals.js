@@ -1,15 +1,15 @@
 {
-	"translatorID": "908c1ca2-59b6-4ad8-b026-709b7b927bda",
-	"label": "SAGE Journals",
+	"translatorID": "8733528c-e083-4797-8709-a9dc335b8669",
+	"label": "ubtue_SAGE Journals",
 	"creator": "Sebastian Karcher",
 	"target": "^https?://journals\\.sagepub\\.com(/doi/((abs|full|pdf)/)?10\\.|/action/doSearch\\?|/toc/)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 150,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-14 13:01:42"
+	"lastUpdated": "2022-07-14 13:01:27"
 }
 
 /*
