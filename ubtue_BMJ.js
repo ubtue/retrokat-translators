@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-14 06:46:01"
+	"lastUpdated": "2022-07-14 07:37:32"
 }
 
 /*
@@ -32,7 +32,7 @@
 
 
 function detectWeb(doc,url) {
-	if (url.match(/\/bmj.com\/content\//) != null && getSearchResults(doc, url)) return "multiple";
+	if (url.match(/bmj.com\/content\//) != null && getSearchResults(doc, url)) return "multiple";
 	else if (url.match(/\/bmj.com\/content\/.+.citation-tools/) != null) return "journalArticle";
 	return false;
 }
@@ -40,25 +40,13 @@ function detectWeb(doc,url) {
 
 function getSearchResults(doc, url) {
 	var items = {}, found = false, title;
-	var results = doc.getElementsByClassName('contentItem');
-	var searchEnvironment = doc.body.classList.contains('page-search') || doc.body.classList.contains('page-searchwithinbase') || doc.body.classList.contains('page-databasecontent');
-	for (var i=0; i<results.length; i++) {
-		if ( searchEnvironment ) {
-			//if we're searching titles, we can for example not handle databases or ebook packages
-			if (results[i].classList.contains('book') || 
-				results[i].classList.contains('textbook') ||
-				results[i].classList.contains('nlm-article') ||
-				results[i].classList.contains('chapter') ||
-				results[i].classList.contains('wdg-biblio-record')) {
-					title = ZU.xpath(results[i], './/h2[contains(@class,"itemTitle")]/a')[0];
-			}
-		} else {//view issue
-			title = ZU.xpath(results[i],'.//h3/a')[0];
-		}
-
-		if (!title || !title.href) continue;
+	var results = ZU.xpath(doc, '//div[@class="toc-citation"]');
+	for (let result of results) {
+		let title = ZU.xpathText(result, './/span[@class="highwire-cite-title"]');
+		let href = ZU.xpathText(result, './/a/@href') + '.citation-tools';
+		if (!title || !href) continue;
 		found = true;
-		items[title.href] = ZU.trimInternal(title.textContent);
+		items[href] = ZU.trimInternal(title);
 	}
 	return found ? items : false;
 }
@@ -81,99 +69,50 @@ function doWeb(doc, url) {
 }
 
 function scrapeRIS(doc, url) {
-	var urlCite = ZU.xpathText(doc,'(//li[@class="cite"])[1]/a/@href');
-	var productId = urlCite.replace('/dg/cite/', '').replace(/[?#].*$/, '');
-
 	var abstract = doc.getElementById('overviewContent') || 
 					ZU.xpath(doc,'//div[@class="articleBody_abstract"]/p')[0] || 
 					ZU.xpath(doc,'//div[@class="articleBody_transAbstract"]/p')[0];
-	var pdfUrl = ZU.xpathText(doc,'//div[contains(@class, "fullContentLink")]/a[@class="pdf-link"]/@href');
 	var tags = ZU.xpath(doc, '//meta[@name="citation_keywords"]/@content');
-	
-	var biblRemark = doc.getElementById('biblRemark');
-	//at the moment the page (end)numbers are not part of the RIS
-	//but the information is in the meta tags
 	var firstPage = ZU.xpathText(doc, '//meta[@name="citation_firstpage"]/@content');
 	var lastPage = ZU.xpathText(doc, '//meta[@name="citation_lastpage"]/@content');
-	
-	ZU.doGet("/dg/cite:exportcitation/ris?t:ac="+productId+"/$N", function(risData) {
+	let risURL = ZU.xpathText(doc, '//a[contains(@href,"/ris")]/@href');
+	ZU.doGet(risURL, function(risData) {
 		if (risData.indexOf("<") == 0) {
 			Z.debug("No RIS");
 			scrapeMetadata(doc);
 		} else {
-			if (detectWeb(doc, url) == "bookSection") {
-				risData = risData.replace("TY  - GENERIC", "TY  - CHAP");
-			}
 			var trans = Zotero.loadTranslator('import');
 			trans.setTranslator('32d59d2d-b65a-4da4-b0a3-bdd3cfb979e7');//https://github.com/zotero/translators/blob/master/RIS.js
 			trans.setString(risData);
-
 			trans.setHandler('itemDone', function (obj, item) {
-				//for debugging
-				//item.notes.push({note:risData});
-				
-				//add endpage if missing
 				if (item.pages && item.pages.indexOf("-") == -1 && lastPage) {
 					if (firstPage == item.pages) {
 						item.pages += "–" + lastPage;
 					}
 				}
-
-				//correct authors from RIS data
-				//they are of the form lastname firstname withouth a comma
-				//e.g., AU  - Meggitt Justin J.
-				for (var i=0; i<item.creators.length; i++) {
-					if (item.creators[i].fieldMode == 1) {
-						var splitPos = item.creators[i].lastName.indexOf(" ");
-							item.creators[i].firstName = item.creators[i].lastName.substr( splitPos+1 );
-							item.creators[i].lastName = item.creators[i].lastName.substr( 0, splitPos);
-							delete item.creators[i].fieldMode;
+				for (let creator of item.creators) {
+					let firstName = "";
+					if (creator.firstName.match(/\b[A-Z]\b/g) != null) {
+					for (let singleChar of creator.firstName.match(/\b[A-Z]\b/g)) {
+						firstName += singleChar + ". ";
+						}
+					creator.firstName = firstName.trim();
 					}
+				}
+				for (let orcidAuthor of ZU.xpath(doc, '//meta[@name="citation_author" and following-sibling::meta[@name="citation_author_orcid"]]/@content')) {
+					
 				}
 				//add hyphen in ISSN if missing
 				if (item.ISSN) {
 					item.ISSN = ZU.cleanISSN(item.ISSN);
 				}
-				//add abstract
-				if (abstract) {
-					abstract = abstract.textContent
-						.replace(/\u0092/g,"’")
-						.replace(/\u0093/g,"“")
-						.replace(/\u0094/g,"”");
-					item.abstractNote = ZU.trimInternal(abstract);
-				}
 
-				//biblRemark e.g. edition maybe more
-				if (biblRemark) {
-					if ((item.itemType == "book" || item.itemType == "bookSection") && !item.edition) {
-						item.edition = biblRemark.textContent;
-					} else {
-						item.notes.push({ note : biblRemark.textContent});
-					}
-				}
-
-				//url is saved in RIS withouth the http(s) protocoll
-				item.url = url;
-
-				//journalAbbreviations are more like internal codes
-				//they don't make sense for citations
-				delete item.journalAbbreviation;
-				
 				if (item.tags.length == 0 && tags && tags.length > 0) {
 					for (var i=0; i<tags.length; i++) {
 						item.tags.push(tags[i].textContent.replace(/[,.]$/, ''));
 					}
 				}
-
-				if (pdfUrl) {
-					//Z.debug(pdfUrl);
-					item.attachments.push({
-						url: pdfUrl,
-						title: "Full Text PDF",
-						mimeType: "application/pdf"
-					});
-				}
-
+				if (item.abstractNote.match('This is a pdf-only article and there is no') != null) item.abstractNote = "";
 				item.complete();
 			});
 			trans.translate();
