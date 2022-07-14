@@ -1,15 +1,15 @@
 {
-	"translatorID": "7d7d0060-3d29-4ccf-8d1d-6d85178c64a2",
-	"label": "JSTOR_zeitaltobiblrech",
+	"translatorID": "68f54863-dab6-4312-8a18-d975cb9e15f6",
+	"label": "ubtue_JSTOR_zeitaltobiblrech",
 	"creator": "Helena Nebel",
 	"target": "www.jstor.org\\/.+\\/zeitaltobiblrech",
 	"minVersion": "3.0.12",
 	"maxVersion": "",
-	"priority": 150,
+	"priority": 94,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-14 12:47:54"
+	"lastUpdated": "2022-07-14 12:47:29"
 }
 
 /*
