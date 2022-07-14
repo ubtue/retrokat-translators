@@ -1,15 +1,15 @@
 {
-	"translatorID": "c54d1932-73ce-dfd4-a943-109380e06574",
-	"label": "Project MUSE",
+	"translatorID": "c5fc84bf-6385-442b-a67d-9ba972bbe252",
+	"label": "ubtue_Project MUSE",
 	"creator": "Sebastian Karcher",
 	"target": "^https?://[^/]*muse\\.jhu\\.edu/(book/|article/|issue/|search\\?)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 150,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-14 12:56:01"
+	"lastUpdated": "2022-07-14 12:55:29"
 }
 
 /*
@@ -134,7 +134,6 @@ function scrape(doc) {
 			}
 			
 			
-				//<div class="details_row">
 			if (ZU.xpathText(doc, '//span[@class="abstractheader"]')) {
 			if (ZU.xpathText(doc, '//span[@class="abstractheader"]').match(/^In lieu of an abstract/) != null) {
 				item.abstractNote = '';
