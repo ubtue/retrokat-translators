@@ -5,11 +5,11 @@
 	"target": "^https?://www\\.cambridge\\.org/core/(search\\?|journals/)",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 95,
+	"priority": 100,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-03-25 12:57:41"
+	"lastUpdated": "2022-07-14 10:54:50"
 }
 
 /*
@@ -138,6 +138,7 @@ function scrape(doc, url) {
 		trans.doWeb(doc, url);
 	});
 }
+
 
 
 
