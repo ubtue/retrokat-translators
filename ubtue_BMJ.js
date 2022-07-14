@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-14 08:03:20"
+	"lastUpdated": "2022-07-14 08:31:43"
 }
 
 /*
@@ -117,6 +117,9 @@ function scrapeRIS(doc, url) {
 					for (var i=0; i<tags.length; i++) {
 						item.tags.push(tags[i].textContent.replace(/[,.]$/, ''));
 					}
+				}
+				if ((ZU.xpathText(doc, '//span[contains(@class,"access-icon")]') == 'Free') || (ZU.xpathText(doc, '//meta[@name="DC.AccessRights" and contains(@content, open-access)]/@content') == 'open-access')) {
+					item.notes.push('LF:')
 				}
 				if (item.abstractNote.match('This is a pdf-only article and there is no') != null) item.abstractNote = "";
 				item.complete();
