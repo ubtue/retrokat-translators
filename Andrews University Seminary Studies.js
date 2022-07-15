@@ -1,15 +1,15 @@
 {
 	"translatorID": "cf4c7715-dcd4-45a1-bbea-a6c387b3fabd",
-	"label": "ubtue_Andrews University Seminary Studies",
+	"label": "Andrews University Seminary Studies",
 	"creator": "Madeesh Kannan",
 	"target": "^https?://(\\\\w+\\\\.)*digitalcommons.andrews.edu/auss/vol[0-9]+/iss[0-9]+",
 	"minVersion": "5.0",
 	"maxVersion": "",
 	"priority": 150,
-	"inRepository": false,
+	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2018-06-20 08:03:53"
+	"lastUpdated": "2022-07-15 07:57:18"
 }
 
 /*
@@ -45,11 +45,7 @@ function detectWeb(doc, url) {
 function postProcess(doc, url, type, item) {
 	item.abstractNote = ZU.xpathText(doc,'//div[@id="abstract"]/p');
 	item.journalAbbreviation = "AUSS";
-	item.attachments.push({
-		title:"Full Text PDF",
-		mimeType:"application/pdf",
-		url:ZU.xpathText(doc,'//meta[@name="bepress_citation_pdf_url"]/@content'),
-	});
+	item.attachments = [];
 	item.complete();
 }
 
@@ -68,6 +64,7 @@ function doWeb(doc, url) {
 		Z.debug("Item type " + type + " not supported yet");
 	}
 }
+
 
 
 /** BEGIN TEST CASES **/
