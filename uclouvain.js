@@ -1,15 +1,15 @@
 {
 	"translatorID": "516ad412-d9f3-48b6-ac66-404e117c5cfb",
-	"label": "ubtue_uclouvain",
+	"label": "uclouvain",
 	"creator": "Timotheus Kim",
 	"target": "^https?://(www\\.)?dial\\.uclouvain\\.be",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 80,
+	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-05-31 12:17:25"
+	"lastUpdated": "2022-07-15 07:50:58"
 }
 
 /*
