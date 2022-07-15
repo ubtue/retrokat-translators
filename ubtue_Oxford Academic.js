@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-12-03 14:47:52"
+	"lastUpdated": "2022-07-15 09:39:06"
 }
 
 /*
@@ -150,7 +150,6 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 				i.abstractNote = extractText.substring(0, 800);
 				let lastIndex = i.abstractNote.lastIndexOf('.');
 				i.abstractNote = i.abstractNote.substring(0, lastIndex + 1);
-				Z.debug(i.abstractNote);
 			}
 			}
 		}
@@ -220,6 +219,7 @@ function doWeb(doc, url) {
 		invokeEmbeddedMetadataTranslator(doc, url);
 	}
 }
+
 
 
 
