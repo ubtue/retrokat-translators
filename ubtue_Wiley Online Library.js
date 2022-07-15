@@ -1,15 +1,15 @@
 {
-	"translatorID": "fe728bc9-595a-4f03-98fc-766f1d8d0936",
-	"label": "Wiley Online Library",
+	"translatorID": "b3d73f85-50d2-47c9-861a-9efb67adecae",
+	"label": "ubtue_Wiley Online Library",
 	"creator": "Sean Takats, Michael Berkowitz, Avram Lyon and Aurimas Vinckevicius",
 	"target": "^https?://([\\w-]+\\.)?onlinelibrary\\.wiley\\.com[^/]*/(book|doi|toc|advanced/search|search-web/cochrane|cochranelibrary/search|o/cochrane/(clcentral|cldare|clcmr|clhta|cleed|clabout)/articles/.+/sect0\\.html)",
 	"minVersion": "3.1",
 	"maxVersion": "",
-	"priority": 150,
+	"priority": 95,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-15 07:40:17"
+	"lastUpdated": "2022-07-15 07:40:31"
 }
 
 /*
