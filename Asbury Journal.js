@@ -1,15 +1,15 @@
 {
 	"translatorID": "3fd0b926-7e7d-439e-b7d6-1025b37c5498",
-	"label": "ubtue_Asbury Journal",
+	"label": "Asbury Journal",
 	"creator": "Timotheus Kim",
 	"target": "^https?://place\\.asburyseminary\\.edu/asburyjournal/vol.*/iss.*",
 	"minVersion": "3.0",
 	"maxVersion": "",
 	"priority": 150,
-	"inRepository": false,
+	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2020-07-01 14:59:25"
+	"lastUpdated": "2022-07-15 07:59:37"
 }
 
 /*
@@ -60,6 +60,7 @@ function doWeb(doc, url) {
 	});
 	translator.translate();
 }
+
 /** BEGIN TEST CASES **/
 var testCases = [
 	{
