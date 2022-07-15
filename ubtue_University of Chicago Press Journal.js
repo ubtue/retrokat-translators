@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-15 10:14:15"
+	"lastUpdated": "2022-07-15 10:17:02"
 }
 
 /*
@@ -105,7 +105,7 @@ function scrape(doc, url) {
 			let authorNo = 0;
 			for (let authorTag of ZU.xpath(doc, '//div[contains(@class,"author-info")]')) {
 				if (authorTag.textContent.match(/(?:\d{4}-)+\d{3}./) != null) {
-				item.notes.push('orcid: ' + authorTag.textContent.match(/(?:\d{4}-)+\d{3}./) + '|' + authorNames[authorNo].textContent);
+				item.notes.push('orcid: ' + authorTag.textContent.match(/(?:\d{4}-)+\d{3}./) + ' | ' + authorNames[authorNo].textContent);
 				}
 				authorNo += 1;
 			}
