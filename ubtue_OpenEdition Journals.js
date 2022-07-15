@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-05-04 07:49:50"
+	"lastUpdated": "2022-07-15 09:36:25"
 }
 
 /*
@@ -131,9 +131,11 @@ function scrape(doc, url) {
 			if (tags) {
 				item.tags = tags.trim().split(/\s*,\s*/);
 			}
-
+			if (ZU.xpathText(doc, '//div[@class="accesstype freemium"]') != null) {
+				if (ZU.xpathText(doc, '//div[@class="accesstype freemium"]') == 'Open Access Freemium') item.notes.push('LF:');
+			}
 			delete item.extra;
-		
+			item.itemType = detectWeb(doc, url);
 			// The site lists all editor of journals as editor in the header. Remove them.
 			// I don't think there is a use case for editors for journal articles
 			if (item.itemType === "journalArticle") {
@@ -192,6 +194,7 @@ function doWeb(doc, url) {
 		scrape(doc, url);
 	}
 }
+
 
 
 /** BEGIN TEST CASES **/
