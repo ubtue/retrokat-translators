@@ -1,6 +1,6 @@
 {
 	"translatorID": "f24cd419-5892-450a-b39e-be2ff3191757",
-	"label": "ubtue_Collectanea Christiana Orientalia",
+	"label": "Collectanea Christiana Orientalia",
 	"creator": "Timotheus Kim",
 	"target": "^https?://www\\.uco\\.es/revistas/index\\.php/cco/(issue|article)/view/",
 	"minVersion": "3.0",
