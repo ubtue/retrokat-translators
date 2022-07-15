@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-11 16:42:35"
+	"lastUpdated": "2022-07-15 10:23:01"
 }
 
 /*
@@ -99,6 +99,7 @@ function scrape(doc, text) {
 	item.issue = issue;
 	item.date = date;
 	item.pages = text.textContent.match(/\)\s*(\d+-\d+)\s*/)[1];
+	item.tags.push('LF:');
 	if (item.url.match(/\/biblica\//) != null) item.ISSN = "0006-0887";
 	for (let tag of ZU.xpath(text, './/span[@class="tag-chain-item-span"]')) {
 		item.tags.push(tag.textContent);
