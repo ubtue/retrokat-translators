@@ -1,6 +1,6 @@
 {
 	"translatorID": "7e7e0811-aab5-4379-bbec-f281babcf396",
-	"label": "ubtue_Weltreligionen",
+	"label": "Weltreligionen",
 	"creator": "Hjordis Lindeboom",
 	"target": "http://weltreligionen.at/\\?/[\\d\\-]+\\Register.htm",
 	"minVersion": "3.0",
