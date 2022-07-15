@@ -1,5 +1,5 @@
 {
-	"translatorID": "b2fcf7d9-e023-412e-a2bc-f06d6275da24",
+	"translatorID": "687d6e93-f4d8-4249-8a3e-f55349757192",
 	"label": "ubtue_Brill",
 	"creator": "Madeesh Kannan, Timotheus Kim",
 	"target": "^https?://brill.com/view/journals/",
@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-04-21 08:27:25"
+	"lastUpdated": "2022-07-15 08:25:24"
 }
 
 /*
@@ -169,6 +169,7 @@ function doWeb(doc, url) {
 	} else
 		invokeEmbeddedMetadataTranslator(doc, url);
 }
+
 /** BEGIN TEST CASES **/
 var testCases = [
 ]
