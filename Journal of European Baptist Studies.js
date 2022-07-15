@@ -1,6 +1,6 @@
 {
 	"translatorID": "a97f8c1f-e6f5-46b5-8377-3abc9af1bb3c",
-	"label": "ubtue_Journal of European Baptist Studies",
+	"label": "Journal of European Baptist Studies",
 	"creator": "Timotheus Kim",
 	"target": "^https?://ojs2\\.uni-tuebingen\\.de/ojs/index\\.php/jebs/",
 	"minVersion": "3.0",
