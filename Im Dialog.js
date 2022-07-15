@@ -1,6 +1,6 @@
 {
 	"translatorID": "5efcb514-9ee3-4bee-9381-3f0921e962d3",
-	"label": "ubtue_Im Dialog",
+	"label": "Im Dialog",
 	"creator": "Timotheus Kim",
 	"target": "^https?://imdialog\\.akademie-rs\\.de/ojs/index\\.php/idadrs/(article|issue)/view/",
 	"minVersion": "3.0",
