@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-01 16:35:06"
+	"lastUpdated": "2022-07-15 16:07:46"
 }
 
 /*
@@ -296,6 +296,14 @@ function invokeEMTranslator(doc) {
 		if (i.language == "español") {
 			i.language = "spa";
 		}
+		if (i.publicationTitle == "Journal for the Study of Religion") {
+		if (ZU.xpathText(doc, '//meta[@name="DC.Description"]/@content') != null) {
+			if (ZU.xpathText(doc, '//meta[@name="DC.Description"]/@content').match(/p?p.\s*(\d+(?:-\d+)?)$/) != null) {
+				i.pages = ZU.xpathText(doc, '//meta[@name="DC.Description"]/@content').match(/p?p.\s*(\d+(?:-\d+)?)$/)[1];
+			}
+		}
+		}
+		
 		if (i.ISSN = "0121-4977" && ["es", "spa"].includes(i.language)) {
 		if (ZU.xpathText(doc, '//meta[@name="citation_author"]/@content').match(/((comunidad|comisión)\s+de)|((Secretariado|Congregación)\s+para)/i)) {
 				i.creators = [];
