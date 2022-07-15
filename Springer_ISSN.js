@@ -1,6 +1,6 @@
 {
 	"translatorID": "de0eef58-cb39-4410-ada0-6b39543383f3",
-	"label": "ubtue_Springer_ISSN",
+	"label": "Springer_ISSN",
 	"creator": "Johannes Riedl",
 	"target": "",
 	"minVersion": "4.0",
