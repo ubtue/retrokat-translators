@@ -1,6 +1,6 @@
 {
 	"translatorID": "5db07685-2d24-4b0a-9659-2e6af73e58ba",
-	"label": "ubtue_Quaderni di storia religiosa medievale",
+	"label": "Quaderni di storia religiosa medievale",
 	"creator": "Timotheus Kim",
 	"target": "^https:?//www\\.rivisteweb\\.it/(doi|issn)/",
 	"minVersion": "3.0",
