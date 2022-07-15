@@ -1,6 +1,6 @@
 {
 	"translatorID": "f5e796cb-0d76-475c-b9b0-f657a39d8ff0",
-	"label": "ubtue_RHPR",
+	"label": "RHPR",
 	"creator": "Timotheus Kim",
 	"target": "^https?://classiques-garnier\\.com",
 	"minVersion": "2.1",
