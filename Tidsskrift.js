@@ -1,6 +1,6 @@
 {
 	"translatorID": "a288df9e-ce56-40ca-a205-bc32182ced4c",
-	"label": "ubtue_Tidsskrift",
+	"label": "Tidsskrift",
 	"creator": "Madeesh Kannan and Timotheus Kim",
 	"target": "^https?://tidsskrift.dk/[^/]+/(article|issue)/view.*/[0-9]+",
 	"minVersion": "3.0",
