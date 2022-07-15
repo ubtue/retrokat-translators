@@ -1,6 +1,6 @@
 {
 	"translatorID": "95e0f3ba-ed5b-4ab2-9aa5-0ae1b8ec6eb3",
-	"label": "ubtue_Springer_DOI",
+	"label": "Springer_DOI",
 	"creator": "Sebastian Karcher, Johannes Riedl",
 	"target": "",
 	"minVersion": "4.0.29.11",
