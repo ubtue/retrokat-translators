@@ -1,6 +1,6 @@
 {
 	"translatorID": "5665af6e-d9a3-4658-b92e-8c0dcd326f72",
-	"label": "ubtue_Springer_JSON",
+	"label": "Springer_JSON",
 	"creator": "Philipp Zumstein, Johannes Riedl",
 	"target": "json",
 	"minVersion": "3.0",
