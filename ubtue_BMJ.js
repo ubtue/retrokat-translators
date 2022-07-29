@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-29 14:27:43"
+	"lastUpdated": "2022-07-29 16:55:36"
 }
 
 /*
@@ -33,7 +33,7 @@
 
 function detectWeb(doc,url) {
 	if (url.match(/bmj.com\/content\//) != null && getSearchResults(doc, url)) return "multiple";
-	else if (url.match(/\/bmj.com\/content\/.+.citation-tools/) != null) return "journalArticle";
+	else if (url.match(/bmj.com\/content\/.+.citation-tools/) != null) return "journalArticle";
 	return false;
 }
 
@@ -126,7 +126,6 @@ function scrapeRIS(doc, url) {
 					if (item.abstractNote.match('This is a pdf-only article and there is no') != null) item.abstractNote = "";
 				}
 				if (item.pages) {
-					Z.debug(item.pages.match(/[bcde]\d+–[bcde]\d+/))
 					if (item.pages.match(/[bcde]\d+–[bcde]\d+/)) {
 						item.pages = item.pages.replace(/[^\d–]/g, '');
 					}
