@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-29 16:55:36"
+	"lastUpdated": "2022-08-02 06:31:59"
 }
 
 /*
@@ -130,6 +130,7 @@ function scrapeRIS(doc, url) {
 						item.pages = item.pages.replace(/[^\d–]/g, '');
 					}
 				}
+				item.ISSN = "1473-4257";
 				item.complete();
 			});
 			trans.translate();
