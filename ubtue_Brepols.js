@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-08-12 08:50:12"
+	"lastUpdated": "2022-08-12 08:57:25"
 }
 
 /*
@@ -126,7 +126,7 @@ function scrape(doc, url) {
 
 				if (abstracts) {
 					abstracts = abstracts.map(function(x) { return x.textContent.replace(/\s+/g, " ").trim(); })
-					item.abstractNote = ZU.trimInternal(abstracts[0]);
+					item.abstractNote = abstracts[0];
 					for (var i = 1; i < abstracts.length; ++i) {
 						if (abstracts[i].length > 250) {
 						item.notes.push("abs:" + abstracts[i]);
@@ -157,7 +157,7 @@ function scrape(doc, url) {
 				let docType = ZU.xpathText(doc, '//meta[@name="dc.Type"]/@content');
 				if (docType === "book-review") {
 					item.tags.push("Book Reviews");
-					delete item.abstractNote
+					delete item.abstractNote;
 				}	
 
 				if (!item.language) {
@@ -199,10 +199,7 @@ function scrape(doc, url) {
 						}
 					}
 				}
-				Z.debug(item.abstractNote);
-				item.abstractNote = item.abstractNote.replace(/<\/?.+?>/g, '');
-				Z.debug('abstracttest:');
-				Z.debug(item.abstractNote);
+				item.abstractNote = item.abstractNote.replace(/<\/.+?>/g, 'g')
 				item.complete();
 			});
 			translator.translate();
