@@ -144,6 +144,14 @@ function extractBerichtsjahr(dateEntry) {
 }
 
 function invokeEmbeddedMetadataTranslator(doc, url) {
+	if (doc.querySelector('body > meta')) {
+	// Brill's HTML is structured incorrectly, and it causes some parsers
+	// to interpret the <meta> tags as being in the body, which breaks EM.
+	// We'll fix it here.
+		for (let meta of doc.querySelectorAll('body > meta')) {
+			doc.head.appendChild(meta);
+		}
+	}
 	var translator = Zotero.loadTranslator("web");
 	translator.setTranslator("951c027d-74ac-47d4-a107-9c3069ab7b48");
 	translator.setDocument(doc);
