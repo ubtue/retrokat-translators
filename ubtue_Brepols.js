@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-08-12 08:28:44"
+	"lastUpdated": "2022-08-12 08:34:32"
 }
 
 /*
@@ -199,6 +199,7 @@ function scrape(doc, url) {
 						}
 					}
 				}
+				item.abstractNote = "Schnegel"
 				Z.debug('abstracttest:')
 				Z.debug(item.abstractNote)
 				item.complete();
