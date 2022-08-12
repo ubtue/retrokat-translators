@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-08-12 07:37:18"
+	"lastUpdated": "2022-08-12 08:26:07"
 }
 
 /*
@@ -126,7 +126,7 @@ function scrape(doc, url) {
 
 				if (abstracts) {
 					abstracts = abstracts.map(function(x) { return x.textContent.replace(/\s+/g, " ").trim(); })
-					item.abstractNote = abstracts[0];
+					item.abstractNote = ZU.trimInternal(abstracts[0]);
 					for (var i = 1; i < abstracts.length; ++i) {
 						if (abstracts[i].length > 250) {
 						item.notes.push("abs:" + abstracts[i]);
