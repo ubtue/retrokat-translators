@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-08-12 07:34:17"
+	"lastUpdated": "2022-08-12 07:37:18"
 }
 
 /*
@@ -157,7 +157,7 @@ function scrape(doc, url) {
 				let docType = ZU.xpathText(doc, '//meta[@name="dc.Type"]/@content');
 				if (docType === "book-review") {
 					item.tags.push("Book Reviews");
-					delete i.abstractNote
+					delete item.abstractNote
 				}	
 
 				if (!item.language) {
@@ -199,6 +199,7 @@ function scrape(doc, url) {
 						}
 					}
 				}
+				Z.debug('abstract:')
 				Z.debug(item.abstractNote)
 				item.complete();
 			});
