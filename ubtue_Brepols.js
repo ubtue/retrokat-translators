@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-08-12 08:42:29"
+	"lastUpdated": "2022-08-12 08:45:14"
 }
 
 /*
@@ -200,7 +200,7 @@ function scrape(doc, url) {
 					}
 				}
 				Z.debug(item.abstractNote)
-				item.abstractNote = "Schnegel"
+				item.abstractNote = item.abstractNote.replace(/<\/?.+?>/g);
 				Z.debug('abstracttest:')
 				Z.debug(item.abstractNote)
 				item.complete();
