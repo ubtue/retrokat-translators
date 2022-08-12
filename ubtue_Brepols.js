@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-13 08:47:47"
+	"lastUpdated": "2022-08-12 07:32:13"
 }
 
 /*
@@ -129,9 +129,7 @@ function scrape(doc, url) {
 					item.abstractNote = abstracts[0];
 					for (var i = 1; i < abstracts.length; ++i) {
 						if (abstracts[i].length > 250) {
-						item.notes.push({
-							note: "abs:" + abstracts[i],
-						});
+						item.notes.push("abs:" + abstracts[i]);
 					}
 					}
 				}
@@ -187,15 +185,15 @@ function scrape(doc, url) {
 							let abstractsOneTwo = abstractsEntry.split('\n\n');
 					if (item.abstractNote) item.abstractNote = abstractsOneTwo[1];
 						if (abstractsOneTwo[2]) {
-							item.notes.push({
-								note: "abs:" + abstractsOneTwo[2],
-							});
+							if (!item.notes.includes("abs:" + abstractsOneTwo[2])) {
+							item.notes.push(
+								"abs:" + abstractsOneTwo[2],
+							);
 						
 						}
+						}
 						if (abstractsOneTwo[3]) {
-							item.notes.push({
-								note: "abs:" + abstractsOneTwo[3],
-							});
+							item.notes.push("abs:" + abstractsOneTwo[3]);
 						
 						}
 						}
