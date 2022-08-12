@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-15 16:07:46"
+	"lastUpdated": "2022-08-12 13:31:09"
 }
 
 /*
@@ -37,7 +37,7 @@ function detectWeb(doc, url) {
 function getSearchResults(doc) {
 	var items = {};
 	var found = false;
-	var rows = ZU.xpath(doc, '//*[contains(concat( " ", @class, " " ), concat( " ", "media-heading", " " ))]//a | //*[contains(concat( " ", @class, " " ), concat( " ", "title", " " ))]//a | //a[contains(@href, "/article/view/") and not(contains(@href, "/pdf")) and not(contains(., "PDF"))  and not(contains(., "HTML"))]');
+	var rows = ZU.xpath(doc, '//*[contains(concat( " ", @class, " " ), concat( " ", "media-heading", " " ))]//a | //*[contains(concat( " ", @class, " " ), concat( " ", "title", " " ))]//a | //a[contains(@href, "/article/view/") and not(contains(@href, "/pdf")) and not(contains(., "PDF"))  and not(contains(., "PDf")) and not(contains(., "HTML"))]');
 	for (let row of rows) {
 		let href = row.href;
 		let title = ZU.trimInternal(row.textContent);
@@ -303,8 +303,7 @@ function invokeEMTranslator(doc) {
 			}
 		}
 		}
-		
-		if (i.ISSN = "0121-4977" && ["es", "spa"].includes(i.language)) {
+		if (i.ISSN == "0121-4977" && ["es", "spa"].includes(i.language)) {
 		if (ZU.xpathText(doc, '//meta[@name="citation_author"]/@content').match(/((comunidad|comisión)\s+de)|((Secretariado|Congregación)\s+para)/i)) {
 				i.creators = [];
 				i.creators.push({lastName: ZU.xpathText(doc, '//meta[@name="citation_author"]/@content'), firstName: "", creatorType: "author", fieldMode: 1 });
