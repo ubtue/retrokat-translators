@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-11 15:00:42"
+	"lastUpdated": "2022-08-19 11:35:26"
 }
 
 /*
@@ -111,7 +111,7 @@ function parseAbstract(doc, item) {
 		while (i < textParts.length) {
 			let text = textParts[i].textContent.replace(/\n|\s\s+/g, '');
 			if (text.length == 0) {
-				fullAbstract += '\\n4207';
+				fullAbstract += '\\n4207 ';
 			}
 			if (text && text.length > 0) {
 				fullAbstract += text;
@@ -184,7 +184,11 @@ function scrape(doc, url) {
 	item.pages = ZU.xpathText(doc, '//b[contains(text(), "Pages:")]/following-sibling::text()[1]');
 	item.DOI = ZU.xpathText(doc, '//b[contains(text(), "DOI:")]/following-sibling::text()[1]');
 	item.url = url;
-
+	if (item.date) {
+		var match = item.date.match(/^numéro [0-9]+, ([0-9]{4})/);
+		if (match)
+			item.date = match[1];
+	}
 	parseAbstract(doc, item);
 	if (item.abstractNote.match(/not\s?available+|^editorial$|^Obituary$/i)) delete item.abstractNote;
 	//scrape e-issn from the journal site
@@ -196,16 +200,10 @@ function scrape(doc, url) {
 			if (eissn && eissn.match(/e-issn\s+:?\s+\d{4}-?\d{4}/gi)) {
 				item.ISSN = eissn.match(/e-issn\s+:?\s+\d{4}-?\d{4}/gi).toString().trim().replace(/e-issn\s+:?\s/i, '');
 			}
-			//item.complete();
+			item.complete();
 		});
 	}
-	// fixup date
-	if (item.date) {
-		var match = item.date.match(/^numéro [0-9]+, ([0-9]{4})/);
-		if (match)
-			item.date = match[1];
-	}
-	item.complete();
+	else item.complete();
 }
 
 
