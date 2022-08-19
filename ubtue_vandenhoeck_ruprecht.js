@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2021-10-20 08:32:18"
+	"lastUpdated": "2022-08-19 09:17:59"
 }
 
 /*
@@ -33,7 +33,8 @@
 var reviewURLs = [];
 
 function detectWeb(doc, url) {
-	if (url.includes('/doi/')) return "journalArticle";
+	if (url.includes('/doi/') && getSearchResults(doc)) return "multiple";
+	else if (url.includes('/doi/')) return "journalArticle";
 	else if (url.includes('/toc/') && getSearchResults(doc)) return "multiple";
 	else return false;
 }
@@ -105,7 +106,13 @@ function scrape(doc, url) {
 			translator.setTranslator("32d59d2d-b65a-4da4-b0a3-bdd3cfb979e7");
 			translator.setString(text);
 			translator.setHandler("itemDone", function (obj, item) {
-				
+				item.notes = [];
+				if (item.series == "Jahrbuch für Liturgik und Hymnologie") {
+					item.itemType = "journalArticle";
+					item.ISSN = "2197-3466";
+					item.publicationTitle = "Jahrbuch für Liturgik und Hymnologie";
+					item.DOI = doi;
+				}
 				//subtitle
 				let subtitle = ZU.xpathText(doc, '//*[contains(concat( " ", @class, " " ), concat( " ", "citation__subtitle", " " ))]');
 				if (subtitle) {
@@ -135,8 +142,9 @@ function scrape(doc, url) {
 					if (metaLang && metaLang.getAttribute("content"))
 						item.language = metaLang.getAttribute("content")
 				}
+				Z.debug(ZU.xpathText(doc, '//span[@class="citation__access__type"]'))
 				if (ZU.xpathText(doc, '//span[@class="citation__access__type"]') != null) {
-					if (ZU.xpathText(doc, '//span[@class="citation__access__type"]').match(/(open(\s+)?access)|(kostenlos)/i)) {
+					if (ZU.xpathText(doc, '//span[@class="citation__access__type"]').match(/(open(\s+)?access)|(free(\s+)?access)|(kostenlos)/i)) {
 						item.notes.push('LF:');
 					}
 				}
@@ -147,6 +155,12 @@ function scrape(doc, url) {
 						let orcid = ZU.xpathText(authorTag, './/a[@class="orcid-link"]');
 						orcid = orcid.replace('https://orcid.org/', '')
 					item.notes.push({note: "orcid:" + orcid + ' | ' + author});	
+					}
+				}
+				Z.debug(ZU.xpathText(doc, '//h1[@class="citation__title"]'))
+				if (item.title.match(/\?/) != null) {
+					if (ZU.xpathText(doc, '//h1[@class="citation__title"]') != null) {
+						item.title = ZU.xpathText(doc, '//h1[@class="citation__title"]');
 					}
 				}
 				//
@@ -163,6 +177,7 @@ function scrape(doc, url) {
 		});
 	});
 }
+
 
 
 
