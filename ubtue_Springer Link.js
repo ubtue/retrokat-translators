@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-14 13:11:51"
+	"lastUpdated": "2022-09-06 11:09:59"
 }
 
 function detectWeb(doc, url) {
@@ -56,6 +56,13 @@ function getResultList(doc) {
 	}
 	if (!results.length) {
 		results = ZU.xpath(doc, '//div[@class="toc"]/ol//li[contains(@class,"toc-item")]/p[@class="title"]/a');
+	}
+	// https://link.springer.com/journal/10344/volumes-and-issues/66-5
+	if (!results.length) {
+		results = ZU.xpath(doc, '//li[@class="c-list-group__item"]//h3/a');
+	}
+	if (!results.length) {
+		results = doc.querySelectorAll('h3.c-card__title > a');
 	}
 	return results;
 }
