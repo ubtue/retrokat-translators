@@ -2,14 +2,14 @@
 	"translatorID": "687d6e93-f4d8-4249-8a3e-f55349757192",
 	"label": "ubtue_Brill",
 	"creator": "Madeesh Kannan, Timotheus Kim",
-	"target": "^https?://brill.com/view/journals/",
+	"target": "^https?://brill.com/(view|abstract)/journals/",
 	"minVersion": "3.0",
 	"maxVersion": "",
 	"priority": 94,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-09-07 08:30:29"
+	"lastUpdated": "2022-09-07 12:03:01"
 }
 
 /*
