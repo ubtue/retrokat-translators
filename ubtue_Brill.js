@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-09-07 07:23:15"
+	"lastUpdated": "2022-09-07 08:12:08"
 }
 
 /*
@@ -135,6 +135,11 @@ function postProcess(doc, item) {
 	let freeAccess = text(doc, '.color-access-free');
 	if (freeAccess && freeAccess.match(/(free|freier)\s+(access|zugang)/gi)) item.notes.push('LF:');
 	if (!item.itemType)	item.itemType = "journalArticle";
+	if (item.pages != null) {
+		if (item.pages.match(/([ivx]+-\d+)|(PLATE)|(TAFEL)/i) != null) {
+			item.pages = "";
+		}
+	}
 }
 
 function extractErscheinungsjahr(date) {
@@ -160,6 +165,7 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 	translator.setDocument(doc);
 	translator.setHandler("itemDone", function (t, i) {
 		postProcess(doc, i);
+		i.attachments = [];
 		i.complete();
 	});
 	translator.translate();
