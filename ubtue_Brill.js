@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-15 08:25:24"
+	"lastUpdated": "2022-09-07 07:23:15"
 }
 
 /*
@@ -82,8 +82,10 @@ function postProcess(doc, item) {
 	let excerpt = ZU.xpathText(doc, '//excerpt');
 	if (reviewEntry && reviewEntry.match(/book\sreview/i)) {
 		item.tags.push('Book Review');
+		if (excerpt != null) {
 		if (excerpt.match(/ISBN:?\s+((?:\d[-\s]*)+)/) != null) {
 			item.tags.push("#reviewed_pub#isbn::" + excerpt.match(/ISBN:?\s+((?:\d[-\s]*)+)/)[1].trim() + "#");
+		}
 		}
 	}
 	if (excerpt != null) {
@@ -120,8 +122,9 @@ function postProcess(doc, item) {
 	}
 	//delete symbols in names
 	for (let i in item.creators) {
+		if (item.creators[i].firstName == undefined) item.creators[i] = ZU.cleanAuthor(item.creators[i].lastName, 'author');
 		item.creators[i].lastName = item.creators[i].lastName.replace('†', '');
-		item.creators[i].firstName = item.creators[i].firstName.replace('†', '');
+		if (item.creators[i].firstName != undefined) item.creators[i].firstName = item.creators[i].firstName.replace('†', '');
 	}
 	//deduplicate
 	item.notes = Array.from(new Set(item.notes.map(JSON.stringify))).map(JSON.parse);
