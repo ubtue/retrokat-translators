@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-15 09:39:06"
+	"lastUpdated": "2022-09-27 08:40:49"
 }
 
 /*
@@ -62,7 +62,6 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 	translator.setTranslator("951c027d-74ac-47d4-a107-9c3069ab7b48");
 	translator.setDocument(doc);
 	translator.setHandler("itemDone", function (t, i) {
-		Z.debug(i.creators);
 		// update abstract from the webpage as the embedded data is often incomplete
 		if (i.creators.length > 1) {
 		let authorList = ZU.xpath(doc, '//div[@class="info-card-name"]');
@@ -79,7 +78,6 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 			a = a.replace(/\./g, ' ').replace(/\s+/g, ' ');
 			authorNamesListNormalized.push(a);
 		}
-		Z.debug(authorNamesListNormalized);
 		let authorsNotFoundList = [];
 		let authorsNotFound = [];
 		let authorIndex = 0;
@@ -93,7 +91,6 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 			}
 			authorIndex += 1;
 		}
-		Z.debug(authorsNotFoundList);
 		let trueAuthorNamesFound = false;
 		if (authorsNotFoundList.length == 2) {
 			if (authorNamesListNormalized.indexOf(authorsNotFoundList.join(' ')) != -1) {
@@ -154,7 +151,7 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 			}
 		}
 		}
-		if (section != 0) {
+		if (section != null) {
 			if (section.match(/(\bReviews?\b)|(\bBook(\s+)?Reviews?\b)|(\bReview(\s+)?Article\b)|(\bBook(s)?(\s+)?Note(s)?\b)|(\bShort(\s+)?notice(s)?)/i)) i.tags.push('Book Review');
 		}
 		// if the article are review article, then the full text extract is scraped from the HTML
