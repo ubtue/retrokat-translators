@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-14 13:01:27"
+	"lastUpdated": "2022-09-27 08:03:27"
 }
 
 /*
@@ -51,7 +51,7 @@ function detectWeb(doc, url) {
 function getSearchResults(doc, checkOnly) {
 	var items = {};
 	var found = false;
-	let rows = ZU.xpath(doc, '//span[contains(@class, "art_title")]/a[contains(@href, "/doi/full/10.") or contains(@href, "/doi/abs/10.") or contains(@href, "/doi/pdf/10.")][1] | //a[contains(concat( " ", @class, " " ), concat( " ", "ref", " " )) and contains(concat( " ", @class, " " ), concat( " ", "nowrap", " " ))] | //*[contains(concat( " ", @class, " " ), concat( " ", "hlFld-Title", " " ))]');
+	let rows = ZU.xpath(doc, '//span[contains(@class, "art_title")]/a[contains(@href, "/doi/full/10.") or contains(@href, "/doi/abs/10.") or contains(@href, "/doi/pdf/10.")][1] | //a[contains(concat( " ", @class, " " ), concat( " ", "ref", " " )) and contains(concat( " ", @class, " " ), concat( " ", "nowrap", " " ))] | //*[contains(concat( " ", @class, " " ), concat( " ", "hlFld-Title", " " ))] | //a[(contains(@href, "/doi/abs/10.") or contains(@href, "/doi/pdf/10.")) and @data-id="toc-article-title"]');
 	let new_rows = ZU.xpath(doc, '//td[@valign="top"][contains(./span[@class="ArticleType"], "Review")]');
 	for (var i = 0; i < new_rows.length; i++) {
 		let links = ZU.xpath(new_rows[i], './/a');
@@ -72,6 +72,7 @@ function getSearchResults(doc, checkOnly) {
 		href = href.replace("/doi/pdf/", "/doi/abs/");
 		items[href] = title;
 	}
+	Z.debug(items)
 	return found ? items : false;
 }
 
