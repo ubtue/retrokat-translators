@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-14 12:31:51"
+	"lastUpdated": "2022-09-28 13:58:24"
 }
 
 /*
@@ -211,8 +211,8 @@ function processRIS(text, jid, doc) {
 		item.attachments = [];
 		if (item.ISSN) {
 			item.ISSN = ZU.cleanISSN(item.ISSN);
+			if (item.ISSN == "1754-3983" && item.volume == undefined) item.volume = item.date;
 		}
-		
 		if (!item.DOI) {
 			item.DOI = ZU.xpathText(doc, '//div[contains(@class,"doi")]');
 			if (item.DOI)
