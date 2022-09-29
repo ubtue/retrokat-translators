@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-09-29 10:13:26"
+	"lastUpdated": "2022-09-29 10:54:25"
 }
 
 /*
@@ -54,6 +54,10 @@ function getSearchResults(doc, checkOnly) {
 		volume = doc.URL.match(/\/vol-(\d+)-\d{4}\/v\d+-\d+\//)[1];
 		issue = doc.URL.match(/\/vol-\d+-\d{4}\/v\d+-(\d+)\//)[1];
 	}
+	else if (doc.URL.match(/filologia-neotestamentaria/) != null && doc.URL.match(/\/vol-\d+-\d{4}\//) != null) {
+		date = doc.URL.match(/\/vol-\d+-(\d{4})\//)[1];
+		volume = doc.URL.match(/\/vol-(\d+)-\d{4}\//)[1];
+	}
 	var rows = ZU.xpath(doc, '//div[@class="articoliFasc"]');
 	for (let row of rows) {
 		let href = "https://www.bsw.org/" + ZU.xpathText(row, './/a[@class="articoliFascTitle"]/@href');
@@ -87,25 +91,31 @@ function scrape(doc, text) {
 	item.title = ZU.xpathText(text, './/a[@class="articoliFascTitle"]');
 	item.url = "https://www.bsw.org" + ZU.xpathText(text, './/a[@class="articoliFascTitle"]/@href');
 	item.abstractNote = ZU.xpathText(text, './/p').replace(/\s*\n\s*/g, " ");
-	for (let creators of ZU.xpath(text, './b')) {
-		for (let creator of creators.textContent.split(/\s*,\s*/)) item.creators.push(ZU.cleanAuthor(creator.replace(/\s*Sr\.\s*/, ''), "author", false));
-	}
-	for (let creator of item.creators) {
-		let firstName = creator.lastName;
-		creator.lastName = creator.firstName;
-		creator.firstName = firstName;
-	}
-	item.volume = volume;
-	item.issue = issue;
-	item.date = date;
-	item.pages = text.textContent.match(/\)\s*(\d+-\d+)\s*/)[1];
-	item.notes.push('LF:');
-	if (item.url.match(/\/biblica\//) != null) item.ISSN = "0006-0887";
-	for (let tag of ZU.xpath(text, './/span[@class="tag-chain-item-span"]')) {
-		item.tags.push(tag.textContent);
-	}
-	item.complete();
-	
+	ZU.doGet(item.url,
+		function (newItem) {
+		var parser = new DOMParser();
+		var html = parser.parseFromString(newItem, "text/html");
+		var author = ZU.xpathText(html, '//title').split(', ')[0]
+		for (let authorName of author.split(/\s+[-]\s+/)) {
+		item.creators.push(ZU.cleanAuthor(authorName, 'author', false));
+		}
+		item.volume = volume;
+		item.issue = issue;
+		item.date = date;
+		//if (text.textContent.match(/\d{4}\s+(\d+-\d+)$/) == null) Z.debug(text.textContent)
+		if (text.textContent.match(/\)\s*(\d+-\d+)\s*/) != null) {
+		item.pages = text.textContent.match(/\)\s*(\d+-\d+)\s*/)[1];
+		}
+		else if (text.textContent.match(/Vol\.?\s+(\d+-\d+)/i) != null) {
+		item.pages = text.textContent.match(/Vol\.?\s+(\d+-\d+)/i)[1];
+		}
+		item.notes.push('LF:');
+		if (item.url.match(/\/biblica\//) != null) item.ISSN = "0006-0887";
+		for (let tag of ZU.xpath(text, './/span[@class="tag-chain-item-span"]')) {
+			item.tags.push(tag.textContent);
+		}
+		item.complete();
+	})
 }
 /** BEGIN TEST CASES **/
 var testCases = [
