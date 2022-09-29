@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-15 07:40:31"
+	"lastUpdated": "2022-09-29 11:32:25"
 }
 
 /*
@@ -142,7 +142,7 @@ function scrapeBook(doc, url) {
 			'/h6[normalize-space(text())="About The Product"]',
 			'/following-sibling::p'].join(''), null, "\n") || "");
 	newItem.accessDate = 'CURRENT_TIMESTAMP';
-
+	
 	newItem.complete();
 }
 
@@ -208,6 +208,7 @@ function scrapeEM(doc, url) {
 			}
 		}
 		item.attachments = [];
+		
 		item.complete();
 	});
 
@@ -215,6 +216,7 @@ function scrapeEM(doc, url) {
 	addArticleNumber(doc, item);
 	addFreeAccessTag(doc, item);
 	item.attachments = [];
+	
 	item.complete();
 
 	translator.getTranslatorObject(function(em) {
@@ -532,7 +534,7 @@ function doWeb(doc, url) {
 	if (type == "multiple") {
 		sections = ZU.xpath(doc, '//div[contains(@class, "issue-items-container")]');
 		for (i = 0; i < sections.length; i++) {
-			if (ZU.xpath(sections[i], './h3[@title="BOOK REVIEWS"]').length > 0 || ZU.xpath(sections[i], './h3[@title="Reviews"]').length > 0 || ZU.xpath(sections[i], './h3[@title="Review"]').length > 0) {
+			if (ZU.xpath(sections[i], './h3[@title="BOOK REVIEWS" or @title="Review Articles" or @title="Review"]').length > 0) {
 				let review_urls = ZU.xpath(sections[i], './/a');
 				for (let i in review_urls) {
 					if (review_urls[i].href.match(/doi\/10/)) {
