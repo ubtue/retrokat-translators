@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-10-12 16:00:22"
+	"lastUpdated": "2022-10-12 16:04:33"
 }
 
 /*
@@ -80,9 +80,11 @@ function scrape(doc, url) {
 			translator.setTranslator("edd87d07-9194-42f8-b2ad-997c4c7deefd");
 			translator.setString(text);
 			translator.setHandler("itemDone", function (obj, item) {
+				let newNotes = [];
 				for (let note of item.notes) {
-					note['note'] = 'abs:' + note['note'];
+					newNotes.push('abs:' + note['note']);
 				}
+				item.notes = newNotes;
 				if (item.place) {
 					item.notes.push('place::' + item.place);
 					item.notes.push('publisher::' + item.publisher)
