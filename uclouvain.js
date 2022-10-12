@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-07-15 07:50:58"
+	"lastUpdated": "2022-10-12 16:00:22"
 }
 
 /*
@@ -72,47 +72,54 @@ function doWeb(doc, url) {
  }
 
 function scrape(doc, url) {
-	let json = JSON.parse(text(doc, 'script[type="application/ld+json"]').replace(/\n/g, " "));//Z.debug(json)
- 	var translator = Zotero.loadTranslator('web');
- 	// Embedded Metadata
- 	translator.setTranslator('951c027d-74ac-47d4-a107-9c3069ab7b48');
- 	// translator.setDocument(doc);
- 	translator.setHandler('itemDone', function (obj, item) {
-	if (json.pagination) item.pages = json.pagination;
-	if (json.description) item.abstractNote = json.description;
-	if (json.keywords) {
-		for (let tag of json.keywords) {
-		if (json && !tag.match(/^\d/)) item.tags.push({ tag });
-		}
-	}
-	let parts = [];
-	let newJSON = json.isPartOf;
-	for (let i of [1,2,3,4]) {
-		if (newJSON) {
-			if (newJSON["@type"] == "PublicationIssue") {
-				item.tags.push("##issueNumber##" + newJSON.issueNumber);
-				item.tags.push("##datePublished##" + newJSON.datePublished);
-			}
-			if (newJSON["@type"] == "PublicationVolume") {
-				item.tags.push("##volumeNumber##" + newJSON.volumeNumber);
-			}
-			if (newJSON["@type"] == "Periodical") {
-				item.tags.push("##journalName##" + newJSON.name);
-				item.tags.push("##issn##" + newJSON.issn);
-			}
-			newJSON = newJSON.isPartOf;
-		}
-	}
-	if (json.url) item.tags.push("##handle##" + json.url);
-	//ppn abfrage 
-	item.complete();
- 	});
-	
- 	translator.getTranslatorObject(function (trans) {
- 		trans.itemType = "journalArticle";
- 		trans.doWeb(doc, url);
- 	});
+	let oai_url = url.replace('https://dial.uclouvain.be/pr/boreal/object/', 'https://dial.uclouvain.be/oai/?verb=GetRecord&metadataPrefix=marcxml&identifier=');
+	ZU.doGet(oai_url, function (text) {
+		var parser = new DOMParser();
+		var xml = parser.parseFromString(text, "text/xml");
+			var translator = Zotero.loadTranslator("import");
+			translator.setTranslator("edd87d07-9194-42f8-b2ad-997c4c7deefd");
+			translator.setString(text);
+			translator.setHandler("itemDone", function (obj, item) {
+				for (let note of item.notes) {
+					note['note'] = 'abs:' + note['note'];
+				}
+				if (item.place) {
+					item.notes.push('place::' + item.place);
+					item.notes.push('publisher::' + item.publisher)
+				}
+				item.itemType = "journalArticle";
+				for (let url of ZU.xpath(xml, '//*[@tag="856"]/*[@code="u"]')) {
+					if (url.textContent.match('/2078.1/')) {
+						item.url = url.textContent;
+						break;
+					}
+				}
+				item.notes.push('LF:');
+				let identifier =  ZU.xpathText(xml, '//*[@tag="001"]');
+				item.notes.push('hdl:' + identifier.replace('boreal:', '2078.1'));
+				//add_marc_field_024 = "0247 \037a%hdl%\0372hdl
+				for (let identifier of ZU.xpath(xml, '//*[@tag="022"]')) {
+					if (ZU.xpathText(identifier, './*[@code="v"]') == 'e-issn') {
+						item.notes.push('issn:' + issn);
+						break;
+					}
+				}
+				if (!item.volume && !item.issue && !item.pages) {
+					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]')) {
+						item.notes.push('773$g:' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]'));
+					}
+				}
+				//hinzufügen: 4241-Daten (hier ISSN);
+				//264-Daten (beide Felder)
+				//orcid
+				//Daten aus 779 verwenden.
+
+				item.complete();
+			});
+			translator.translate();
+ });
  }
+
 /** BEGIN TEST CASES **/
 var testCases = [
 	{
