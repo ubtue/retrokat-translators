@@ -2,14 +2,14 @@
 	"translatorID": "2e011676-bad7-424b-80c1-f50140134850",
 	"label": "uclouvain_oai",
 	"creator": "Helena Nebel",
-	"target": "^https?://dial.uclouvain.be/oai/\\?verb=GetRecord&metadataPrefix=marcxml",
+	"target": "dial.uclouvain.be/oai/",
 	"minVersion": "3.0",
 	"maxVersion": "",
 	"priority": 150,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-10-12 10:48:12"
+	"lastUpdated": "2022-10-12 10:50:03"
 }
 
 /*
