@@ -5,11 +5,11 @@
 	"target": "^https?://(www\\.)?dial\\.uclouvain\\.be",
 	"minVersion": "3.0",
 	"maxVersion": "",
-	"priority": 150,
+	"priority": 99,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-10-12 16:04:33"
+	"lastUpdated": "2022-10-12 16:06:47"
 }
 
 /*
