@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-10-13 11:56:53"
+	"lastUpdated": "2022-10-13 12:04:37"
 }
 
 /*
@@ -80,16 +80,15 @@ function scrape(doc, url) {
 			translator.setTranslator("edd87d07-9194-42f8-b2ad-997c4c7deefd");
 			translator.setString(text);
 			translator.setHandler("itemDone", function (obj, item) {
-				let tag773 = "";
 				item.notes = [];
 				for (let identifier of ZU.xpath(xml, '//*[@tag="022"]')) {
 					if (ZU.xpathText(identifier, './*[@code="v"]') == 'e-issn') {
-						tag773 = 'x' + ZU.xpathText(identifier, './*[@code="a"]');
+						item.notes = ['issn:' + ZU.xpathText(identifier, './*[@code="a"]')];
 						break;
 					}
 					else if (ZU.xpathText(identifier, './*[@code="v"]') == 'issn') {
-						if (tag773 == "") {
-							tag773 += 'x' + ZU.xpathText(identifier, './*[@code="a"]');
+						if (item.notes.length == 0) {
+							item.notes.push('issn:' + ZU.xpathText(identifier, './*[@code="a"]'));
 						}
 					}
 				}
@@ -117,23 +116,23 @@ function scrape(doc, url) {
 				item.notes.push('hdl:' + identifier.replace('boreal:', '2078.1/'));
 				if (!item.volume && !item.issue && !item.pages) {
 					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]')) {
-						tag773 += '\\037g' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]');
+						item.notes.push('773g:' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]'));
 					}
 					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]')) {
-						tag773 += 'z' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]').replace(/ISBN\s*/, '');
+						item.notes.push('773z:' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]').replace(/ISBN\s*/, ''));
 					}
 					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="a"]')) {
 						if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="t"]')) {
-						tag773 += 't' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="a"]') + ': ' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="t"]');
+						item.notes.push('773t:' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="a"]') + ': ' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="t"]'));
 						}
 					}
 				}
 				else {
 					if (ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]')) {
-						tag773 += '\\037g' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]');
+						item.notes.push('773g:' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]'));
 					}
 					if (ZU.xpathText(xml, '//*[@tag="773"]/*[@code="t"]')) {
-						tag773 += 't' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="t"]');
+						item.notes.push('773t:' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="t"]'));
 					}
 				}
 				for (let responsible of ZU.xpath(xml, '//*[@tag="100" or @tag="700"]')) {
@@ -152,8 +151,10 @@ function scrape(doc, url) {
 					if (item.title.match(/ISBN:?\s+((?:\d+[\- ]*)+)/) != null) {
 						item.tags.push("#reviewed_pub#isbn::" + item.title.match(/ISBN:?\s+((?:\d+[\- ]*)+)/)[1].trim() + "#")
 					}
-				}					
-				item.notes.push('773:' + tag773);
+				}
+				item.volume = "1";
+				item.issue = "";						
+
 				item.complete();
 			});
 			translator.translate();
