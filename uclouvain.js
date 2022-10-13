@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-10-13 11:52:48"
+	"lastUpdated": "2022-10-13 11:56:53"
 }
 
 /*
@@ -117,7 +117,7 @@ function scrape(doc, url) {
 				item.notes.push('hdl:' + identifier.replace('boreal:', '2078.1/'));
 				if (!item.volume && !item.issue && !item.pages) {
 					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]')) {
-						tag773 += 'g' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]');
+						tag773 += '\\037g' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]');
 					}
 					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]')) {
 						tag773 += 'z' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]').replace(/ISBN\s*/, '');
@@ -130,7 +130,7 @@ function scrape(doc, url) {
 				}
 				else {
 					if (ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]')) {
-						tag773 += 'g' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]');
+						tag773 += '\\037g' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]');
 					}
 					if (ZU.xpathText(xml, '//*[@tag="773"]/*[@code="t"]')) {
 						tag773 += 't' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="t"]');
