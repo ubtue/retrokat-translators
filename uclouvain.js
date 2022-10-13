@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-10-13 11:49:07"
+	"lastUpdated": "2022-10-13 11:52:48"
 }
 
 /*
@@ -84,12 +84,12 @@ function scrape(doc, url) {
 				item.notes = [];
 				for (let identifier of ZU.xpath(xml, '//*[@tag="022"]')) {
 					if (ZU.xpathText(identifier, './*[@code="v"]') == 'e-issn') {
-						tag773 = '\\037x' + ZU.xpathText(identifier, './*[@code="a"]');
+						tag773 = 'x' + ZU.xpathText(identifier, './*[@code="a"]');
 						break;
 					}
 					else if (ZU.xpathText(identifier, './*[@code="v"]') == 'issn') {
 						if (tag773 == "") {
-							tag773 += '\\037x' + ZU.xpathText(identifier, './*[@code="a"]');
+							tag773 += 'x' + ZU.xpathText(identifier, './*[@code="a"]');
 						}
 					}
 				}
@@ -117,23 +117,23 @@ function scrape(doc, url) {
 				item.notes.push('hdl:' + identifier.replace('boreal:', '2078.1/'));
 				if (!item.volume && !item.issue && !item.pages) {
 					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]')) {
-						tag773 +='\\037g' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]');
+						tag773 += 'g' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]');
 					}
 					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]')) {
-						tag773 += '\\037z:' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]').replace(/ISBN\s*/, '');
+						tag773 += 'z' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]').replace(/ISBN\s*/, '');
 					}
 					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="a"]')) {
 						if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="t"]')) {
-						tag773 += '\\037t:' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="a"]') + ': ' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="t"]');
+						tag773 += 't' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="a"]') + ': ' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="t"]');
 						}
 					}
 				}
 				else {
 					if (ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]')) {
-						tag773 += '\\037g:' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]');
+						tag773 += 'g' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]');
 					}
 					if (ZU.xpathText(xml, '//*[@tag="773"]/*[@code="t"]')) {
-						tag773 += '\\037t:' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="t"]');
+						tag773 += 't' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="t"]');
 					}
 				}
 				for (let responsible of ZU.xpath(xml, '//*[@tag="100" or @tag="700"]')) {
