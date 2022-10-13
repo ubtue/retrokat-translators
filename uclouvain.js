@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-10-13 10:19:00"
+	"lastUpdated": "2022-10-13 10:22:19"
 }
 
 /*
@@ -132,9 +132,6 @@ function scrape(doc, url) {
 				else {
 					if (ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]')) {
 						item.notes.push('773$g:' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]'));
-					item.volume = "";
-					item.issue = "";
-					item.pages = "";
 					}
 				}
 				for (let responsible of ZU.xpath(xml, '//*[@tag="100" or @tag="700"]')) {
@@ -150,7 +147,7 @@ function scrape(doc, url) {
 				item.notes.push('second_publisher:' + 'Université catholique de Louvain');
 				item.notes.push('second_place:' + 'Louvain');
 
-						
+				item.volume = "1";						
 
 				item.complete();
 			});
