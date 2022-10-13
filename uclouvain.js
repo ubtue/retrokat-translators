@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-10-13 13:21:11"
+	"lastUpdated": "2022-10-13 13:35:32"
 }
 
 /*
@@ -82,6 +82,8 @@ function scrape(doc, url) {
 			translator.setHandler("itemDone", function (obj, item) {
 				item.notes = [];
 				let tag773 = "";
+				let tag264_1 = ""
+				let tag264_2 = ""
 				let issn = "";
 				for (let identifier of ZU.xpath(xml, '//*[@tag="022"]')) {
 					if (ZU.xpathText(identifier, './*[@code="v"]') == 'e-issn') {
@@ -142,12 +144,13 @@ function scrape(doc, url) {
 					}
 				}
 				if (ZU.xpath(xml, '//*[@tag="260"]') != null) {
-					if (ZU.xpathText(xml, '//*[@tag="260"]/*[@code="a"]')) item.notes.push('place:' + ZU.xpathText(xml, '//*[@tag="260"]/*[@code="a"]'));
-					if (ZU.xpathText(xml, '//*[@tag="260"]/*[@code="b"]')) item.notes.push('publisher:' + ZU.xpathText(xml, '//*[@tag="260"]/*[@code="b"]'));
+					if (ZU.xpathText(xml, '//*[@tag="260"]/*[@code="a"]')) tag264_1 += '\037a' + ZU.xpathText(xml, '//*[@tag="260"]/*[@code="a"]');
+					if (ZU.xpathText(xml, '//*[@tag="260"]/*[@code="b"]')) tag264_1 += '\037b' + ZU.xpathText(xml, '//*[@tag="260"]/*[@code="b"]');
 				}
-				if (ZU.xpathText(xml, '//*[@tag="500"]/*[@code="e"]') != null && ZU.xpathText(xml, '//*[@tag="500"]/*[@code="e"]').match(/\d{4}/)) item.notes.push('second_publication_year:' + ZU.xpathText(xml, '//*[@tag="500"]/*[@code="e"]').match(/\d{4}/)[0]);
-				item.notes.push('second_publisher:' + 'Université catholique de Louvain');
-				item.notes.push('second_place:' + 'Louvain');
+				tag264_1 += '\037c' + item.date;
+				if (ZU.xpathText(xml, '//*[@tag="500"]/*[@code="e"]') != null && ZU.xpathText(xml, '//*[@tag="500"]/*[@code="e"]').match(/\d{4}/)) tag264_2 += '\037c' + ZU.xpathText(xml, '//*[@tag="500"]/*[@code="e"]').match(/\d{4}/)[0];
+				tag264_2 += '\037aUniversité catholique de Louvain';
+				tag264_2 += '\037bLouvain';
 				if (item.title != undefined) {
 					if (item.title.match(/ISBN:?\s+((?:\d+[\- ]*)+)/) != null) {
 						item.tags.push("#reviewed_pub#isbn::" + item.title.match(/ISBN:?\s+((?:\d+[\- ]*)+)/)[1].trim() + "#")
@@ -156,6 +159,8 @@ function scrape(doc, url) {
 				item.volume = "1";
 				item.issue = "";						
 				item.notes.push('773:' + tag773.replace(/^\u001f/, ''));
+				item.notes.push('264_1:' + tag264_1.replace(/^\u001f/, ''));
+				item.notes.push('264_2:' + tag264_2.replace(/^\u001f/, ''));
 				item.complete();
 			});
 			translator.translate();
