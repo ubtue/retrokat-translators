@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-10-13 14:38:23"
+	"lastUpdated": "2022-10-13 15:07:49"
 }
 
 /*
@@ -143,7 +143,7 @@ function scrape(doc, url) {
 				}
 				for (let responsible of ZU.xpath(xml, '//*[@tag="100" or @tag="700"]')) {
 					if (ZU.xpathText(responsible, './*[@code="o"]')!= null) {
-						item.notes.push('orcid: ' + ZU.xpathText(responsible, './*[@code="o"]').replace(/https?:\/\/orcid.org\//, '') + ' | ' + ZU.xpathText(responsible, './*[@code="a"]') + ' | taken from website');
+						item.notes.push('orcid: ' + ZU.xpathText(responsible, './*[@code="o"]').replace(/https?:\/\/orcid.org\//, '') + ' | ' + ZU.xpathText(responsible, './*[@code="a"]'));
 					}
 				}
 				if (ZU.xpath(xml, '//*[@tag="260"]') != null) {
