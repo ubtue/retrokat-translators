@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-10-13 12:04:37"
+	"lastUpdated": "2022-10-13 12:12:14"
 }
 
 /*
@@ -154,7 +154,7 @@ function scrape(doc, url) {
 				}
 				item.volume = "1";
 				item.issue = "";						
-
+				item.notes.push('773test:\\037gVol. 97, no.4, p. 694-696 (2022)\\037x1783-1423')
 				item.complete();
 			});
 			translator.translate();
