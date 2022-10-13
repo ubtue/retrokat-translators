@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-10-13 13:35:32"
+	"lastUpdated": "2022-10-13 14:34:55"
 }
 
 /*
@@ -114,12 +114,15 @@ function scrape(doc, url) {
 						break;
 					}
 				}
+				for (let tag of ZU.xpath(xml, '//*[@tag="699"]/*[@code="a"]')) {
+					item.tags.push(tag.textContent);
+				}
 				item.notes.push('LF:');
 				let identifier =  ZU.xpathText(xml, '//*[@tag="001"]');
 				item.notes.push('hdl:' + identifier.replace('boreal:', '2078.1/'));
 				if (!item.volume && !item.issue && !item.pages) {
 					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]')) {
-						tag773 += '\037g' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]');
+						tag773 += '\037g' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]').replace(/^,? */, '');;
 					}
 					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]')) {
 						tag773 += '\037z' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]').replace(/ISBN\s*/, '');
@@ -132,7 +135,7 @@ function scrape(doc, url) {
 				}
 				else {
 					if (ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]')) {
-						tag773 += '\037g' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]');
+						tag773 += '\037g' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]').replace(/^,? */, '');
 					}
 					if (ZU.xpathText(xml, '//*[@tag="773"]/*[@code="t"]')) {
 						tag773 += '\037t' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="t"]');
@@ -157,7 +160,8 @@ function scrape(doc, url) {
 					}
 				}
 				item.volume = "1";
-				item.issue = "";						
+				item.issue = "";
+				item.date = "";						
 				item.notes.push('773:' + tag773.replace(/^\u001f/, ''));
 				item.notes.push('264_1:' + tag264_1.replace(/^\u001f/, ''));
 				item.notes.push('264_2:' + tag264_2.replace(/^\u001f/, ''));
@@ -373,6 +377,57 @@ var testCases = [
 					"second_publication_year:2022",
 					"second_publisher:Université catholique de Louvain",
 					"second_place:Louvain"
+				],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://dial.uclouvain.be/pr/boreal/object/boreal:225367",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "La cartographie disciplinaire de vingt-cinq années de publication de \"savoirs religieux\" à Québec: le cas du périodique Laval théologique et philosophique (1945 à 1969)",
+				"creators": [
+					{
+						"firstName": "Martin",
+						"lastName": "Dutron",
+						"creatorType": "author"
+					}
+				],
+				"date": "2021",
+				"language": "fre",
+				"libraryCatalog": "uclouvain",
+				"pages": "65-79",
+				"publicationTitle": "Etudes d’histoire religieuse",
+				"shortTitle": "La cartographie disciplinaire de vingt-cinq années de publication de \"savoirs religieux\" à Québec",
+				"url": "http://hdl.handle.net/2078.1/225367",
+				"volume": "1",
+				"attachments": [],
+				"tags": [
+					{
+						"tag": "Laval théologique et philosophique"
+					},
+					{
+						"tag": "facultés ecclésiastiques de l'Université Laval"
+					},
+					{
+						"tag": "histoire de la théologie"
+					},
+					{
+						"tag": "histoire des savoirs"
+					},
+					{
+						"tag": "periodical studies"
+					}
+				],
+				"notes": [
+					"LF:",
+					"hdl:2078.1/225367",
+					"773:x1920-6267\u001fgVol. 87, no. 1-2, p. 65-79 (2021)\u001ftEtudes d’histoire religieuse",
+					"264_1:aMontréal\u001fbSociété canadienne d'histoire de l'Église catholique\u001fc2021",
+					"264_2:c2020\u001faUniversité catholique de Louvain\u001fbLouvain"
 				],
 				"seeAlso": []
 			}
