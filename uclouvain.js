@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-10-13 11:26:16"
+	"lastUpdated": "2022-10-13 11:35:07"
 }
 
 /*
@@ -124,6 +124,14 @@ function scrape(doc, url) {
 						if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="t"]')) {
 						item.notes.push('773t:' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="a"]') + ': ' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="t"]'));
 						}
+					}
+				}
+				else {
+					if (ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]')) {
+						item.notes.push('773g:' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]'));
+					}
+					if (ZU.xpathText(xml, '//*[@tag="773"]/*[@code="t"]')) {
+						item.notes.push('773t:' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="t"]'));
 					}
 				}
 				for (let responsible of ZU.xpath(xml, '//*[@tag="100" or @tag="700"]')) {
