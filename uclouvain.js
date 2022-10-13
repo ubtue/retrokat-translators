@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-10-13 10:22:19"
+	"lastUpdated": "2022-10-13 11:26:16"
 }
 
 /*
@@ -102,7 +102,7 @@ function scrape(doc, url) {
 				}
 				item.notes.push('LF:');
 				let identifier =  ZU.xpathText(xml, '//*[@tag="001"]');
-				item.notes.push('hdl:' + identifier.replace('boreal:', '2078.1'));
+				item.notes.push('hdl:' + identifier.replace('boreal:', '2078.1/'));
 				//add_marc_field_024 = "0247 \037a%hdl%\0372hdl
 				for (let identifier of ZU.xpath(xml, '//*[@tag="022"]')) {
 					if (ZU.xpathText(identifier, './*[@code="v"]') == 'e-issn') {
@@ -115,23 +115,15 @@ function scrape(doc, url) {
 				}
 				if (!item.volume && !item.issue && !item.pages) {
 					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]')) {
-						item.notes.push('773$g:' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]'));
+						item.notes.push('773g:' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]'));
 					}
 					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]')) {
-						item.notes.push('773$z:' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]'));
-					}
-					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]')) {
-						item.notes.push('773$z:' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]').replace(/ISBN\s*/, ''));
+						item.notes.push('773z:' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]').replace(/ISBN\s*/, ''));
 					}
 					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="a"]')) {
 						if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="t"]')) {
-						item.notes.push('773$t:' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="a"]') + ': ' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="t"]'));
+						item.notes.push('773t:' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="a"]') + ': ' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="t"]'));
 						}
-					}
-				}
-				else {
-					if (ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]')) {
-						item.notes.push('773$g:' + ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]'));
 					}
 				}
 				for (let responsible of ZU.xpath(xml, '//*[@tag="100" or @tag="700"]')) {
@@ -146,8 +138,13 @@ function scrape(doc, url) {
 				if (ZU.xpathText(xml, '//*[@tag="500"]/*[@code="e"]') != null && ZU.xpathText(xml, '//*[@tag="500"]/*[@code="e"]').match(/\d{4}/)) item.notes.push('second_publication_year:' + ZU.xpathText(xml, '//*[@tag="500"]/*[@code="e"]').match(/\d{4}/)[0]);
 				item.notes.push('second_publisher:' + 'Université catholique de Louvain');
 				item.notes.push('second_place:' + 'Louvain');
-
-				item.volume = "1";						
+				if (item.title != undefined) {
+					if (item.title.match(/ISBN:?\s+((?:\d+[\- ]*)+)/) != null) {
+						item.tags.push("#reviewed_pub#isbn::" + item.title.match(/ISBN:?\s+((?:\d+[\- ]*)+)/)[1].trim() + "#")
+					}
+				}
+				item.volume = "1";
+				item.issue = "";						
 
 				item.complete();
 			});
@@ -276,6 +273,88 @@ var testCases = [
 					"orcid: 0000-0002-6261-1865 | Join-Lambert, Arnaud | taken from website",
 					"place:Leuven",
 					"publisher:Peeters Publishers",
+					"second_publication_year:2022",
+					"second_publisher:Université catholique de Louvain",
+					"second_place:Louvain"
+				],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://dial.uclouvain.be/pr/boreal/object/boreal:200580",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "The Orthodox Influence on the Roman Catholic Theologian Yves Congar, O.P. A Sketch",
+				"creators": [
+					{
+						"firstName": "Joseph",
+						"lastName": "Famerée",
+						"creatorType": "author"
+					}
+				],
+				"date": "2018",
+				"abstractNote": "L'article présente et évalue l'influence orthodoxe sur Congar. Celle-ci peut être détectée dans le vocabulaire de \"Chrétiens désunis\". Dans un langage soulignant les aspects visibles et sociaux de l'Église, celle-ci est aussi présentée comme une \"théo phanie\" ou une \"christophanie\" en une forme collective et sociétale: le Corps du Christ mystique et visible. On étudie aussi \"Jalons pour ne théologie du laïcat\" (1953), qui se réfère explicitement à la \"sobornost\" des slavophiles. Congar est parti de là en vue d'envisager non seulement un \"principe de collégialité\" dans l'ordre hiérarchique, mais aussi \"un principe communautaire\" au niveau de toute l'Église. C'est pourquoi, il suggéra de traduire \"sobornost\" par \"collégialité\" dans le sens large de \"communion\". L'article indique en conclusion le travail qu'il reste à faire sur les ouvrages de Congar postérieurs au concile Vatican II.",
+				"language": "eng",
+				"libraryCatalog": "uclouvain",
+				"series": "Louvain Theological and Pastoral Monographs",
+				"url": "http://hdl.handle.net/2078.1/200580",
+				"volume": "1",
+				"attachments": [],
+				"tags": [],
+				"notes": [
+					"abs:The article presents and assesses the Orthodox influence on Congar. It shows how Orthodox influences can be detected in the vocabulary of \"Chrétiens désunis\". In a language that emphasizes its visible and social aspects, the Church is presented as a \"theophany\" or a \"christophany\" in a collective and societal form: the mystical and visible Body of Christ. Famerée then assesses Congar's main book on the laity, \"Jalons pour une théologie du laïcat\" (1953), where he referred explicitly to the \"sobornost\" of the Slavophile thinkers. The article shows how Congar started from this idea in order to consider not only a \"principle of collegiality\" in the hierarchical order but also a \"communitarian principle\" on the level of the whole Church. Therefore he suggested translating \"sobornost\" as \"collegiality\" in the comprehensive sense of \"communion\". One concludes by pointing to work that remains to be done by means of a study of Congar's volumes subsequent to Vatican II.",
+					"LF:",
+					"hdl:2078.1/200580",
+					"773$g:p. 273-282",
+					"773$z:978-90-429-3607-2.",
+					"773$z:978-90-429-3607-2.",
+					"773$t:Gabriel Flynn: Yves Congar Theologian of the Church",
+					"place:Leuven - Paris - Bristol, CT",
+					"publisher:Peeters",
+					"second_publication_year:2018",
+					"second_publisher:Université catholique de Louvain",
+					"second_place:Louvain"
+				],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://dial.uclouvain.be/pr/boreal/object/boreal:258173",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "Review of: Eberhard Bons (ed.). Historical and Theological Lexicon of the Septuagint. Volume 1: Alpha-Gamma. Tübingen, Mohr Siebeck, 2020. (18×24,5), clxiii-1979 p. ISBN 978-3-16-150747-2. €289.00",
+				"creators": [
+					{
+						"firstName": "Ellen",
+						"lastName": "De Doncker",
+						"creatorType": "author"
+					}
+				],
+				"date": "2022",
+				"abstractNote": "Review of E. Bons HTLS.",
+				"language": "eng",
+				"libraryCatalog": "uclouvain",
+				"pages": "694-696",
+				"publicationTitle": "Ephemerides Theologicae Lovanienses",
+				"shortTitle": "Review of",
+				"url": "http://hdl.handle.net/2078.1/258173",
+				"volume": "1",
+				"attachments": [],
+				"tags": [],
+				"notes": [
+					"LF:",
+					"hdl:2078.1/258173",
+					"issn:0013-9513",
+					"issn:1783-1423",
+					"773$g:Vol. 97, no.4, p. 694-696 (2022)",
+					"place:Leuven",
+					"publisher:Peeters",
 					"second_publication_year:2022",
 					"second_publisher:Université catholique de Louvain",
 					"second_place:Louvain"
