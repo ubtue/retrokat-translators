@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-10-13 15:07:49"
+	"lastUpdated": "2022-10-17 16:12:26"
 }
 
 /*
@@ -109,12 +109,15 @@ function scrape(doc, url) {
 				}
 				item.itemType = "journalArticle";
 				for (let url of ZU.xpath(xml, '//*[@tag="856"]/*[@code="u"]')) {
-					if (url.textContent.match('/2078.1/')) {
+					if (url.textContent.match(/\/2078(?:\.1)?\//)) {
 						item.url = url.textContent;
 						break;
 					}
 				}
 				for (let tag of ZU.xpath(xml, '//*[@tag="699"]/*[@code="a"]')) {
+					item.tags.push(tag.textContent);
+				}
+				for (let tag of ZU.xpath(xml, '//*[@tag="698"]/*[@code="a"]')) {
 					item.tags.push(tag.textContent);
 				}
 				item.notes.push('LF:');
