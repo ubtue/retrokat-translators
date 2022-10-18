@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-10-18 11:08:05"
+	"lastUpdated": "2022-10-18 11:18:18"
 }
 
 /*
@@ -127,18 +127,22 @@ function scrape(doc, url) {
 				if (!item.url) {
 					item.url = "https://dial.uclouvain.be/pr/boreal/object/" + identifier;
 				}
-				if (!item.volume && !item.issue && !item.pages) {
+				if (!item.volume && !item.issue && !item.pages && !item.publicationTitle) {
 					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]')) {
 						tag773 += '\037g' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]').replace(/^,? */, '');;
 					}
 					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]')) {
 						tag773 += '\037z' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="z"]').replace(/ISBN\s*/, '');
 					}
-					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="a"]')) {
-						if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="t"]')) {
+					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="t"]')) {
+						if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="a"]')) {
 						tag773 += '\037t' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="a"]') + ': ' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="t"]');
 						}
+						else tag773 += '\037t' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="a"]');
 					}
+				}
+				else if (item.publicationTitle) {
+					tag773 += '\037t' + item.publicationTitle;
 				}
 				else {
 					if (ZU.xpathText(xml, '//*[@tag="773"]/*[@code="g"]')) {
