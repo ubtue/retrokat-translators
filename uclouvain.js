@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-10-17 16:12:26"
+	"lastUpdated": "2022-10-18 11:08:05"
 }
 
 /*
@@ -114,6 +114,7 @@ function scrape(doc, url) {
 						break;
 					}
 				}
+				
 				for (let tag of ZU.xpath(xml, '//*[@tag="699"]/*[@code="a"]')) {
 					item.tags.push(tag.textContent);
 				}
@@ -123,6 +124,9 @@ function scrape(doc, url) {
 				item.notes.push('LF:');
 				let identifier =  ZU.xpathText(xml, '//*[@tag="001"]');
 				item.notes.push('hdl:' + identifier.replace('boreal:', '2078.1/'));
+				if (!item.url) {
+					item.url = "https://dial.uclouvain.be/pr/boreal/object/" + identifier;
+				}
 				if (!item.volume && !item.issue && !item.pages) {
 					if (ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]')) {
 						tag773 += '\037g' + ZU.xpathText(xml, '//*[@tag="779"]/*[@code="g"]').replace(/^,? */, '');;
@@ -155,8 +159,8 @@ function scrape(doc, url) {
 				}
 				tag264_1 += '\037c' + item.date;
 				if (ZU.xpathText(xml, '//*[@tag="500"]/*[@code="e"]') != null && ZU.xpathText(xml, '//*[@tag="500"]/*[@code="e"]').match(/\d{4}/)) tag264_2 += '\037c' + ZU.xpathText(xml, '//*[@tag="500"]/*[@code="e"]').match(/\d{4}/)[0];
-				tag264_2 += '\037aUniversité catholique de Louvain';
-				tag264_2 += '\037bLouvain';
+				tag264_2 += '\037aLouvain';
+				tag264_2 += '\037bUniversité catholique de Louvain';
 				if (item.title != undefined) {
 					if (item.title.match(/ISBN:?\s+((?:\d+[\- ]*)+)/) != null) {
 						item.tags.push("#reviewed_pub#isbn::" + item.title.match(/ISBN:?\s+((?:\d+[\- ]*)+)/)[1].trim() + "#")
@@ -164,10 +168,10 @@ function scrape(doc, url) {
 				}
 				item.volume = "1";
 				item.issue = "";
-				item.date = "1000";						
-				item.notes.push('773:' + tag773.replace(/^\u001f/, ''));
-				item.notes.push('264_1:' + tag264_1.replace(/^\u001f/, ''));
-				item.notes.push('264_2:' + tag264_2.replace(/^\u001f/, ''));
+				item.date = "1000";					
+				if (tag773 != "") item.notes.push('773:' + tag773.replace(/^\u001f/, ''));
+				if (tag264_1 != "") item.notes.push('264_1:' + tag264_1.replace(/^\u001f/, ''));
+				if (tag264_2 != "") item.notes.push('264_2:' + tag264_2.replace(/^\u001f/, ''));
 				item.complete();
 			});
 			translator.translate();
