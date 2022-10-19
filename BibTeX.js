@@ -301,11 +301,11 @@ var keyRe = /[a-zA-Z0-9\-]/;
 // Split keywords on space by default when called from another translator
 // This is purely for historical reasons. Otherwise we risk breaking tag import
 // from some websites
-var keywordSplitOnSpace = !!Zotero.parentTranslator;
+var keywordSplitOnSpace = false;
 var keywordDelimRe = /\s*[,;]\s*/;
 
 function setKeywordSplitOnSpace( val ) {
-	keywordSplitOnSpace = val;
+	keywordSplitOnSpace = false;
 }
 
 function setKeywordDelimRe( val, flags ) {
