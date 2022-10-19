@@ -73,6 +73,7 @@ function scrape(doc, url) {
 		}
 		for (let tag of item.tags) {
 			tag = tag.replace(/\?\?\?\?/g, ",");
+			tag = tag.replace(/xxxx/g, "--");
 			newTags.push(tag);
 		}
 		item.tags = newTags;
