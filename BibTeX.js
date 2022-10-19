@@ -18,7 +18,7 @@
 	},
 	"inRepository": true,
 	"translatorType": 3,
-	"lastUpdated": "2022-10-19 08:45:21"
+	"lastUpdated": "2021-09-10 18:17:50"
 }
 
 /*
@@ -301,10 +301,12 @@ var keyRe = /[a-zA-Z0-9\-]/;
 // Split keywords on space by default when called from another translator
 // This is purely for historical reasons. Otherwise we risk breaking tag import
 // from some websites
-var keywordSplitOnSpace = false;
+var keywordSplitOnSpace = !!Zotero.parentTranslator;
 var keywordDelimRe = /\s*[,;]\s*/;
 
-
+function setKeywordSplitOnSpace( val ) {
+	keywordSplitOnSpace = val;
+}
 
 function setKeywordDelimRe( val, flags ) {
 	//expect string, but it could be RegExp
