@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-08-19 11:35:26"
+	"lastUpdated": "2022-11-02 09:37:58"
 }
 
 /*
@@ -188,6 +188,7 @@ function scrape(doc, url) {
 		var match = item.date.match(/^numéro [0-9]+, ([0-9]{4})/);
 		if (match)
 			item.date = match[1];
+		else if (item.date.match(/\d{4}/)) item.date = item.date.match(/\d{4}/)[0];
 	}
 	parseAbstract(doc, item);
 	if (item.abstractNote.match(/not\s?available+|^editorial$|^Obituary$/i)) delete item.abstractNote;
