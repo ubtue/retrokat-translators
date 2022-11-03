@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-11-03 08:44:12"
+	"lastUpdated": "2022-11-03 08:56:43"
 }
 
 /*
@@ -75,6 +75,9 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 			}
 		}
 		i.abstractNote = "";
+		if (ZU.xpathText(doc, '//i[@class="icon-availability_unlocked"]/@title') == "Available") {
+		i.notes.push('LF:');
+		}
 		i.complete();
 	});
 	translator.translate();
