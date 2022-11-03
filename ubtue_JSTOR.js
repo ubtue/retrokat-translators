@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-09-28 13:58:24"
+	"lastUpdated": "2022-11-03 08:29:32"
 }
 
 /*
@@ -47,10 +47,6 @@ function detectWeb(doc, url) {
 	else if (/stable|pss/.test(url) // Issues with DOIs can't be identified by URL
 		&& getSearchResults(doc, true)) {
 		return "multiple";
-	}
-	else if (/stable|pss/.test(url)) {
-		Z.debug("Snargle");
-		Z.debug(getSearchResults(doc, true))
 	}
 	// If this is a view page, find the link to the citation
 	var favLink = getFavLink(doc);
@@ -226,6 +222,10 @@ function processRIS(text, jid, doc) {
 		}
 		if (item.pages != undefined) {
 			if (item.pages.match(/(?:[ivxlcm]+.\d+)|(?:\d+.[ivxlcm]+)/i)) item.pages = "";
+			if (item.pages.match(/\*/)) {
+				item.tags.push('::pagination::' + item.pages);
+				item.pages = "";
+			}
 		}
 		
 		
