@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-11-10 17:06:13"
+	"lastUpdated": "2022-11-10 17:14:36"
 }
 
 /*
@@ -221,15 +221,18 @@ function processRIS(text, jid, doc) {
 			item.title = item.title + ": " + subtitle[1]
 		}
 		if (item.pages != undefined) {
-			if (item.pages.match(/(?:[ivxlcm]+.\d+)|(?:\d+.[ivxlcm]+)/i)) item.pages = "";
+			if (item.pages.match(/(?:[ivxlm]+.\d+)|(?:\d+.[ivxlm]+)/i)) item.pages = "";
 			if (item.pages.match(/\*/)) {
 				item.tags.push('::pagination::' + item.pages);
 				item.pages = "";
 			}
-			else if (item.pages.match(/\d[^\d]+-\d+[^\d]/)) {
+			else if (item.pages.match(/\d+[^\d]-\d+[^\d]/)) {
 				if (item.pages.match(/\d+([^\d])-\d+([^\d])/g)[1] == item.pages.match(/\d+([^\d])-\d+([^\d])/g)[2]) {
 					item.pages = item.pages.match(/(\d+)[^\d]-(\d+)[^\d]/)[1] + '-' + item.pages.match(/(\d+)[^\d]-(\d+)[^\d]/)[2];
 				}
+			}
+			else if (item.pages.match(/\d+[^\d]/)) {
+				item.pages = item.pages.match(/(\d+)[^\d]/)[1];
 			}
 		}
 		
