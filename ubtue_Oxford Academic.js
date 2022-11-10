@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-09-27 08:40:49"
+	"lastUpdated": "2022-11-10 16:29:34"
 }
 
 /*
@@ -62,6 +62,16 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 	translator.setTranslator("951c027d-74ac-47d4-a107-9c3069ab7b48");
 	translator.setDocument(doc);
 	translator.setHandler("itemDone", function (t, i) {
+		let deduplicatedCreators = [];
+		for (let author of i.creators) {
+			let foundCreator = false;
+			for (let aut of deduplicatedCreators) {
+				if (aut.firstName + aut.lastName == author.firstName + author.lastName) foundCreator = true;
+			}
+			if (!foundCreator) deduplicatedCreators.push(author);
+		}
+		i.creators = deduplicatedCreators;
+		i.attachments = [];
 		// update abstract from the webpage as the embedded data is often incomplete
 		if (i.creators.length > 1) {
 		let authorList = ZU.xpath(doc, '//div[@class="info-card-name"]');
@@ -75,7 +85,7 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 			a = ZU.trimInternal(a);
 			a = a.toLowerCase();
 			a = a.split(',')[0];
-			a = a.replace(/\./g, ' ').replace(/\s+/g, ' ');
+			a = a.replace(/\./g, ' ').replace(/\s+/g, ' ').trim();
 			authorNamesListNormalized.push(a);
 		}
 		let authorsNotFoundList = [];
@@ -84,7 +94,7 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 		for (let c of i.creators) {
 			let uninvertedName = c.firstName + ' ' + c.lastName;
 			uninvertedName = uninvertedName.toLowerCase();
-			uninvertedName = uninvertedName.replace(/\./g, ' ').replace(/\s+/g, ' ');
+			uninvertedName = uninvertedName.replace(/\./g, ' ').replace(/\s+/g, ' ').trim();
 			if (!authorNamesListNormalized.includes(uninvertedName)) {
 				authorsNotFoundList.push(uninvertedName);
 				authorsNotFound.push(c);
@@ -194,7 +204,6 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 				i.notes.push({note: "orcid:" + orcid + ' | ' + author});
 			}
 		}
-		i.attachments = [];
 		i.complete();
 	});
 	translator.translate();
