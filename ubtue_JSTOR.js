@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-11-10 17:14:36"
+	"lastUpdated": "2022-11-16 08:48:37"
 }
 
 /*
@@ -231,8 +231,8 @@ function processRIS(text, jid, doc) {
 					item.pages = item.pages.match(/(\d+)[^\d]-(\d+)[^\d]/)[1] + '-' + item.pages.match(/(\d+)[^\d]-(\d+)[^\d]/)[2];
 				}
 			}
-			else if (item.pages.match(/\d+[^\d]/)) {
-				item.pages = item.pages.match(/(\d+)[^\d]/)[1];
+			else if (item.pages.match(/\d+[^\d-]/)) {
+				item.pages = item.pages.match(/(\d+)[^\d-]/)[1];
 			}
 		}
 		
