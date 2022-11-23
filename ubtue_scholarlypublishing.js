@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-11-03 08:56:43"
+	"lastUpdated": "2022-11-23 14:03:25"
 }
 
 /*
@@ -70,11 +70,14 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 		let reviewTag = ZU.xpathText(doc, '//span[@class="article-client_type"]');
 		if (reviewTag != null) {
 			if (reviewTag.match(/^Book\s*review/i) != null) {
-				i.tags.push('RezensionstagPica');
+				i.tags.push('Book Review');
 				i.abstractNote = "";
 			}
 		}
-		i.abstractNote = "";
+		if (i.abstractNote && i.abstractNote.trim().match(/^Abstract/)) {
+			i.abstractNote = i.abstractNote.replace(/^Abstract[\.:]\s*/, "");
+		}
+		else i.abstractNote = "";
 		if (ZU.xpathText(doc, '//i[@class="icon-availability_unlocked"]/@title') == "Available") {
 		i.notes.push('LF:');
 		}
@@ -98,6 +101,7 @@ function doWeb(doc, url) {
 	} else
 		invokeEmbeddedMetadataTranslator(doc, url);
 }
+
 /** BEGIN TEST CASES **/
 var testCases = [
 	{

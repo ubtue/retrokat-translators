@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-11-02 17:59:39"
+	"lastUpdated": "2022-11-23 14:08:42"
 }
 
 /*
@@ -112,7 +112,7 @@ function invokeEmbeddedMetadataTranslator(doc, url) {
 			tags = tags.replace(/\n|keywords/g, '').trim();
 			item.tags = tags.split(' – ');
 		}
-		if (item.title == "Recensioni") item.tags.push("RezensionstagPica");
+		if (item.title == "Recensioni") item.tags.push("Book Review");
 		if (pages[item.url] != undefined) {
 			item.pages = pages[item.url]
 		}
@@ -135,6 +135,7 @@ function doWeb(doc, url) {
 		});
 	} else invokeEmbeddedMetadataTranslator(doc, url);
 }
+
 
 /** BEGIN TEST CASES **/
 var testCases = [
