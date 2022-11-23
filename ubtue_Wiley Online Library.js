@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-09-29 11:32:25"
+	"lastUpdated": "2022-11-23 15:05:18"
 }
 
 /*
@@ -270,8 +270,9 @@ function scrapeBibTeX(doc, url) {
 		translator.setHandler('itemDone', function(obj, item) {
 			// BibTeX throws the last names and first names together
 			// Therefore, we prefer creators names from EM (if available)
+			
 			var authors = doc.querySelectorAll('meta[name="citation_author"]');
-			if (authors && authors.length>0) {
+			if (authors && authors.length>0 && ZU.xpathText(doc, '//meta[@name="citation_author"]').trim() != "") {
 				item.creators = [];
 				for (let i=0; i<authors.length; i++) {
 					item.creators.push(ZU.cleanAuthor(authors[i].content, 'author'));
@@ -279,7 +280,7 @@ function scrapeBibTeX(doc, url) {
 			}
 			//fix author case
 			for (var i=0, n=item.creators.length; i<n; i++) {
-				item.creators[i].firstName = fixCase(item.creators[i].firstName);
+				item.creators[i].firstName = fixCase(item.creators[i].firstName.replace(/^The\s+Rev\s+/i, ""));
 				item.creators[i].lastName = fixCase(item.creators[i].lastName);
 			}
 
@@ -572,6 +573,7 @@ function doWeb(doc, url) {
 		}
 	}
 }
+
 
 
 
