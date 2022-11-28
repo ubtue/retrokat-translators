@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-09-29 15:49:12"
+	"lastUpdated": "2022-11-28 12:11:21"
 }
 
 /*
@@ -86,6 +86,11 @@ function invokeEMTranslator(doc) {
 	translator.setTranslator("951c027d-74ac-47d4-a107-9c3069ab7b48");
 	translator.setDocument(doc);
 	translator.setHandler("itemDone", function (t, i) {
+		if (ZU.xpathText(doc, '//div[@id="articleInfo"]//b')) {
+			if (ZU.xpathText(doc, '//div[@id="articleInfo"]//b').includes(i.title) && ZU.xpathText(doc, '//div[@id="articleInfo"]//b').includes('"')) {
+			i.title = ZU.xpathText(doc, '//div[@id="articleInfo"]//b');
+			}
+		}
 		i.itemType = "journalArticle";
 		i.attachments = []
 		i.complete();
@@ -103,7 +108,8 @@ function doWeb(doc, url) {
 	else {
 		invokeEMTranslator(doc, url);
 	}
-}/** BEGIN TEST CASES **/
+}
+/** BEGIN TEST CASES **/
 var testCases = [
 ]
 /** END TEST CASES **/
