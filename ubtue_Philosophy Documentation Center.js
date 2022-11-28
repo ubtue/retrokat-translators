@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-11-28 12:11:21"
+	"lastUpdated": "2022-11-28 14:12:46"
 }
 
 /*
@@ -89,6 +89,11 @@ function invokeEMTranslator(doc) {
 		if (ZU.xpathText(doc, '//div[@id="articleInfo"]//b')) {
 			if (ZU.xpathText(doc, '//div[@id="articleInfo"]//b').includes(i.title) && ZU.xpathText(doc, '//div[@id="articleInfo"]//b').includes('"')) {
 			i.title = ZU.xpathText(doc, '//div[@id="articleInfo"]//b');
+			}
+		}
+		if (i.abstractNote && ZU.xpathText(doc, '//div[@id="articleInfo"]//i')) {
+			if (ZU.xpathText(doc, '//div[@id="articleInfo"]//i').includes(i.abstractNote) && ZU.xpathText(doc, '//div[@id="articleInfo"]//b').includes('"')) {
+			i.abstractNote = ZU.xpathText(doc, '//div[@id="articleInfo"]//i');
 			}
 		}
 		i.itemType = "journalArticle";
