@@ -1,15 +1,15 @@
 {
-	"translatorID": "b3d73f85-50d2-47c9-861a-9efb67adecae",
+	"translatorID": "9386ab7d-31b7-401a-8cc0-17b6b82ffa45",
 	"label": "ubtue_Wiley Online Library",
 	"creator": "Sean Takats, Michael Berkowitz, Avram Lyon and Aurimas Vinckevicius",
 	"target": "^https?://([\\w-]+\\.)?onlinelibrary\\.wiley\\.com[^/]*/(book|doi|toc|advanced/search|search-web/cochrane|cochranelibrary/search|o/cochrane/(clcentral|cldare|clcmr|clhta|cleed|clabout)/articles/.+/sect0\\.html)",
 	"minVersion": "3.1",
 	"maxVersion": "",
-	"priority": 95,
+	"priority": 99,
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-11-23 15:05:18"
+	"lastUpdated": "2022-12-01 16:54:21"
 }
 
 /*
@@ -33,7 +33,6 @@
 // attr()/text() v2
 
 var reviewURLs = [];
-
 function attr(docOrElem,selector,attr,index){var elem=index?docOrElem.querySelectorAll(selector).item(index):docOrElem.querySelector(selector);return elem?elem.getAttribute(attr):null;}function text(docOrElem,selector,index){var elem=index?docOrElem.querySelectorAll(selector).item(index):docOrElem.querySelector(selector);return elem?elem.textContent:null;}
 
 function fixCase(authorName) {
@@ -63,14 +62,17 @@ function getAuthorName(text) {
 	//lower case words at the end of a name are probably not part of a name
 	text = text.replace(/(\s+[a-z]+)+\s*$/,'');
 
-	text = text.replace(/(^|[\s,])(PhD|MA|Prof|Dr)(\.?|(?=\s|$))/gi,'');	//remove salutations
+	text = text.replace(/(^|[\s,])(PhD|MA|Prof|Dr)\b(\.?|(?=\s|$))/gi,'');	//remove salutations
 
 	return fixCase(text.trim());
 }
 
 function addBookReviewTag(doc, item) {
 	var primaryHeading = ZU.xpathText(doc, '//span[@class="primary-heading"]');
-	if (primaryHeading.match(/(Book Reviews?)|(Review Essays?)|(Reviews?)/i)) {
+	if (primaryHeading.match(/Book\s?Reviews?|Review\s?Essays?|Reviews?/i)) {
+		item.tags.push('Book Review');
+	}
+	else if (reviewURLs.includes(item.url) || reviewURLs.includes(item.url.replace(/\/abs\//, '/'))) {
 		item.tags.push('Book Review');
 	}
 }
@@ -142,7 +144,8 @@ function scrapeBook(doc, url) {
 			'/h6[normalize-space(text())="About The Product"]',
 			'/following-sibling::p'].join(''), null, "\n") || "");
 	newItem.accessDate = 'CURRENT_TIMESTAMP';
-	
+	if (item.issue != undefined) item.issue = item.issue.replace(/-/g, "/");
+	item.title = item.title.replace(/\*+$/, '').replace(/℡/g, 'tel');
 	newItem.complete();
 }
 
@@ -188,14 +191,17 @@ function scrapeEM(doc, url) {
 			//this is not great for summary, but will do for now
 			item.abstractNote = ZU.xpathText(doc, '//div[@id="abstract"]/div[@class="para"]//p', null, "\n");
 		} else {
-			var keywords = ZU.xpathText(doc, '//meta[@name="citation_keywords"]/@content');
-			if (keywords) {
-				item.tags = keywords.split(', ');
-			}
+			
 			item.rights = ZU.xpathText(doc, '//div[@id="titleMeta"]//p[@class="copyright"]');
 			item.abstractNote = ZU.xpathText(doc, '//div[@id="abstract"]/div[@class="para"]', null, "\n");
 		}
-
+		if (item.tags.length == 0) {
+			var keywords = ZU.xpath(doc, '//meta[@name="citation_keywords"]/@content');
+			for (let keyword of keywords) {
+				if (keywords.length == 1) item.tags = keywords.split(', ');
+				else item.tags.push(keyword.textContent);
+			}
+		}
 		//set correct print publication date
 		if (date) item.date = date;
 
@@ -207,16 +213,17 @@ function scrapeEM(doc, url) {
 				n--;
 			}
 		}
-		item.attachments = [];
-		
+		if (item.issue != undefined) item.issue = item.issue.replace(/-/g, "/");
+		item.title = item.title.replace(/\*+$/, '').replace(/℡/g, 'tel');
 		item.complete();
 	});
 
 	addBookReviewTag(doc, item);
 	addArticleNumber(doc, item);
 	addFreeAccessTag(doc, item);
-	item.attachments = [];
-	
+	getORCID(doc, item);
+	if (item.issue != undefined) item.issue = item.issue.replace(/-/g, "/");
+	item.title = item.title.replace(/\*+$/, '').replace(/℡/g, 'tel');
 	item.complete();
 
 	translator.getTranslatorObject(function(em) {
@@ -268,19 +275,10 @@ function scrapeBibTeX(doc, url) {
 		translator.setString(text);
 
 		translator.setHandler('itemDone', function(obj, item) {
-			// BibTeX throws the last names and first names together
-			// Therefore, we prefer creators names from EM (if available)
-			
-			var authors = doc.querySelectorAll('meta[name="citation_author"]');
-			if (authors && authors.length>0 && ZU.xpathText(doc, '//meta[@name="citation_author"]').trim() != "") {
-				item.creators = [];
-				for (let i=0; i<authors.length; i++) {
-					item.creators.push(ZU.cleanAuthor(authors[i].content, 'author'));
-				}
-			}
+			if (item.title == undefined) item.title = ZU.xpathText(doc, '//meta[@name="citation_title"]/@content');
 			//fix author case
 			for (var i=0, n=item.creators.length; i<n; i++) {
-				item.creators[i].firstName = fixCase(item.creators[i].firstName.replace(/^The\s+Rev\s+/i, ""));
+				item.creators[i].firstName = fixCase(item.creators[i].firstName);
 				item.creators[i].lastName = fixCase(item.creators[i].lastName);
 			}
 
@@ -299,6 +297,12 @@ function scrapeBibTeX(doc, url) {
 			}
 
 			//title
+			if (item.title && item.title.toUpperCase() == item.title) {
+				item.title = ZU.capitalizeTitle(item.title, true);
+			}
+			//subtitle
+			let citationSubtitle = ZU.xpathText(doc, '//*[@class="citation__subtitle"]');
+			if (item.title && citationSubtitle) item.title = item.title + ': ' + citationSubtitle;
 			
 			if (!item.date) {
 				item.date = ZU.xpathText(doc, '//meta[@name="citation_publication_date"]/@content');
@@ -320,13 +324,13 @@ function scrapeBibTeX(doc, url) {
 			}
 
 			//tags
-			if (!item.tags.length) {
-				var keywords = ZU.xpathText(doc,
-					'//meta[@name="citation_keywords"][1]/@content');
-				if (keywords) {
-					item.tags = keywords.split(', ');
-				}
+			if (item.tags.length == 0) {
+			var keywords = ZU.xpath(doc, '//meta[@name="citation_keywords"]/@content');
+			for (let keyword of keywords) {
+				if (keywords.length == 1) item.tags = keywords.split(', ');
+				else item.tags.push(keyword.textContent);
 			}
+		}
 
 			//abstract should not start with "Abstract"
 			if (item.abstractNote) {
@@ -363,7 +367,6 @@ function scrapeBibTeX(doc, url) {
 			addArticleNumber(doc, item);
 			addPages(doc, item);
 			//attachments
-			item.attachments = [];
 
 			addBookReviewTag(doc, item);
 			// adding author(s) for Short Reviews
@@ -371,40 +374,28 @@ function scrapeBibTeX(doc, url) {
 				for (let author of getAuthorNameShortReview(doc))
 					item.creators.push(ZU.cleanAuthor(author));
 			}
-			//adding review tags for Short Reviews
-			if (reviewURLs.includes(url)) {
-				if (!item.tags.includes('Book Review')) {
-				item.tags.push('Book Review');
+			
+			if (!item.creators[0] && item.ISSN == "1748-0922") {
+				let author = ZU.xpathText(doc, '//section[@class="article-section__content"]/p[last()-1]/i');
+				if (author) {
+					item.creators.push(ZU.cleanAuthor(getAuthorName(author), 'author', false));
 				}
 			}
-			let isbn_tag = ZU.xpathText(doc, '//a[contains(@href,"/isbn/")]');
-			if (isbn_tag != null) {
-				item.tags.push("#reviewed_pub#isbn::#" + isbn_tag + "#");
-				item.tags.push("Book Review");
-			}
-			if (!item.tags.includes("Book Review")) {
-				if (item.title.match(/\s+–(?:\s+edited)?\s+by /i) != null) {
-					item.tags.push("Book Review");
-				}
-			}
+
 			// Make sure we pass only the DOI not the whole URL
 			doiURLRegex = /^https:\/\/doi.org\/(.*)/;
 			if (item.DOI && item.DOI.match(doiURLRegex))
 				item.DOI = item.DOI.replace(/^https:\/\/doi.org\/(.*)/, "$1");
 			addFreeAccessTag(doc, item);
-			let author_tags = ZU.xpath(doc, './/span[@class="accordion-tabbed__tab-mobile  accordion__closed"]');
-			allOrcids = [];
-			for (let author_tag of author_tags) {
-				//Z.debug(author_tag.innerHTML);
-				let author = ZU.xpath(author_tag, './/span')[0].textContent;
-				let orcid = ZU.xpathText(author_tag, './/a[@class="sm-account__link"][@class="sm-account__link" and contains(@href, "orcid.org")]/@href');
-				if (orcid != null) {
-				orcid = orcid.replace('https://orcid.org/' ,'')
-				if (!allOrcids.includes(orcid)) {
-					item.notes.push({note: "orcid:" + orcid + ' | ' + author});
-					allOrcids.push(orcid);
+			getORCID(doc, item);
+			if (item.issue != undefined) item.issue = item.issue.replace(/-/g, "/");
+			if (item.creators.length == 0) {
+				let creatorTags = ZU.xpath(doc, '//meta[@name="citation_author"]/@content');
+				for (let creatorTag of creatorTags) {
+					item.creators.push(ZU.cleanAuthor(creatorTag.textContent, 'author'));
 				}
-			}}
+			}
+			item.title = item.title.replace(/\*+$/, '').replace(/℡/g, 'tel');
 			item.complete();
 		});
 
@@ -415,11 +406,26 @@ function scrapeBibTeX(doc, url) {
 //ubtue:tag an article as open access
 function addFreeAccessTag(doc, item) {
 	let tagEntry = ZU.xpathText(doc, '//div[@class="doi-access"]');
-	if (tagEntry && tagEntry.match(/(Free Access)|(Open Access)/i)) {
+	if (tagEntry && tagEntry.match(/(Free|Open)\s+Access/i)) {
 		item.notes.push('LF:');
 	};
 }
 
+function getORCID(doc, item) {
+	let authorOrcidEntries = doc.querySelectorAll('#sb-1 span');
+	for (let authorOrcidEntry of authorOrcidEntries) {
+		let authorEntry = authorOrcidEntry.querySelector('.author-name accordion-tabbed__control, span');
+		let orcidEntry = authorOrcidEntry.querySelector('*[href^="https://orcid"]');
+		if (authorEntry && orcidEntry && orcidEntry.text && orcidEntry.text.match(/\d+-\d+-\d+-\d+x?/i)) {
+			let author = authorEntry.textContent;
+			let orcid = orcidEntry.text.match(/\d+-\d+-\d+-\d+x?/i)[0];
+			item.notes.push({note: "orcid:" + orcid + ' | ' + author});
+			item.notes = Array.from(new Set(item.notes.map(JSON.stringify))).map(JSON.parse);
+		}
+	}
+}
+
+	
 function scrapeCochraneTrial(doc, url){
 	Z.debug("Scraping Cochrane External Sources");
 	var item = new Zotero.Item('journalArticle');
@@ -440,7 +446,7 @@ function scrapeCochraneTrial(doc, url){
 	for (var i in tags){
 		item.tags.push(tags[i]);
 	}
-	item.attachments = [];
+	item.attachments.push({document: doc, title: "Cochrane Snapshot", mimType: "text/html"});
 	var authors = ZU.xpathText(doc, '//meta[@name="orderedAuthors"]/@content');
 	if (!authors) authors = ZU.xpathText(doc, '//meta[@name="Author"]/@content');
 
@@ -466,6 +472,8 @@ function scrapeCochraneTrial(doc, url){
 
 	addBookReviewTag(doc, item);
 	addArticleNumber(doc, item);
+	if (item.issue != undefined) item.issue = item.issue.replace(/-/g, "/");
+	item.title = item.title.replace(/\*+$/, '').replace(/℡/g, 'tel');
 	item.complete();
 }
 
@@ -492,6 +500,14 @@ function scrape(doc, url) {
 function getSearchResults(doc, checkOnly) {
 	var items = {};
 	var found = false;
+	for (let container of ZU.xpath(doc, '//div[contains(@class,"issue-items-container")]')) {
+		if (ZU.xpathText(container, './h3') && ZU.xpathText(container, './h3').match(/Book\s?Reviews?|Review\s?Essays?|Reviews?/i)) {
+			for (let articleRow of container.querySelectorAll('.table-of-content a.issue-item__title, .item__body h2 a')) {
+				var href = articleRow.href;
+				reviewURLs.push(href);
+				}
+		}
+	}
 	var rows = doc.querySelectorAll('.table-of-content a.issue-item__title, .item__body h2 a');
 	for (var i=0; i<rows.length; i++) {
 		var href = rows[i].href;
@@ -533,18 +549,6 @@ function detectWeb(doc, url) {
 function doWeb(doc, url) {
 	var type = detectWeb(doc, url);
 	if (type == "multiple") {
-		sections = ZU.xpath(doc, '//div[contains(@class, "issue-items-container")]');
-		for (i = 0; i < sections.length; i++) {
-			if (ZU.xpath(sections[i], './h3[@title="BOOK REVIEWS" or @title="Review Articles" or @title="Review"]').length > 0) {
-				let review_urls = ZU.xpath(sections[i], './/a');
-				for (let i in review_urls) {
-					if (review_urls[i].href.match(/doi\/10/)) {
-					reviewURLs.push(review_urls[i].href);
-					}
-				}
-			}
-		
-		}
 		Zotero.selectItems(getSearchResults(doc, false), function (items) {
 			if (!items) {
 				return true;
@@ -576,15 +580,8 @@ function doWeb(doc, url) {
 
 
 
-
-
 /** BEGIN TEST CASES **/
 var testCases = [
-	{
-		"type": "web",
-		"url": "https://onlinelibrary.wiley.com/action/doSearch?AfterMonth=&AfterYear=&BeforeMonth=&BeforeYear=&Ppub=&field1=AllField&field2=AllField&field3=AllField&text1=zotero&text2=&text3=",
-		"items": "multiple"
-	},
 	{
 		"type": "web",
 		"url": "https://onlinelibrary.wiley.com/doi/10.1002/9781118269381.notes",
@@ -593,13 +590,13 @@ var testCases = [
 				"itemType": "bookSection",
 				"title": "Endnotes",
 				"creators": [],
-				"date": "2012-01-11",
+				"date": "2011",
 				"ISBN": "9781118269381",
 				"bookTitle": "The World is Open",
 				"extra": "DOI: 10.1002/9781118269381.notes",
 				"itemID": "doi:https://doi.org/10.1002/9781118269381.notes",
 				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
+				"libraryCatalog": "ubtue_Wiley Online Library",
 				"pages": "427-467",
 				"publisher": "John Wiley & Sons, Ltd",
 				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/9781118269381.notes",
@@ -635,7 +632,7 @@ var testCases = [
 				"extra": "DOI: 10.1002/9781444304794.ch1",
 				"itemID": "doi:https://doi.org/10.1002/9781444304794.ch1",
 				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
+				"libraryCatalog": "ubtue_Wiley Online Library",
 				"pages": "1-20",
 				"publisher": "John Wiley & Sons, Ltd",
 				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/9781444304794.ch1",
@@ -732,7 +729,68 @@ var testCases = [
 				"issue": "2",
 				"itemID": "https://doi.org/10.1002/pmic.201100327",
 				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
+				"libraryCatalog": "ubtue_Wiley Online Library",
+				"pages": "173-182",
+				"publicationTitle": "PROTEOMICS",
+				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/pmic.201100327",
+				"volume": "12",
+				"attachments": [],
+				"tags": [
+					{
+						"tag": "Post-translational modification"
+					},
+					{
+						"tag": "Spectral pairing"
+					},
+					{
+						"tag": "Technology"
+					},
+					{
+						"tag": "α-Amidated peptide"
+					}
+				],
+				"notes": [],
+				"seeAlso": []
+			}
+		]
+	},
+	{
+		"type": "web",
+		"url": "https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/pmic.201100327",
+		"items": [
+			{
+				"itemType": "journalArticle",
+				"title": "A mass spectrometry-based method to screen for α-amidated peptides",
+				"creators": [
+					{
+						"firstName": "Zhenming",
+						"lastName": "An",
+						"creatorType": "author"
+					},
+					{
+						"firstName": "Yudan",
+						"lastName": "Chen",
+						"creatorType": "author"
+					},
+					{
+						"firstName": "John M.",
+						"lastName": "Koomen",
+						"creatorType": "author"
+					},
+					{
+						"firstName": "David J.",
+						"lastName": "Merkler",
+						"creatorType": "author"
+					}
+				],
+				"date": "2012",
+				"DOI": "10.1002/pmic.201100327",
+				"ISSN": "1615-9861",
+				"abstractNote": "Amidation is a post-translational modification found at the C-terminus of ∼50% of all neuropeptide hormones. Cleavage of the Cα–N bond of a C-terminal glycine yields the α-amidated peptide in a reaction catalyzed by peptidylglycine α-amidating monooxygenase (PAM). The mass of an α-amidated peptide decreases by 58 Da relative to its precursor. The amino acid sequences of an α-amidated peptide and its precursor differ only by the C-terminal glycine meaning that the peptides exhibit similar RP-HPLC properties and tandem mass spectral (MS/MS) fragmentation patterns. Growth of cultured cells in the presence of a PAM inhibitor ensured the coexistence of α-amidated peptides and their precursors. A strategy was developed for precursor and α-amidated peptide pairing (PAPP): LC-MS/MS data of peptide extracts were scanned for peptide pairs that differed by 58 Da in mass, but had similar RP-HPLC retention times. The resulting peptide pairs were validated by checking for similar fragmentation patterns in their MS/MS data prior to identification by database searching or manual interpretation. This approach significantly reduced the number of spectra requiring interpretation, decreasing the computing time required for database searching and enabling manual interpretation of unidentified spectra. Reported here are the α-amidated peptides identified from AtT-20 cells using the PAPP method.",
+				"issue": "2",
+				"itemID": "https://doi.org/10.1002/pmic.201100327",
+				"language": "en",
+				"libraryCatalog": "ubtue_Wiley Online Library",
 				"pages": "173-182",
 				"publicationTitle": "PROTEOMICS",
 				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/pmic.201100327",
@@ -793,7 +851,7 @@ var testCases = [
 				"issue": "2",
 				"itemID": "https://doi.org/10.1002/pmic.201100327",
 				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
+				"libraryCatalog": "ubtue_Wiley Online Library",
 				"pages": "173-182",
 				"publicationTitle": "PROTEOMICS",
 				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/pmic.201100327",
@@ -854,7 +912,7 @@ var testCases = [
 				"issue": "2",
 				"itemID": "https://doi.org/10.1002/pmic.201100327",
 				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
+				"libraryCatalog": "ubtue_Wiley Online Library",
 				"pages": "173-182",
 				"publicationTitle": "PROTEOMICS",
 				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/pmic.201100327",
@@ -888,8 +946,8 @@ var testCases = [
 				"title": "β-Rezeptorenblocker",
 				"creators": [
 					{
-						"firstName": "L. von",
-						"lastName": "Meyer",
+						"firstName": "L.",
+						"lastName": "von Meyer",
 						"creatorType": "author"
 					},
 					{
@@ -905,7 +963,7 @@ var testCases = [
 				"extra": "DOI: 10.1002/3527603018.ch17",
 				"itemID": "doi:https://doi.org/10.1002/3527603018.ch17",
 				"language": "de",
-				"libraryCatalog": "Wiley Online Library",
+				"libraryCatalog": "ubtue_Wiley Online Library",
 				"pages": "365-370",
 				"publisher": "John Wiley & Sons, Ltd",
 				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/3527603018.ch17",
@@ -946,7 +1004,7 @@ var testCases = [
 				"issue": "1",
 				"itemID": "https://doi.org/10.1111/j.1468-5930.2011.00548.x",
 				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
+				"libraryCatalog": "ubtue_Wiley Online Library",
 				"pages": "1-18",
 				"publicationTitle": "Journal of Applied Philosophy",
 				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1468-5930.2011.00548.x",
@@ -986,7 +1044,7 @@ var testCases = [
 				"issue": "4",
 				"itemID": "https://doi.org/10.1111/j.1540-6261.1986.tb04559.x",
 				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
+				"libraryCatalog": "ubtue_Wiley Online Library",
 				"pages": "951-974",
 				"publicationTitle": "The Journal of Finance",
 				"shortTitle": "Volume for Winners and Losers",
@@ -1025,7 +1083,7 @@ var testCases = [
 				"issue": "1",
 				"itemID": "https://doi.org/10.1002/(SICI)1521-3773(20000103)39:1<165::AID-ANIE165>3.0.CO;2-B",
 				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
+				"libraryCatalog": "ubtue_Wiley Online Library",
 				"pages": "165-168",
 				"publicationTitle": "Angewandte Chemie International Edition",
 				"shortTitle": "Phosphane-Free Palladium-Catalyzed Coupling Reactions",
@@ -1077,7 +1135,7 @@ var testCases = [
 				"issue": "4",
 				"itemID": "https://doi.org/10.1002/jhet.5570200408",
 				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
+				"libraryCatalog": "ubtue_Wiley Online Library",
 				"pages": "875-885",
 				"publicationTitle": "Journal of Heterocyclic Chemistry",
 				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/jhet.5570200408",
@@ -1115,7 +1173,7 @@ var testCases = [
 				"issue": "141",
 				"itemID": "https://doi.org/10.1002/ev.20077",
 				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
+				"libraryCatalog": "ubtue_Wiley Online Library",
 				"pages": "25-99",
 				"publicationTitle": "New Directions for Evaluation",
 				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/ev.20077",
@@ -1129,27 +1187,39 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "https://onlinelibrary.wiley.com/doi/full/10.1111/teth.12436?af=R",
+		"url": "https://onlinelibrary.wiley.com/toc/17480922/2020/46/3",
+		"items": "multiple"
+	},
+	{
+		"type": "web",
+		"url": "https://onlinelibrary.wiley.com/doi/10.1111/rsr.14681",
 		"items": [
 			{
 				"itemType": "journalArticle",
-				"title": "BOOK REVIEWS",
-				"creators": [],
-				"date": "2018",
-				"DOI": "10.1111/teth.12436",
-				"ISSN": "1467-9647",
-				"issue": "2",
-				"itemID": "https://doi.org/10.1111/teth.12436",
+				"title": "SACRED MISINTERPRETATION: REACHING ACROSS THE CHRISTIAN-MUSLIM DIVIDE. By Martin Accad. Grand Rapids, MI: Eerdmans, 2019. Pp. xxx + 366. Paper, $38.00.",
+				"creators": [
+					{
+						"firstName": "Matthew",
+						"lastName": "Friedman",
+						"creatorType": "author"
+					}
+				],
+				"date": "2020",
+				"DOI": "10.1111/rsr.14681",
+				"ISSN": "1748-0922",
+				"issue": "3",
+				"itemID": "https://doi.org/10.1111/rsr.14681",
 				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
-				"pages": "158-158",
-				"publicationTitle": "Teaching Theology & Religion",
-				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/teth.12436",
-				"volume": "21",
+				"libraryCatalog": "ubtue_Wiley Online Library",
+				"pages": "378-378",
+				"publicationTitle": "Religious Studies Review",
+				"shortTitle": "SACRED MISINTERPRETATION",
+				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/rsr.14681",
+				"volume": "46",
 				"attachments": [],
 				"tags": [
 					{
-						"tag": "Book Review"
+						"tag": "RezensionstagPica"
 					}
 				],
 				"notes": [],
@@ -1159,71 +1229,38 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "https://onlinelibrary.wiley.com/doi/full/10.1111/hic3.12657",
-		"items": [
-			{
-				"itemType": "journalArticle",
-				"title": "Magic, Genderfluidity, and queer Vikings, ca. 750-1050",
-				"creators": [
-					{
-						"firstName": "Jacob",
-						"lastName": "Bell",
-						"creatorType": "author"
-					}
-				],
-				"date": "2021",
-				"DOI": "10.1111/hic3.12657",
-				"ISSN": "1478-0542",
-				"abstractNote": "From the Nazi Reich to the deadly storming of the U.S. Capital building on January 6, 2021, symbols of pre-Christian Norse religious practices, especially magic, have come to represent androcentricity, authoritarianism, and White nationalism. This modern misrepresentation contrasts how the Norse people themselves potentially saw these same signs and images: as subversive, subaltern, and queer. Rather than the austere and distorted image left to us by monastic chroniclers of later centuries, recent historical, archaeological, and literary studies have taken into consideration new evidence that suggests magic was a vibrant and interwoven part of everyday life for the Norse people in the Viking Age. New methodological approaches and material discoveries have enabled scholars to re-evaluate the socio-sexual systems of Viking-Age Scandinavia and theorize about the potential for ungendered, transgendered, and gender-fluid readings of how individuals subverted these regimes through sorcery. This article surveys this recent turn in Old Norse studies and explores the possibilities for such scholarship to revolutionize how we think of the Vikings' place in the circum-polar history of Shamanism, gender-bending, and queer magic.",
-				"issue": "5",
-				"itemID": "https://doi.org/10.1111/hic3.12657",
-				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
-				"pages": "article e12657",
-				"publicationTitle": "History Compass",
-				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/hic3.12657",
-				"volume": "19",
-				"attachments": [],
-				"tags": [],
-				"notes": [
-					{
-						"note": "orcid:0000-0002-5189-1937 | Jacob Bell"
-					}
-				],
-				"seeAlso": []
-			}
-		]
+		"url": "https://onlinelibrary.wiley.com/toc/17586623/2021/73/1",
+		"items": "multiple"
 	},
 	{
 		"type": "web",
-		"url": "https://onlinelibrary.wiley.com/doi/10.1111/erev.12591",
+		"url": "https://anthrosource.onlinelibrary.wiley.com/doi/full/10.1111/etho.12311",
 		"items": [
 			{
 				"itemType": "journalArticle",
-				"title": "Aruna Gnanadason, With Courage and Compassion: Women and the Ecumenical Movement. Minneapolis: Fortress Press, 2020. 171 + xiv pp.",
+				"title": "Review of Beekers, Daan and DavidKloos, eds. Straying from the Straight Path: How Senses of Failure Invigorate Lived Religion. 2018. New York and Oxford: Berghahn Books. 146 pp",
 				"creators": [
 					{
-						"firstName": "Lois M.",
-						"lastName": "Wilson",
+						"firstName": "Jack David",
+						"lastName": "Eller",
 						"creatorType": "author"
 					}
 				],
 				"date": "2021",
-				"DOI": "10.1111/erev.12591",
-				"ISSN": "1758-6623",
-				"issue": "1",
-				"itemID": "https://doi.org/10.1111/erev.12591",
+				"DOI": "10.1111/etho.12311",
+				"ISSN": "1548-1352",
+				"issue": "2",
+				"itemID": "https://doi.org/10.1111/etho.12311",
 				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
-				"pages": "194-195",
-				"publicationTitle": "The Ecumenical Review",
-				"shortTitle": "Aruna Gnanadason, With Courage and Compassion",
-				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/erev.12591",
-				"volume": "73",
+				"libraryCatalog": "ubtue_Wiley Online Library",
+				"publicationTitle": "Ethos",
+				"shortTitle": "Review of Beekers, Daan and DavidKloos, eds. Straying from the Straight Path",
+				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/etho.12311",
+				"volume": "49",
 				"attachments": [],
 				"tags": [
 					{
-						"tag": "Book Review"
+						"tag": "RezensionstagPica"
 					}
 				],
 				"notes": [],
@@ -1233,171 +1270,56 @@ var testCases = [
 	},
 	{
 		"type": "web",
-		"url": "https://onlinelibrary.wiley.com/doi/10.1111/erev.12515",
+		"url": "https://onlinelibrary.wiley.com/doi/10.1111/dial.12675",
 		"items": [
 			{
 				"itemType": "journalArticle",
-				"title": "Issue Information",
-				"creators": [],
-				"date": "2021",
-				"DOI": "10.1111/erev.12515",
-				"ISSN": "1758-6623",
-				"issue": "2",
-				"itemID": "https://doi.org/10.1111/erev.12515",
-				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
-				"publicationTitle": "The Ecumenical Review",
-				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/erev.12515",
-				"volume": "73",
-				"attachments": [],
-				"tags": [],
-				"notes": [
-					"LF:"
-				],
-				"seeAlso": []
-			}
-		]
-	},
-	{
-		"type": "web",
-		"url": "https://onlinelibrary.wiley.com/doi/10.1111/erev.12592",
-		"items": [
-			{
-				"itemType": "journalArticle",
-				"title": "Ecumenical Chronicle",
-				"creators": [],
-				"date": "2021",
-				"DOI": "10.1111/erev.12592",
-				"ISSN": "1758-6623",
-				"issue": "1",
-				"itemID": "https://doi.org/10.1111/erev.12592",
-				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
-				"pages": "182-190",
-				"publicationTitle": "The Ecumenical Review",
-				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/erev.12592",
-				"volume": "73",
-				"attachments": [],
-				"tags": [],
-				"notes": [],
-				"seeAlso": []
-			}
-		]
-	},
-	{
-		"type": "web",
-		"url": "https://onlinelibrary.wiley.com/doi/10.1111/zygo.12687",
-		"items": [
-			{
-				"itemType": "journalArticle",
-				"title": "Religion and the Philosophy of Life. By Gavin Flood. Oxford: Oxford University Press, 2019. 464 pages. $50.00. (Hardback).",
+				"title": "Becoming society again: Reimagining new social contracts through Scandinavian creation theology",
 				"creators": [
 					{
-						"firstName": "Lluis",
-						"lastName": "Oviedo",
+						"firstName": "Elisabeth",
+						"lastName": "Gerle",
 						"creatorType": "author"
 					}
 				],
 				"date": "2021",
-				"DOI": "10.1111/zygo.12687",
-				"ISSN": "1467-9744",
+				"DOI": "10.1111/dial.12675",
+				"ISSN": "1540-6385",
 				"issue": "2",
-				"itemID": "https://doi.org/10.1111/zygo.12687",
+				"itemID": "https://doi.org/10.1111/dial.12675",
 				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
-				"pages": "533-536",
-				"publicationTitle": "Zygon®",
-				"shortTitle": "Religion and the Philosophy of Life. By Gavin Flood. Oxford",
-				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/zygo.12687",
-				"volume": "56",
-				"attachments": [],
-				"tags": [
-					{
-						"tag": "Book Review"
-					}
-				],
-				"notes": [
-					{
-						"note": "orcid:0000-0001-8189-3311 | Lluis Oviedo"
-					}
-				],
-				"seeAlso": []
-			}
-		]
-	},
-	{
-		"type": "web",
-		"url": "https://onlinelibrary.wiley.com/doi/10.1111/jssr.12702",
-		"items": [
-			{
-				"itemType": "journalArticle",
-				"title": "Religion and Refugee Well-Being: The Importance of Inclusive Community",
-				"creators": [
-					{
-						"firstName": "Stephen",
-						"lastName": "Wu",
-						"creatorType": "author"
-					},
-					{
-						"firstName": "Stephen",
-						"lastName": "Ellingson",
-						"creatorType": "author"
-					},
-					{
-						"firstName": "Paul",
-						"lastName": "Hagstrom",
-						"creatorType": "author"
-					},
-					{
-						"firstName": "Jaime",
-						"lastName": "Kucinskas",
-						"creatorType": "author"
-					}
-				],
-				"date": "2021",
-				"DOI": "10.1111/jssr.12702",
-				"ISSN": "1468-5906",
-				"abstractNote": "We use a large sample of refugees in Utica, New York to investigate how religiosity and the ability to practice religion are related to happiness in one's community. We analyze religious and secular facets of the community in which they live, such as perceived ability to practice their religion, sense of safety, and experiences of discrimination. Contrary to the literature on broader populations, we find that religiosity is unrelated to refugees’ happiness in their community, but their perceived ability to practice is strongly related to this measure of well-being. Ability to practice religion remains strongly related to happiness in the community even for refugees who are not religious and for ones who do not regularly attend services. These findings point to the need for more studies to include measures not only of individual religiosity, but facets of religion in people's larger communities, especially for vulnerable populations like refugees.",
-				"issue": "2",
-				"itemID": "https://doi.org/10.1111/jssr.12702",
-				"language": "en",
-				"libraryCatalog": "Wiley Online Library",
-				"pages": "291-308",
-				"publicationTitle": "Journal for the Scientific Study of Religion",
-				"shortTitle": "Religion and Refugee Well-Being",
-				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/jssr.12702",
+				"libraryCatalog": "ubtue_Wiley Online Library",
+				"pages": "167-176",
+				"publicationTitle": "Dialog",
+				"shortTitle": "Becoming society again",
+				"url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/dial.12675",
 				"volume": "60",
 				"attachments": [],
 				"tags": [
 					{
-						"tag": "Utica"
+						"tag": "\"neoliberalism\""
 					},
 					{
-						"tag": "community"
+						"tag": "New Public Management"
 					},
 					{
-						"tag": "inclusive"
+						"tag": "Scandinavian Creation Theology"
 					},
 					{
-						"tag": "refugees"
+						"tag": "Social justice"
 					},
 					{
-						"tag": "religion"
+						"tag": "bodies"
 					},
 					{
-						"tag": "well-being"
+						"tag": "defending welfare states"
+					},
+					{
+						"tag": "planet"
 					}
 				],
 				"notes": [
-					{
-						"note": "orcid:0000-0003-4640-0221 | Stephen Wu"
-					},
-					{
-						"note": "orcid:0000-0002-9220-2288 | Paul Hagstrom"
-					},
-					{
-						"note": "orcid:0000-0002-6518-8564 | Jaime Kucinskas"
-					}
+					"LF:"
 				],
 				"seeAlso": []
 			}
