@@ -207,7 +207,7 @@ function processRIS(text, jid, doc) {
 		item.attachments = [];
 		if (item.ISSN) {
 			item.ISSN = ZU.cleanISSN(item.ISSN);
-			if (item.ISSN == "2372-904X" && item.volume == undefined) item.volume = item.date;
+			if (item.ISSN == "0278-4645" && item.volume == undefined) item.volume = item.date;
 		}
 		if (!item.DOI) {
 			item.DOI = ZU.xpathText(doc, '//div[contains(@class,"doi")]');
