@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2022-08-12 13:37:26"
+	"lastUpdated": "2023-06-20 15:25:05"
 }
 
 /*
@@ -230,7 +230,7 @@ function invokeEMTranslator(doc) {
 		i.title = i.title.replace(/(<\/?[^>]+>)|(&nbsp;)/g, '');
 		for (let abstract of ZU.xpath(doc, '//meta[@name="DC.Description"]/@content')) {
 			abstract = abstract.textContent.replace(/(<\/?[^>]+>)|(&nbsp;)/g, '');
-			if (i.abstractNote != abstract && abstract.trim() != "" && abstract != ".") {
+			if (i.abstractNote != abstract && abstract.trim() != "" && abstract != "." && i.abstractNote.trim() != abstract.trim()) {
 				i.notes.push({note: "abs:" + abstract});
 			}
 		}
@@ -349,87 +349,13 @@ function doWeb(doc, url) {
 var testCases = [
 	{
 		"type": "web",
-		"url": "https://ojs.reformedjournals.co.za/stj/issue/view/70",
+		"url": "https://ejournals.bc.edu/index.php/levantine/issue/view/854",
 		"items": "multiple"
 	},
 	{
 		"type": "web",
-		"url": "https://ojs.reformedjournals.co.za/stj/article/view/1969",
-		"items": [
-			{
-				"itemType": "journalArticle",
-				"title": "“The message to the people of South Africa” in contemporary context: The question of Palestine and the challenge to the church",
-				"creators": [
-					{
-						"firstName": "Mark",
-						"lastName": "Braverman",
-						"creatorType": "author"
-					}
-				],
-				"date": "2019",
-				"DOI": "10.17570/stj.2019.v5n3.a01",
-				"ISSN": "2413-9467",
-				"abstractNote": "In September 2018 John de Gruchy presented a paper at the Volmoed Colloquium entitled “Revisiting the Message to the people of South Africa,” in which he asks, “what is the significance of the document for our time?” In this expanded version of the author’s response to de Gruchy, two further questions are pursued: First: how can the churches today meet the challenge of today’s global system of economically and politically-driven inequality driven by a constellation of individuals, corporations, and governments? Second: in his review of church history, de Gruchy focused on the issue of church theology described in the 1985 Kairos South Africa document, in which churches use words that purport to support justice but actually serve to shore up the status quo of discrimination, inequality and racism. How does church theology manifest in the contemporary global context, and what is the remedy? The author proposes that ecumenism can serve as a mobilizing and organizing model for church action, and that active engagement in the issue of Palestine is an entry point for church renewal and for a necessary and fruitful exploration of critical issues in theology and ecclesiology.",
-				"issue": "3",
-				"journalAbbreviation": "STJ",
-				"language": "en",
-				"libraryCatalog": "ojs.reformedjournals.co.za",
-				"pages": "13-40",
-				"publicationTitle": "STJ | Stellenbosch Theological Journal",
-				"rights": "Copyright (c) 2020 Pieter de Waal Neethling Trust, Stellenbosch",
-				"shortTitle": "“The message to the people of South Africa” in contemporary context",
-				"url": "https://ojs.reformedjournals.co.za/stj/article/view/1969",
-				"volume": "5",
-				"attachments": [
-					{
-						"title": "Full Text PDF",
-						"mimeType": "application/pdf"
-					},
-					{
-						"title": "Snapshot",
-						"mimeType": "text/html"
-					}
-				],
-				"tags": [],
-				"notes": [],
-				"seeAlso": []
-			}
-		]
-	},
-	{
-		"type": "web",
-		"url": "http://www.zwingliana.ch/index.php/zwa/article/view/2516",
-		"items": [
-			{
-				"itemType": "journalArticle",
-				"title": "Geleitwort",
-				"creators": [
-					{
-						"firstName": "Christian",
-						"lastName": "Oesterheld",
-						"creatorType": "author"
-					}
-				],
-				"date": "2018",
-				"ISSN": "0254-4407",
-				"language": "en",
-				"libraryCatalog": "www.zwingliana.ch",
-				"pages": "VII-IX",
-				"publicationTitle": "Zwingliana",
-				"rights": "Authors who are published in this journal agree to the following conditions:  a) The authors retain the copyright and allow the journal to print the first publication in print as well as to make it electronically available at the end of three years.  b) The author may allot distribution of their first version of the article with additional contracts for non-exclusive publications by naming the first publication in this Journal in said publication (i.e. publishing the article in a book or other publications).",
-				"url": "http://www.zwingliana.ch/index.php/zwa/article/view/2516",
-				"volume": "45",
-				"attachments": [
-					{
-						"title": "Snapshot",
-						"mimeType": "text/html"
-					}
-				],
-				"tags": [],
-				"notes": [],
-				"seeAlso": []
-			}
-		]
+		"url": "https://ejournals.bc.edu/index.php/levantine/issue/view/592",
+		"items": "multiple"
 	}
 ]
 /** END TEST CASES **/
