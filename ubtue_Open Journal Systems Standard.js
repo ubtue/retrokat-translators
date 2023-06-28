@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2023-06-28 10:50:22"
+	"lastUpdated": "2023-06-28 11:35:20"
 }
 
 /*
@@ -234,15 +234,21 @@ function invokeEMTranslator(doc) {
 				i.notes.push({note: "abs:" + abstract});
 			}
 		}
+		let matched_isbns = [];
 		if (i.abstractNote != undefined) {
 			if (i.abstractNote.match(/ISBN:?\s+((?:\d+[\- ]*)+)/) != null) {
-				i.tags.push("#reviewed_pub#isbn::" + i.abstractNote.match(/ISBN:?\s+((?:\d+[\- ]*)+)/)[1].trim() + "#")
+				matched_isbns = (i.abstractNote).match(/ISBN:?\s+((?:\d+[\- ]*)+)/g);
+				//i.tags.push("#reviewed_pub#isbn::" + i.abstractNote.match(/ISBN:?\s+((?:\d+[\- ]*)+)/)[1].trim() + "#")
 			}
 		}
 		if (i.title != undefined) {
 			if (i.title.match(/ISBN:?\s+((?:\d+[\- ]*)+)/) != null) {
-				i.tags.push("#reviewed_pub#isbn::" + i.title.match(/ISBN:?\s+((?:\d+[\- ]*)+)/)[1].trim() + "#")
+				matched_isbns = (i.title).match(/ISBN:?\s+((?:\d+[\- ]*)+)/g);
+				//i.tags.push("#reviewed_pub#isbn::" + i.title.match(/ISBN:?\s+((?:\d+[\- ]*)+)/)[1].trim() + "#")
 			}
+		}
+		for (let j in matched_isbns) {
+			i.tags.push("#reviewed_pub#isbn::" + matched_isbns[j].trim() + "#");
 		}
 		if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content') != null) {
 			if (ZU.xpathText(doc, '//meta[@name="DC.Type.articleType"]/@content').match(/^(Comptes rendus)|(Vient de paraître)|(Reseñas)|(Recenzje)|((Buch)?besprechungen)|(Recensões)|(Recensiones)|(Review Essays?)|(Books?\s+Reviews?\b)/i) != null) {
