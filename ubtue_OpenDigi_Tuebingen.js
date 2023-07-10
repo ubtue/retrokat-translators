@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2023-07-10 14:11:11"
+	"lastUpdated": "2023-07-10 15:07:49"
 }
 
 /*
@@ -41,7 +41,6 @@ function getSearchResults(doc) {
 	var items = {};
 	var found = false;
 	var rows = ZU.xpath(doc, '//ul/li/ul/li[a]');
-	Z.debug(rows.length)
 	for (let i = 0; i < rows.length; i++) {
 		let row = rows[i].innerHTML;
 		//Z.debug(items)
@@ -65,6 +64,29 @@ function GetMetaData(articles, doc) {
 	//translator.setHandler("itemDone", function (t, item) {
 	let rows = ZU.xpath(doc, '//ul/li/ul/li[a]');
 	let hefte = ZU.xpath(doc, '//div/ul/li[a]');
+	let heftdois = {};
+	for (let r in hefte){
+		heft = hefte[r].innerHTML;
+		if (heft.includes("Heft") && heft.match(/^<a href="#" data-pages="\[(?:\d+,?)+\]">Heft/)) {
+			heftnr = heft.match(/Heft (\d+)/)[1];
+			heftdois[heftnr] = heft.match(/<a class="fa noul" href="[^\s"]+/g);
+			for (let i in heftdois[heftnr]) {
+				heftdois[heftnr][i] = heftdois[heftnr][i].match(/<a class="fa noul" href="([^\s"]+)/)[1];
+			}
+		}
+	}
+	let reviewdois = [];
+	for (let r in rows){
+		review = rows[r].innerHTML;
+		if(review.includes("Rezension")) {
+			if (review.match(/^<a href="#" data-pages="\[(?:\d+,?)+\]">Rezension/)) {
+				reviewdoi = review.match(/<a class="fa noul" href="[^\s"]+/g);
+				for (let i in reviewdoi) {
+					reviewdois.push(reviewdoi[i].match(/<a class="fa noul" href="([^\s"]+)/)[1]);
+				}
+			}
+		}
+	}
 	for (let a in articles) {
 		item = new Zotero.Item('journalArticle');
 		item.url = a;
@@ -75,13 +97,6 @@ function GetMetaData(articles, doc) {
 			row = rows[r].innerHTML;
 			if (row.match(/^<a href="#" data-pages="\[(?:\d+,?)+\]">\d/) && row.includes(a)) {
 				row = rows[r].innerHTML;
-				break;
-			}
-		}
-		for (let r in hefte){
-			heft = hefte[r].innerHTML;
-			if (heft.match(/^<a href="#" data-pages="\[(?:\d+,?)+\]">Heft/) && heft.includes(a)) {
-				item.issue = heft.match(/Heft (\d+)/)[1];
 				break;
 			}
 		}
@@ -97,6 +112,18 @@ function GetMetaData(articles, doc) {
 			}
 			item.creators.push({"firstName": firstname, "lastName": lastname, "creatorType": "author"})
 		}
+		for (let r in heftdois) {
+			for (let i in heftdois[r]) {
+				if (heftdois[r][i] == a) {
+					item.issue = r;
+				}
+			}
+		}
+		for (let i in reviewdois) {
+			if (reviewdois[i] == a) {
+				item.tags.push({"tag": "Book Review"});
+			}
+		}
 		let journal = ZU.xpathText(doc, '//div//dl');
 		item.volume = journal.match(/(?:Volume)|(?:Band)\s*(\d+)/)[1];
 		item.date = journal.match(/(?:Year of publication)|(?:Erscheinungsjahr)\s*(\d+)/)[1];
@@ -106,6 +133,7 @@ function GetMetaData(articles, doc) {
 		item.pages = row.match(/\]">(\d+-?\d*) /)[1];
 		item.pages = item.pages.trim().replace(/^([^-]+)-\1$/, '$1');
 		item.attachments = [];
+		item.notes.push({"note": "LF"});
 		item.complete();
 	}
 	//translator.translate();
