@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2023-07-11 09:17:36"
+	"lastUpdated": "2023-07-11 09:56:51"
 }
 
 /*
@@ -136,7 +136,7 @@ function GetMetaData(articles, doc) {
 		item.pages = row.match(/\]">(\d+-?\d*) /)[1];
 		item.pages = item.pages.trim().replace(/^([^-]+)-\1$/, '$1');
 		item.attachments = [];
-		item.notes.push({"note": "LF"});
+		item.notes.push({"note": "LF:"});
 		item.complete();
 	}
 	//translator.translate();
