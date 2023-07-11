@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2023-07-10 15:07:49"
+	"lastUpdated": "2023-07-11 09:17:36"
 }
 
 /*
@@ -87,6 +87,10 @@ function GetMetaData(articles, doc) {
 			}
 		}
 	}
+	let journal = ZU.xpathText(doc, '//div//dl');
+	volumenr = journal.match(/(?:(?:Volume)|(?:Band))\s*(\d+)/)[1];
+	date = journal.match(/(?:(?:Year of publication)|(?:Erscheinungsjahr))\s*(\d+)/)[1];
+	pubTitle = journal.match(/(?:(?:Title)|(?:Titel))\s*((?:[^\s] ?)+[^\s])\s*,/)[1];
 	for (let a in articles) {
 		item = new Zotero.Item('journalArticle');
 		item.url = a;
@@ -124,10 +128,9 @@ function GetMetaData(articles, doc) {
 				item.tags.push({"tag": "Book Review"});
 			}
 		}
-		let journal = ZU.xpathText(doc, '//div//dl');
-		item.volume = journal.match(/(?:Volume)|(?:Band)\s*(\d+)/)[1];
-		item.date = journal.match(/(?:Year of publication)|(?:Erscheinungsjahr)\s*(\d+)/)[1];
-		item.publicationTitle = journal.match(/(?:Title)|(?:Titel)\s*((?:[^\s] ?)+[^\s])\s*,/)[1];
+		item.volume = volumenr;
+		item.date = date;
+		item.publicationTitle = pubTitle;
 		//item.place = journal.match(/Place\(s\)\s*((?:[^\s] ?)+[^\s])/)[1];
 		//item.issue = issueinfo.match(/Heft (\d+)/)[1];
 		item.pages = row.match(/\]">(\d+-?\d*) /)[1];
