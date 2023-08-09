@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2023-08-09 07:57:04"
+	"lastUpdated": "2023-08-09 08:15:44"
 }
 
 /*
@@ -46,6 +46,7 @@ function getSearchResults(doc) {
 		//Z.debug(items)
 		if (row.match(/^<a href="#" data-pages="\[(?:\d+,?)+\]">\d/)) {
 			let title = row.match(/^<a href="#" data-pages="\[(?:\d+,?)+\]">\d+(?:\[\d+\])?-?\d*(?:\[\d+\])? ([^<]+)<span/)[1];
+			if (title == "Innhalt") continue;
 			let href = row.match(/<a class="fa noul" href="([^\s"]+)/)[1];
 			found = true;
 			items[href] = title;
@@ -127,6 +128,9 @@ function GetMetaData(articles, doc) {
 			if (reviewdois[i] == a) {
 				item.tags.push({"tag": "Book Review"});
 			}
+		}
+		if (["Recensionen", "Litterarische Uebersichten und Anzeigen"].includes(item.title)) {
+			item.tags.push({"tag": "Book Review"});
 		}
 		item.volume = volumenr;
 		item.date = date;
