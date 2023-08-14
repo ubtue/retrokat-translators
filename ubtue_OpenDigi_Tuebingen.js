@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2023-08-14 11:21:23"
+	"lastUpdated": "2023-08-14 11:30:48"
 }
 
 /*
@@ -105,7 +105,7 @@ function GetMetaData(articles, doc) {
 			}
 		}
 		if (row.match(/<span class="info">\s[^\s]\s[^<]+</)) {
-			names = row.match(/<span class="info">\s[^\s]\s([^<]+)</)[1];
+			names = row.match(/<span class="info">\s[^\s]\s([^<]+)</)[1].replace("&nbsp;"," ");
 			let firstname = "";
 			let lastname = "";
 			if (names.match(/,?[^,]+/)) {
