@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2023-08-14 08:39:38"
+	"lastUpdated": "2023-08-14 11:21:23"
 }
 
 /*
@@ -78,7 +78,7 @@ function GetMetaData(articles, doc) {
 	let reviewdois = [];
 	for (let r in rows){
 		review = rows[r].innerHTML;
-		if(review.includes("Rezension")) {
+		if(review.includes(">Rezension")) {
 			if (review.match(/^<a href="#" data-pages="\[(?:\d+,?)+\]">Rezension/)) {
 				reviewdoi = review.match(/<a class="fa noul" href="[^\s"]+/g);
 				for (let i in reviewdoi) {
@@ -128,7 +128,7 @@ function GetMetaData(articles, doc) {
 				item.tags.push({"tag": "Book Review"});
 			}
 		}
-		if (["Recensionen", "Bücheranzeigen", "Bücheranzeige"].includes(item.title)
+		if (["Recensionen", "Rezensionen", "Bücheranzeigen", "Bücheranzeige"].includes(item.title)
 				|| item.title.match(/Litt?erarische.+bers..hten/)) {
 			item.tags.push({"tag": "Book Review"});
 		}
