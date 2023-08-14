@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2023-08-10 08:47:20"
+	"lastUpdated": "2023-08-14 08:39:38"
 }
 
 /*
@@ -128,7 +128,8 @@ function GetMetaData(articles, doc) {
 				item.tags.push({"tag": "Book Review"});
 			}
 		}
-		if (["Recensionen"].includes(item.title) || item.title.match(/Litt?erarische.+bers..hten/)) {
+		if (["Recensionen", "Bücheranzeigen", "Bücheranzeige"].includes(item.title)
+				|| item.title.match(/Litt?erarische.+bers..hten/)) {
 			item.tags.push({"tag": "Book Review"});
 		}
 		item.volume = volumenr;
