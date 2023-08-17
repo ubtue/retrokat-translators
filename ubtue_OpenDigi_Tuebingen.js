@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2023-08-14 11:30:48"
+	"lastUpdated": "2023-08-17 13:02:40"
 }
 
 /*
@@ -45,7 +45,7 @@ function getSearchResults(doc) {
 		let row = rows[i].innerHTML;
 		//Z.debug(items)
 		if (row.match(/^<a href="#" data-pages="\[(?:\d+,?)+\]">\d/)) {
-			let title = row.match(/^<a href="#" data-pages="\[(?:\d+,?)+\]">\d+(?:\[\d+\])?-?\d*(?:\[\d+\])? ?([^<]+)<span/)[1];
+			let title = row.match(/^<a href="#" data-pages="\[(?:\d+,?)+\]">\d+(?:\[\d+\])?\s*-?\s*\d*(?:\[\d+\])? ?([^<]+)<span/)[1];
 			let href = row.match(/<a class="fa noul" href="([^\s"]+)/)[1];
 			found = true;
 			items[href] = title;
@@ -67,6 +67,7 @@ function GetMetaData(articles, doc) {
 	let heftdois = {};
 	for (let r in hefte){
 		heft = hefte[r].innerHTML;
+		heft = heft.replace(" class=\"active\"",""); //TODO Das überall ergänzen
 		if (heft.includes("Heft") && heft.match(/^<a href="#" data-pages="\[(?:\d+,?)+\]">Heft/)) {
 			heftnr = heft.match(/Heft (\d+)/)[1];
 			heftdois[heftnr] = heft.match(/<a class="fa noul" href="[^\s"]+/g);
@@ -137,8 +138,9 @@ function GetMetaData(articles, doc) {
 		item.publicationTitle = pubTitle;
 		//item.place = journal.match(/Place\(s\)\s*((?:[^\s] ?)+[^\s])/)[1];
 		//item.issue = issueinfo.match(/Heft (\d+)/)[1];
-		item.pages = row.match(/\]">(\d+(?:\[\d+\])?-?\d*(?:\[\d+\])?)/)[1];
+		item.pages = row.match(/\]">(\d+(?:\[\d+\])?\s*-?\s*\d*(?:\[\d+\])?)/)[1];
 		item.pages = item.pages.replace(/(?:\[\d+\])/g,"");
+		item.pages = item.pages.replace(/\s/g,"");
 		item.pages = item.pages.trim().replace(/^([^-]+)-\1$/, '$1');
 		item.attachments = [];
 		item.notes.push({"note": "LF:"});
