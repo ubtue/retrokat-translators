@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2023-08-21 10:52:00"
+	"lastUpdated": "2023-08-21 12:50:52"
 }
 
 /*
@@ -69,7 +69,11 @@ function GetMetaData(articles, doc) {
 		heft = hefte[r].innerHTML;
 		heft = heft.replace(" class=\"active\"",""); //TODO Das überall ergänzen
 		if (heft.includes("Heft") && heft.match(/^<a href="#" data-pages="\[(?:\d+,?)+\]">Heft/)) {
-			heftnr = heft.match(/Heft (\d+)/)[1];
+			let heftnr = heft.match(/Heft (\d+)/)[1];
+			if (heft.match(/Heft \d+[^\d<]+\d/)) {
+				heftnr = heft.match(/Heft (\d+[^\d<]+\d+)/)[1].replace(/\s/g,"");
+				heftnr = heftnr.replace("und", "/");
+			}
 			heftdois[heftnr] = heft.match(/<a class="fa noul" href="[^\s"]+/g);
 			for (let i in heftdois[heftnr]) {
 				heftdois[heftnr][i] = heftdois[heftnr][i].match(/<a class="fa noul" href="([^\s"]+)/)[1];
@@ -135,7 +139,7 @@ function GetMetaData(articles, doc) {
 				item.tags.push({"tag": "Book Review"});
 			}
 		}
-		if (["Recensionen", "Rezensionen", "Bücheranzeigen", "Bücheranzeige"].includes(item.title)
+		if (["Recensionen", "Rezensionen", "Bücheranzeigen", "Bücheranzeige", "Kleine Kritiken"].includes(item.title)
 				|| item.title.match(/Litt?erarische.+bers..hten/)) {
 			item.tags.push({"tag": "Book Review"});
 		}
