@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2023-08-17 13:02:40"
+	"lastUpdated": "2023-08-21 10:39:23"
 }
 
 /*
@@ -89,9 +89,12 @@ function GetMetaData(articles, doc) {
 		}
 	}
 	let journal = ZU.xpathText(doc, '//div//dl');
-	volumenr = journal.match(/(?:(?:Volume)|(?:Band))\s*(\d+)/)[1];
-	date = journal.match(/(?:(?:Year of publication)|(?:Erscheinungsjahr))\s*(\d+)/)[1];
 	pubTitle = journal.match(/(?:(?:Title)|(?:Titel))\s*((?:[^\s] ?)+[^\s])\s*,/)[1];
+	volumenr = journal.match(/(?:(?:Volume)|(?:Band))\s*([^\s]+)/)[1];
+	if (pubTitle == "Jahrschrift für Theologie und Kirchenrecht der Katholiken") {
+		volumenr = volumenr.match(/(\d+)/)[1];
+	}
+	date = journal.match(/(?:(?:Year of publication)|(?:Erscheinungsjahr))\s*(\d+)/)[1];
 	for (let a in articles) {
 		item = new Zotero.Item('journalArticle');
 		item.url = a;
@@ -106,16 +109,19 @@ function GetMetaData(articles, doc) {
 			}
 		}
 		if (row.match(/<span class="info">\s[^\s]\s[^<]+</)) {
-			names = row.match(/<span class="info">\s[^\s]\s([^<]+)</)[1].replace("&nbsp;"," ");
-			let firstname = "";
-			let lastname = "";
-			if (names.match(/,?[^,]+/)) {
-				lastname = names.match(/,?([^,]+)/)[1].trim();
+			names = row.match(/<span class="info">\s[^\s]\s([^<]+)</)[1].replace("&nbsp;"," ").split("; ");
+			for (let j in names) {
+				let name = names[j].trim().replace(/\.([^\s])/,'. $1'); //Ergänzen von Leerzeichen zwischen Initialen, falls fehlt
+				let firstname = "";
+				let lastname = "";
+				if (name.match(/,?[^,]+/)) {
+					lastname = name.match(/,?([^,]+)/)[1].trim();
+				}
+				if (name.match(/,[^,]+/)) {
+					firstname = name.match(/,([^,]+)/)[1].trim();
+				}
+				item.creators.push({"firstName": firstname, "lastName": lastname, "creatorType": "author"})
 			}
-			if (names.match(/,[^,]+/)) {
-				firstname = names.match(/,([^,]+)/)[1].trim();
-			}
-			item.creators.push({"firstName": firstname, "lastName": lastname, "creatorType": "author"})
 		}
 		for (let r in heftdois) {
 			for (let i in heftdois[r]) {
