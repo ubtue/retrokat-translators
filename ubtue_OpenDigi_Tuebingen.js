@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2023-08-22 13:30:28"
+	"lastUpdated": "2023-08-22 13:45:58"
 }
 
 /*
@@ -86,13 +86,14 @@ function GetMetaData(articles, doc, url) {
 		heft = heft.replace(" class=\"active\"",""); //TODO Das überall ergänzen
 		if (heft.includes("Heft")) {
 			if (heft.includes("Beilage")) {
-				item = new Zotero.Item('journalArticle');
+				/*item = new Zotero.Item('journalArticle');
 				item.title = heft.match(/Heft[^:]+:\s?([^<]+)</)[1];
 				item.issue = heft.match(/>([^:]*Heft[^:]+):/)[1].trim();
 				item.volume = volumenr;
 				item.date = date;
 				item.publicationTitle = pubTitle;
 				item.complete();
+				*/
 			}
 			else if (heft.match(/^<a href="#" data-pages="\[(?:\d+,?)+\]">Heft/)) {
 				let heftnr = heft.match(/Heft (\d+)/)[1];
