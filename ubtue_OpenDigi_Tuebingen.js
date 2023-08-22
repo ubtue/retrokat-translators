@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2023-08-22 12:17:40"
+	"lastUpdated": "2023-08-22 13:30:28"
 }
 
 /*
@@ -72,35 +72,53 @@ function GetMetaData(articles, doc, url) {
 	//translator.setDocument(doc);
 	//translator.setHandler("itemDone", function (t, item) {
 	let rows = ZU.xpath(doc, '//ul/li/ul/li[a]');
+	let journal = ZU.xpathText(doc, '//div//dl');
+	pubTitle = journal.match(/(?:(?:Title)|(?:Titel))\s*((?:[^\s] ?)+[^\s])\s*,/)[1];
+	volumenr = journal.match(/(?:(?:Volume)|(?:Band))\s*([^\s]+)/)[1].replace(".",",");
+	if (pubTitle == "Jahrschrift für Theologie und Kirchenrecht der Katholiken") {
+		volumenr = volumenr.match(/(\d+)/)[1];
+	}
+	date = journal.match(/(?:(?:Year of publication)|(?:Erscheinungsjahr))\s*(\d+)/)[1];
 	let hefte = ZU.xpath(doc, '//div/ul/li[a]');
 	let heftdois = {};
 	for (let r=0; r < hefte.length; r++){
 		heft = hefte[r].innerHTML;
 		heft = heft.replace(" class=\"active\"",""); //TODO Das überall ergänzen
-		if (heft.includes("Heft") && heft.match(/^<a href="#" data-pages="\[(?:\d+,?)+\]">Heft/)) {
-			let heftnr = heft.match(/Heft (\d+)/)[1];
-			if (heft.match(/Heft \d+[^\d<]+\d/)) {
-				heftnr = heft.match(/Heft (\d+[^\d<]+\d+)/)[1].replace(/\s/g,"");
-				heftnr = heftnr.replace("und", "/");
+		if (heft.includes("Heft")) {
+			if (heft.includes("Beilage")) {
+				item = new Zotero.Item('journalArticle');
+				item.title = heft.match(/Heft[^:]+:\s?([^<]+)</)[1];
+				item.issue = heft.match(/>([^:]*Heft[^:]+):/)[1].trim();
+				item.volume = volumenr;
+				item.date = date;
+				item.publicationTitle = pubTitle;
+				item.complete();
 			}
-			if (!heft.match(/<a class="fa noul" href="[^\s"]+/)) {
-				heft = hefte[r+1].innerHTML;
-				heft = heft.replace(" class=\"active\"","");
-			}
-			if (heft.match(/<a class="fa noul" href="[^\s"]+/)) {
-				heftdois[heftnr] = heft.match(/<a class="fa noul" href="[^\s"]+/g);
-			}
-			else {
-				if (heft.match(/<a href="([^\s"]+)" class="fa noul"/)) {
-					heftdois[heftnr] = heft.match(/<a href="([^\s"]+)" class="fa noul"/g);
+			else if (heft.match(/^<a href="#" data-pages="\[(?:\d+,?)+\]">Heft/)) {
+				let heftnr = heft.match(/Heft (\d+)/)[1];
+				if (heft.match(/Heft \d+[^\d<]+\d/)) {
+					heftnr = heft.match(/Heft (\d+[^\d<]+\d+)/)[1].replace(/\s/g,"");
+					heftnr = heftnr.replace("und", "/");
 				}
-			}
-			for (let i in heftdois[heftnr]) {
-				if (heftdois[heftnr][i].match(/<a class="fa noul" href="([^\s"]+)/)) {
-					heftdois[heftnr][i] = heftdois[heftnr][i].match(/<a class="fa noul" href="([^\s"]+)/)[1];
+				if (!heft.match(/<a class="fa noul" href="[^\s"]+/)) {
+					heft = hefte[r+1].innerHTML;
+					heft = heft.replace(" class=\"active\"","");
 				}
-				else if (heftdois[heftnr][i].match(/<a href="([^\s"]+)" class="fa noul"/)) {
-					heftdois[heftnr][i] = heftdois[heftnr][i].match(/<a href="([^\s"]+)" class="fa noul"/)[1];
+				if (heft.match(/<a class="fa noul" href="[^\s"]+/)) {
+					heftdois[heftnr] = heft.match(/<a class="fa noul" href="[^\s"]+/g);
+				}
+				else {
+					if (heft.match(/<a href="([^\s"]+)" class="fa noul"/)) {
+						heftdois[heftnr] = heft.match(/<a href="([^\s"]+)" class="fa noul"/g);
+					}
+				}
+				for (let i in heftdois[heftnr]) {
+					if (heftdois[heftnr][i].match(/<a class="fa noul" href="([^\s"]+)/)) {
+						heftdois[heftnr][i] = heftdois[heftnr][i].match(/<a class="fa noul" href="([^\s"]+)/)[1];
+					}
+					else if (heftdois[heftnr][i].match(/<a href="([^\s"]+)" class="fa noul"/)) {
+						heftdois[heftnr][i] = heftdois[heftnr][i].match(/<a href="([^\s"]+)" class="fa noul"/)[1];
+					}
 				}
 			}
 		}
@@ -117,13 +135,7 @@ function GetMetaData(articles, doc, url) {
 			}
 		}
 	}
-	let journal = ZU.xpathText(doc, '//div//dl');
-	pubTitle = journal.match(/(?:(?:Title)|(?:Titel))\s*((?:[^\s] ?)+[^\s])\s*,/)[1];
-	volumenr = journal.match(/(?:(?:Volume)|(?:Band))\s*([^\s]+)/)[1].replace(".",",");
-	if (pubTitle == "Jahrschrift für Theologie und Kirchenrecht der Katholiken") {
-		volumenr = volumenr.match(/(\d+)/)[1];
-	}
-	date = journal.match(/(?:(?:Year of publication)|(?:Erscheinungsjahr))\s*(\d+)/)[1];
+	
 	for (let a in articles) {
 		item = new Zotero.Item('journalArticle');
 		if (a.match(/https?:\/\//)) {
