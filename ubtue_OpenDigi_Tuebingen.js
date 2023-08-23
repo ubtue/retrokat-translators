@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2023-08-23 10:36:43"
+	"lastUpdated": "2023-08-23 10:46:05"
 }
 
 /*
@@ -101,8 +101,8 @@ function GetMetaData(articles, doc, url) {
 					heftnr = heft.match(/Heft (\d+[^\d<]+\d+)/)[1].replace(/\s/g,"");
 					heftnr = heftnr.replace("und", "/");
 				}
-				if (!heft.match(/<a class="fa noul" href="[^\s"]+/)) {
-					heft = hefte[r+1].innerHTML;
+				if (!heft.includes("class=\"fa noul\"")) {
+					heft = hefte[r+1].innerHTML; //vllt. ist der Inhalt des Heftes in der nächsten Datenzeile
 					heft = heft.replace(" class=\"active\"","");
 				}
 				if (heft.match(/<a class="fa noul" href="[^\s"]+/)) {
