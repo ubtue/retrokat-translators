@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2023-08-22 13:45:58"
+	"lastUpdated": "2023-08-23 10:36:43"
 }
 
 /*
@@ -159,7 +159,7 @@ function GetMetaData(articles, doc, url) {
 		if (row.match(/<span class="info">\s[^\s]\s[^<]+</)) {
 			names = row.match(/<span class="info">\s[^\s]\s([^<]+)</)[1].replace("&nbsp;"," ").split("; ");
 			for (let j in names) {
-				let name = names[j].trim().replace(/\.([^\s])/,'. $1'); //Ergänzen von Leerzeichen zwischen Initialen, falls fehlt
+				let name = names[j].trim().replace(/\.([^\s])/g,'. $1'); //Ergänzen von Leerzeichen zwischen Initialen, falls fehlt
 				let firstname = "";
 				let lastname = "";
 				if (name.match(/,?[^,]+/)) {
