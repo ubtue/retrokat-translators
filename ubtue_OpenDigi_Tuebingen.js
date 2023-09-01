@@ -9,7 +9,7 @@
 	"inRepository": true,
 	"translatorType": 4,
 	"browserSupport": "gcsibv",
-	"lastUpdated": "2023-08-28 09:34:02"
+	"lastUpdated": "2023-09-01 10:06:39"
 }
 
 /*
@@ -74,7 +74,7 @@ function GetMetaData(articles, doc, url) {
 	let rows = ZU.xpath(doc, '//ul/li/ul/li[a]');
 	let journal = ZU.xpathText(doc, '//div//dl');
 	pubTitle = journal.match(/(?:(?:Title)|(?:Titel))\s*((?:[^\s] ?)+[^\s])\s*,/)[1];
-	volumenr = journal.match(/(?:(?:Volume)|(?:Band))\s*([^\s]+)/)[1].replace(".",",");
+	volumenr = journal.match(/(?:(?:Volume)|(?:Band))\s*([^\s]+\s?[^\s]*)/)[1]; //.replace(/\./g,",");
 	if (pubTitle == "Jahrschrift für Theologie und Kirchenrecht der Katholiken") {
 		volumenr = volumenr.match(/(\d+)/)[1];
 	}
